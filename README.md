@@ -57,6 +57,13 @@ Start the local server. Keep this terminal window open while using Droid/Cursor:
 3.  You will see new models like **"Claude Opus 4.5 Thinking [Antigravity]"** or **"GPT-5 Mini [Copilot]"**.
 4.  Select one and start chatting\!
 
+## ⌨️ Shortcuts
+
+After installation, restart your terminal. You can use these short commands anywhere:
+
+* `cp-login` : Open the login menu.
+* `cp-start` : Start the proxy server.
+
 ## 📂 File Locations
 
   * **Binary**: `~/bin/cliproxyapi-plus`
