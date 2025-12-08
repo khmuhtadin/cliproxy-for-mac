@@ -203,7 +203,7 @@ EOF
             "base_url": "http://localhost:8317/v1",
             "api_key": "sk-dummy",
             "provider": "openai"
-        },
+        }
     ]
 }
 EOF
