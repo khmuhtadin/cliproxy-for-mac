@@ -1,0 +1,207 @@
+#!/bin/bash
+
+# ==============================================================================
+# CLIProxy Ultimate Installer for macOS
+# Includes: Homebrew, Go, Git, and CLIProxyAPIPlus
+# ==============================================================================
+
+# --- Colors ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# --- Helper Functions ---
+
+check_brew() {
+    if command -v brew &> /dev/null; then
+        echo -e "${GREEN}[OK] Homebrew is already installed.${NC}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+install_brew() {
+    echo -e "${YELLOW}Installing Homebrew...${NC}"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    # Add Brew to PATH for Apple Silicon (M1/M2/M3)
+    if [[ -f "/opt/homebrew/bin/brew" ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+    # Add Brew to PATH for Intel Macs
+    if [[ -f "/usr/local/bin/brew" ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+}
+
+install_dependencies() {
+    if ! check_brew; then
+        echo -e "${RED}[Error] Homebrew is required to install Git and Go.${NC}"
+        echo "Please run option 1 (Install Homebrew) first."
+        return 1
+    fi
+
+    echo -e "${YELLOW}Updating Homebrew...${NC}"
+    brew update
+
+    echo -e "${YELLOW}Installing/Checking Git...${NC}"
+    brew install git || echo "Git already installed or updated."
+
+    echo -e "${YELLOW}Installing/Checking Go...${NC}"
+    brew install go || echo "Go already installed or updated."
+    
+    echo -e "${GREEN}[OK] Dependencies ready.${NC}"
+}
+
+install_cliproxy() {
+    # Check if Go exists before proceeding
+    if ! command -v go &> /dev/null; then
+        echo -e "${RED}[Error] Go is not found!${NC}"
+        echo "Please run option 2 or 4 to install dependencies first."
+        exit 1
+    fi
+
+    echo -e "${YELLOW}>>> Starting CLIProxy Installation...${NC}"
+    
+    BIN_DIR="$HOME/bin"
+    CONFIG_DIR="$HOME/.cli-proxy-api"
+    SCRIPTS_DIR="$CONFIG_DIR/scripts"
+
+    mkdir -p "$BIN_DIR"
+    mkdir -p "$CONFIG_DIR"
+    mkdir -p "$SCRIPTS_DIR"
+
+    # Clone & Build
+    TEMP_DIR=$(mktemp -d)
+    git clone --depth 1 https://github.com/router-for-me/CLIProxyAPIPlus.git "$TEMP_DIR"
+    
+    echo "Building binary..."
+    cd "$TEMP_DIR"
+    go build -o cliproxyapi-plus ./cmd/server
+    mv -f cliproxyapi-plus "$BIN_DIR/cliproxyapi-plus"
+    rm -rf "$TEMP_DIR"
+
+    # Config
+    cat > "$CONFIG_DIR/config.yaml" <<EOF
+port: 8317
+auth-dir: "$CONFIG_DIR"
+api-keys:
+  - "sk-dummy"
+quota-exceeded:
+  switch-project: true
+  switch-preview-model: true
+EOF
+
+    # Helper Scripts
+    # Start Script
+    cat > "$SCRIPTS_DIR/start.sh" <<EOF
+#!/bin/bash
+echo "Starting CLIProxy on http://localhost:8317"
+"$BIN_DIR/cliproxyapi-plus" --config "$CONFIG_DIR/config.yaml"
+EOF
+    chmod +x "$SCRIPTS_DIR/start.sh"
+
+    # Login Script
+    cat > "$SCRIPTS_DIR/login.sh" <<EOF
+#!/bin/bash
+BINARY="$BIN_DIR/cliproxyapi-plus"
+CONFIG="$CONFIG_DIR/config.yaml"
+clear
+echo "1. Antigravity (Claude/Gemini)"
+echo "2. GitHub Copilot"
+echo "3. Gemini CLI"
+echo "4. Codex"
+echo "5. Claude"
+echo "6. Qwen"
+echo "7. iFlow"
+read -p "Select provider (1-7): " c
+case \$c in
+  1) "\$BINARY" --config "\$CONFIG" -antigravity-login ;;
+  2) "\$BINARY" --config "\$CONFIG" -github-copilot-login ;;
+  3) "\$BINARY" --config "\$CONFIG" -login ;;
+  4) "\$BINARY" --config "\$CONFIG" -codex-login ;;
+  5) "\$BINARY" --config "\$CONFIG" -claude-login ;;
+  6) "\$BINARY" --config "\$CONFIG" -qwen-login ;;
+  7) "\$BINARY" --config "\$CONFIG" -iflow-login ;;
+  *) echo "Invalid" ;;
+esac
+EOF
+    chmod +x "$SCRIPTS_DIR/login.sh"
+
+    # Droid Config
+    DROID_FILE="$HOME/.factory/config.json"
+    mkdir -p "$(dirname "$DROID_FILE")"
+    if [ ! -f "$DROID_FILE" ]; then
+        # Inject JSON (Shortened for brevity, same content as before)
+        cat > "$DROID_FILE" <<EOF
+{
+    "custom_models": [
+        { "model_display_name": "Claude Opus 4.5 Thinking [Antigravity]", "model": "gemini-claude-opus-4-5-thinking", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Sonnet 4.5 Thinking [Antigravity]", "model": "gemini-claude-sonnet-4-5-thinking", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Sonnet 4.5 [Antigravity]", "model": "gemini-claude-sonnet-4-5", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Gemini 3 Pro [Antigravity]", "model": "gemini-3-pro-preview", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Opus 4.5 [Copilot]", "model": "claude-opus-4.5", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "GPT-5 Mini [Copilot]", "model": "gpt-5-mini", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "GPT-5.1 Codex Max [Codex]", "model": "gpt-5.1-codex-max", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" }
+    ]
+}
+EOF
+        echo -e "${GREEN}[OK] Droid config created.${NC}"
+    else
+        echo -e "${YELLOW}[!] Droid config exists, skipping.${NC}"
+    fi
+
+    echo -e "${GREEN}========================================${NC}"
+    echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
+    echo -e "${GREEN}========================================${NC}"
+    echo "1. Login: ~/.cli-proxy-api/scripts/login.sh"
+    echo "2. Start: ~/.cli-proxy-api/scripts/start.sh"
+}
+
+# --- Main Menu ---
+
+clear
+echo -e "${CYAN}========================================${NC}"
+echo -e "${CYAN}   CLIProxy macOS Installer Manager${NC}"
+echo -e "${CYAN}========================================${NC}"
+echo ""
+echo "1. Install Homebrew (Required for Git/Go)"
+echo "2. Install Git & Go (Via Homebrew)"
+echo "3. Install CLIProxy Only (If prerequisites met)"
+echo "4. FULL INSTALL (Recommended: Runs 1 -> 2 -> 3)"
+echo "5. Exit"
+echo ""
+read -p "Please select your choice (1-5): " choice
+
+case $choice in
+    1)
+        install_brew
+        ;;
+    2)
+        install_dependencies
+        ;;
+    3)
+        install_cliproxy
+        ;;
+    4)
+        echo ""
+        echo -e "${CYAN}Starting Full Installation...${NC}"
+        # Logic: Check brew, if not install. Then deps. Then proxy.
+        if ! check_brew; then
+            install_brew
+        fi
+        install_dependencies
+        install_cliproxy
+        ;;
+    5)
+        echo "Exiting."
+        exit 0
+        ;;
+    *)
+        echo "Invalid choice."
+        exit 1
+        ;;
+esac
