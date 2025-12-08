@@ -16,8 +16,8 @@ It handles everything from installing dependencies (Go, Git) to configuring the 
 Open your Terminal and run the following command:
 
 ```bash
-/bin/bash -c "$(curl -fsSL [https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install.sh](https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install.sh))"
-````
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install.sh)"
+```
 
 ## 🛠️ Menu Options
 
@@ -67,7 +67,7 @@ Start the local server. Keep this terminal window open while using Droid/Cursor:
 ## Credits
 
   * Installer script ported for macOS by [khmuhtadin](https://github.com/khmuhtadin).
-  * Core application by [router-for-me/CLIProxyAPIPlus](https://www.google.com/search?q=https://github.com/router-for-me/CLIProxyAPIPlus).
+  * Core application by [router-for-me/CLIProxyAPIPlus](https://github.com/router-for-me/CLIProxyAPIPlus).
 
 -----
 
