@@ -65,12 +65,14 @@ setup_shortcuts() {
     # Remove old aliases if they exist to prevent duplicates
     sed -i '' '/alias cp-login/d' "$SHELL_CONFIG"
     sed -i '' '/alias cp-start/d' "$SHELL_CONFIG"
+    sed -i '' '/alias cp-update/d' "$SHELL_CONFIG"
     
     # Add new aliases
     echo "" >> "$SHELL_CONFIG"
     echo "# CLIProxy Shortcuts" >> "$SHELL_CONFIG"
     echo "alias cp-login=\"$HOME/.cli-proxy-api/scripts/login.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-start=\"$HOME/.cli-proxy-api/scripts/start.sh\"" >> "$SHELL_CONFIG"
+    echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install | bash -s -- -update\"" >> "$SHELL_CONFIG"
     
     echo -e "${GREEN}[OK] Shortcuts added!${NC}"
 }
@@ -274,9 +276,19 @@ GOEOF
     echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
     echo -e "${GREEN}========================================${NC}"
     echo "Restart your terminal or run 'source ~/.zshrc' to use shortcuts:"
-    echo -e "  1. Login: ${CYAN}cp-login${NC}"
-    echo -e "  2. Start: ${CYAN}cp-start${NC}"
+    echo -e "  1. Login:  ${CYAN}cp-login${NC}"
+    echo -e "  2. Start:  ${CYAN}cp-start${NC}"
+    echo -e "  3. Update: ${CYAN}cp-update${NC} (Fetches latest core & installer)"
 }
+
+# --- Main Execution ---
+
+if [[ "$1" == "-update" ]]; then
+    if ! check_brew; then install_brew; fi
+    install_dependencies
+    install_cliproxy
+    exit 0
+fi
 
 # --- Main Menu ---
 
@@ -287,8 +299,8 @@ echo -e "${CYAN}========================================${NC}"
 echo ""
 echo "1. Install Homebrew (Required for Git/Go)"
 echo "2. Install Git & Go (Via Homebrew)"
-echo "3. Install CLIProxy Only (If prerequisites met)"
-echo "4. FULL INSTALL (Recommended: Runs 1 -> 2 -> 3)"
+echo "3. Install / Update CLIProxy Core"
+echo "4. FULL INSTALL (Recommended for first run)"
 echo "5. Exit"
 echo ""
 read -p "Please select your choice (1-5): " choice
@@ -301,7 +313,7 @@ case $choice in
         if ! check_brew; then install_brew; fi
         install_dependencies
         install_cliproxy
-        ;;;
+        ;;
     5) exit 0 ;;
     *) echo "Invalid choice." ;;
 esac
