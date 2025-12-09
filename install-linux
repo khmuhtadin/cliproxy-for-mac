@@ -1,0 +1,339 @@
+#!/bin/bash
+
+# ==============================================================================
+# CLIProxy Ultimate Installer for Linux
+# Includes: Go, Git, CLIProxyAPIPlus, and Shortcuts
+# ==============================================================================
+
+# --- Colors ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# --- Helper Functions ---
+
+# --- OS Detection ---
+detect_distro() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS_NAME=$NAME
+        DISTRO_ID=$ID
+    else
+        OS_NAME=$(uname -s)
+        DISTRO_ID="unknown"
+    fi
+}
+
+install_dependencies() {
+    detect_distro
+    echo -e "${YELLOW}Detected OS: $OS_NAME ($DISTRO_ID)${NC}"
+
+    if command -v git &> /dev/null && command -v go &> /dev/null; then
+        echo -e "${GREEN}[OK] Git and Go are already installed.${NC}"
+        return 0
+    fi
+
+    echo -e "${YELLOW}Installing dependencies...${NC}"
+
+    case $DISTRO_ID in
+        ubuntu|debian|kali|pop) 
+            sudo apt-get update
+            sudo apt-get install -y git golang
+            ;; 
+        fedora|centos|rhel)
+            sudo dnf install -y git golang || sudo yum install -y git golang
+            ;; 
+        arch|manjaro)
+            sudo pacman -Syu --noconfirm git go
+            ;; 
+        opensuse*|suse)
+            sudo zypper install -y git go
+            ;; 
+        *)
+            echo -e "${RED}[!] Unsupported distro for auto-install.${NC}"
+            echo "Please manually install 'git' and 'go' using your package manager."
+            if ! command -v go &> /dev/null; then exit 1; fi
+            ;; 
+    esac
+
+    echo -e "${GREEN}[OK] Dependencies ready.${NC}"
+}
+
+setup_shortcuts() {
+    SHELL_CONFIG="$HOME/.bashrc"
+    if [[ "$SHELL" == *"zsh"* ]]; then
+        SHELL_CONFIG="$HOME/.zshrc"
+    elif [[ "$SHELL" == *"fish"* ]]; then
+         # Fish syntax is different, skip for now or warn
+         echo -e "${YELLOW}[!] Fish shell detected. Please add aliases manually.${NC}"
+         return
+    fi
+
+    echo -e "${YELLOW}Adding shortcuts (cp-login, cp-start, cp-update) to $SHELL_CONFIG...${NC}"
+    
+    # Remove old aliases if they exist (Linux sed syntax: no empty string after -i)
+    sed -i '/alias cp-login/d' "$SHELL_CONFIG"
+    sed -i '/alias cp-start/d' "$SHELL_CONFIG"
+    sed -i '/alias cp-update/d' "$SHELL_CONFIG"
+    
+    # Add new aliases
+    echo "" >> "$SHELL_CONFIG"
+    echo "# CLIProxy Shortcuts" >> "$SHELL_CONFIG"
+    echo "alias cp-login=\"$HOME/.cli-proxy-api/scripts/login.sh\"" >> "$SHELL_CONFIG"
+    echo "alias cp-start=\"$HOME/.cli-proxy-api/scripts/start.sh\"" >> "$SHELL_CONFIG"
+    # Note: Using install-linux script for updates
+    echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install-linux | bash -s -- -update\"" >> "$SHELL_CONFIG"
+    
+    echo -e "${GREEN}[OK] Shortcuts added!${NC}"
+}
+
+install_cliproxy() {
+    if ! command -v go &> /dev/null; then
+        echo -e "${RED}[Error] Go is not found!${NC}"
+        echo "Please run option 1 to install dependencies first."
+        exit 1
+    fi
+
+    echo -e "${YELLOW}>>> Starting CLIProxy Installation...${NC}"
+    
+    BIN_DIR="$HOME/bin"
+    CONFIG_DIR="$HOME/.cli-proxy-api"
+    SCRIPTS_DIR="$CONFIG_DIR/scripts"
+
+    # Ensure bin is in PATH
+    if [[ ":$PATH:" != ":$HOME/bin:"* ]]; then
+        echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
+        [ -f "$HOME/.zshrc" ] && echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.zshrc"
+        echo -e "${YELLOW}[!] Added $HOME/bin to PATH. You may need to restart terminal.${NC}"
+    fi
+
+    mkdir -p "$BIN_DIR"
+    mkdir -p "$CONFIG_DIR"
+    mkdir -p "$SCRIPTS_DIR"
+
+    # Clone & Build
+    TEMP_DIR=$(mktemp -d)
+    echo "Cloning repository..."
+    git clone --depth 1 https://github.com/router-for-me/CLIProxyAPIPlus.git "$TEMP_DIR"
+    
+    echo "Building binary..."
+    cd "$TEMP_DIR"
+    go build -o cliproxyapi-plus ./cmd/server
+    mv -f cliproxyapi-plus "$BIN_DIR/cliproxyapi-plus"
+    rm -rf "$TEMP_DIR"
+
+    # Config
+    # Only create if it doesn't exist, to preserve user settings on update
+    if [ ! -f "$CONFIG_DIR/config.yaml" ]; then
+        cat > "$CONFIG_DIR/config.yaml" <<EOF
+port: 8317
+auth-dir: "$CONFIG_DIR"
+api-keys:
+  - "sk-dummy"
+quota-exceeded:
+  switch-project: true
+  switch-preview-model: true
+EOF
+    fi
+
+    # Helper Scripts
+    cat > "$SCRIPTS_DIR/start.sh" <<EOF
+#!/bin/bash
+echo "Starting CLIProxy on http://localhost:8317"
+"$BIN_DIR/cliproxyapi-plus" --config "$CONFIG_DIR/config.yaml"
+EOF
+    chmod +x "$SCRIPTS_DIR/start.sh"
+
+    cat > "$SCRIPTS_DIR/login.sh" <<EOF
+#!/bin/bash
+BINARY="$BIN_DIR/cliproxyapi-plus"
+CONFIG="$CONFIG_DIR/config.yaml"
+clear
+echo "1. Antigravity (Claude/Gemini)"
+echo "2. GitHub Copilot"
+echo "3. Gemini CLI"
+echo "4. Codex"
+echo "5. Claude"
+echo "6. Qwen"
+echo "7. iFlow"
+read -p "Select provider (1-7): " c
+case \$c in
+  1) "\$BINARY" --config "\$CONFIG" -antigravity-login ;;
+  2) "\$BINARY" --config "\$CONFIG" -github-copilot-login ;;
+  3) "\$BINARY" --config "\$CONFIG" -login ;;
+  4) "\$BINARY" --config "\$CONFIG" -codex-login ;;
+  5) "\$BINARY" --config "\$CONFIG" -claude-login ;;
+  6) "\$BINARY" --config "\$CONFIG" -qwen-login ;;
+  7) "\$BINARY" --config "\$CONFIG" -iflow-login ;;
+  *) echo "Invalid" ;; 
+esac
+EOF
+    chmod +x "$SCRIPTS_DIR/login.sh"
+
+    # Droid Config Injection
+    # Linux Droid path might vary, usually ~/.factory or ~/.config/factory ??
+    # Assuming ~/.factory based on previous script, but user might need to adjust
+    DROID_FILE="$HOME/.factory/config.json"
+    mkdir -p "$(dirname "$DROID_FILE")"
+    
+    # Define target models
+    cat > "/tmp/cliproxy_new_models.json" <<EOF
+{
+    "custom_models": [
+        { "model_display_name": "GPT-OSS 120B Medium [Antigravity]", "model": "gpt-oss-120b-medium", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "GPT-OSS 120B Large [Antigravity]", "model": "gpt-oss-120b-large", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Opus 4.5 Thinking [Antigravity]", "model": "gemini-claude-opus-4-5-thinking", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Sonnet 4.5 Thinking [Antigravity]", "model": "gemini-claude-sonnet-4-5-thinking", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Sonnet 4.5 [Antigravity]", "model": "gemini-claude-sonnet-4-5", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Gemini 3 Pro [Antigravity]", "model": "gemini-3-pro-preview", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Claude Opus 4.5 [Copilot]", "model": "claude-opus-4.5", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "GPT-5 Mini [Copilot]", "model": "gpt-5-mini", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "GPT-5.1 Codex Max [Codex]", "model": "gpt-5.1-codex-max", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Gemini 3 Ultra [Antigravity]", "model": "gemini-3-ultra-preview", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Llama 4 405B [Meta]", "model": "llama-4-405b-instruct", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "DeepSeek V3.2 [Antigravity]", "model": "deepseek-v3.2-chat", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
+        { "model_display_name": "Nano Banana [Local]", "model": "nano-banana-v1", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" }
+    ]
+}
+EOF
+
+    if [ ! -f "$DROID_FILE" ]; then
+        cp "/tmp/cliproxy_new_models.json" "$DROID_FILE"
+        echo -e "${GREEN}[OK] Droid config created.${NC}"
+    else
+        echo -e "${YELLOW}[!] config.json exists, checking for missing models...${NC}"
+        
+        # Create temp Go merger
+        cat > "/tmp/merge_config.go" <<'GOEOF'
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+)
+
+type Model struct {
+	ModelDisplayName string `json:"model_display_name"`
+	Model            string `json:"model"`
+	BaseURL          string `json:"base_url"`
+	APIKey           string `json:"api_key"`
+	Provider         string `json:"provider"`
+}
+
+type Config struct {
+	CustomModels []Model `json:"custom_models"`
+}
+
+func main() {
+	if len(os.Args) < 3 {
+		os.Exit(1)
+	}
+	existingPath := os.Args[1]
+	newPath := os.Args[2]
+
+	existingBytes, err := os.ReadFile(existingPath)
+	if err != nil {
+		fmt.Printf("Error reading existing: %v\n", err)
+		os.Exit(1)
+	}
+	var existingConfig Config
+	if err := json.Unmarshal(existingBytes, &existingConfig); err != nil {
+		fmt.Printf("Error parsing existing: %v\n", err)
+		os.Exit(1)
+	}
+
+	newBytes, err := os.ReadFile(newPath)
+	if err != nil {
+		fmt.Printf("Error reading new: %v\n", err)
+		os.Exit(1)
+	}
+	var newConfig Config
+	if err := json.Unmarshal(newBytes, &newConfig); err != nil {
+		fmt.Printf("Error parsing new: %v\n", err)
+		os.Exit(1)
+	}
+
+	existingMap := make(map[string]bool)
+	for _, m := range existingConfig.CustomModels {
+		existingMap[m.Model] = true
+	}
+
+	addedCount := 0
+	for _, m := range newConfig.CustomModels {
+		if !existingMap[m.Model] {
+			existingConfig.CustomModels = append(existingConfig.CustomModels, m)
+			existingMap[m.Model] = true
+			addedCount++
+		}
+	}
+
+	if addedCount > 0 {
+		outBytes, err := json.MarshalIndent(existingConfig, "", "    ")
+		if err != nil {
+			fmt.Printf("Error marshaling: %v\n", err)
+			os.Exit(1)
+		}
+		if err := os.WriteFile(existingPath, outBytes, 0644); err != nil {
+			fmt.Printf("Error writing: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Merged %d new models into config\n", addedCount)
+	} else {
+		fmt.Println("No new models to add")
+	}
+}
+GOEOF
+        # Run merger
+        go run "/tmp/merge_config.go" "$DROID_FILE" "/tmp/cliproxy_new_models.json"
+        rm -f "/tmp/merge_config.go"
+    fi
+    rm -f "/tmp/cliproxy_new_models.json"
+
+
+    # CALL SHORTCUT SETUP
+    setup_shortcuts
+
+    echo -e "${GREEN}========================================${NC}"
+    echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
+    echo -e "${GREEN}========================================${NC}"
+    echo "Restart your terminal or run 'source ~/.bashrc' (or zshrc) to use shortcuts:"
+    echo -e "  1. Login: ${CYAN}cp-login${NC}"
+    echo -e "  2. Start: ${CYAN}cp-start${NC}"
+    echo -e "  3. Update: ${CYAN}cp-update${NC} (Fetches latest core & installer)"
+}
+
+# --- Main Execution ---
+
+if [[ "$1" == "-update" ]]; then
+    install_dependencies
+    install_cliproxy
+    exit 0
+fi
+
+# --- Main Menu ---
+
+clear
+echo -e "${CYAN}========================================${NC}"
+echo -e "${CYAN}   CLIProxy Linux Installer Manager${NC}"
+echo -e "${CYAN}========================================${NC}"
+echo ""
+echo "1. Install Dependencies (Git & Go)"
+echo "2. Install / Update CLIProxy Core"
+echo "3. FULL INSTALL (Recommended for first run)"
+echo "4. Exit"
+echo ""
+read -p "Please select your choice (1-4): " choice
+
+case $choice in
+    1) install_dependencies ;;
+    2) install_cliproxy ;;
+    3) 
+        install_dependencies
+        install_cliproxy
+        ;;
+    4) exit 0 ;;
+    *) echo "Invalid choice." ;;
+esac
