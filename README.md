@@ -19,7 +19,7 @@ It handles everything from installing dependencies (Go, Git), configuring the lo
 Open your Terminal and run:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/refs/heads/main/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install)"
 ```
 
 ## 🐧 Quick Install for Linux
@@ -27,7 +27,7 @@ Open your Terminal and run:
 Open your Terminal and run:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/refs/heads/main/install-linux)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install-linux)"
 ```
 
 ## 🪟 Quick Install for Windows
@@ -35,7 +35,7 @@ Open your Terminal and run:
 Open **PowerShell** (Run as Administrator recommended) and execute:
 
 ```powershell
-irm https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/refs/heads/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install.ps1 | iex
 ```
 
 ## 🛠️ Menu Options
