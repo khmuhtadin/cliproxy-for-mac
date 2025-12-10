@@ -64,7 +64,7 @@ function cp-start { & "$ScriptsDir\start.ps1" }
 function cp-login { & "$ScriptsDir\login.ps1" }
 function cp-update {
     Write-Host "Updating CLIProxy..."
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install.ps1" -OutFile "$env:TEMP\install.ps1"
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install.ps1" -OutFile "$env:TEMP\install.ps1"
     powershell -ExecutionPolicy Bypass -File "$env:TEMP\install.ps1" -Update
 }
 "@

@@ -84,7 +84,7 @@ setup_shortcuts() {
     echo "alias cp-login=\"$HOME/.cli-proxy-api/scripts/login.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-start=\"$HOME/.cli-proxy-api/scripts/start.sh\"" >> "$SHELL_CONFIG"
     # Note: Using install-linux script for updates
-    echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/main/install-linux | bash -s -- -update\"" >> "$SHELL_CONFIG"
+    echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install-linux | bash -s -- -update\"" >> "$SHELL_CONFIG"
     
     echo -e "${GREEN}[OK] Shortcuts added!${NC}"
 }
