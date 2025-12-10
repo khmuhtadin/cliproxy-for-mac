@@ -1,4 +1,4 @@
-# CLIProxy Installer for macOS & Linux
+# CLIProxy Installer for macOS, Linux & Windows
 
 Automated installer for **CLIProxyAPIPlus**. This script simplifies the process of setting up custom AI models (Claude, Gemini, etc.) for use in Droid, Cursor, or other AI-powered editors.
 
@@ -6,16 +6,17 @@ It handles everything from installing dependencies (Go, Git), configuring the lo
 
 ## 🚀 Features
 
-* **All-in-One Installation**: Automatically checks and installs **Homebrew** (macOS) or relevant package managers (Linux), **Git**, and **Go** if they are missing.
+* **Cross-Platform**: Works on **macOS**, **Linux**, and **Windows**.
+* **All-in-One Installation**: Automatically checks and installs **Homebrew** (macOS), package managers (Linux), or checks for **Git/Go** (Windows).
 * **Smart Config Merge**: Intelligently adds new models to your `config.json` without overwriting your existing custom configurations.
-* **Auto-Update**: Built-in self-updater keeps both the installer and the core CLIProxy binary up to date with a single command.
-* **Auto-Build**: Clones the latest `CLIProxyAPIPlus` repository and builds the binary for your specific architecture (Intel/Apple Silicon).
+* **Auto-Update**: Built-in self-updater keeps both the installer and the core CLIProxy binary up to date.
+* **Auto-Build**: Clones the latest `CLIProxyAPIPlus` repository and builds the binary for your specific architecture.
 * **Helper Scripts & Shortcuts**: Generates easy-to-use aliases (`cp-login`, `cp-start`, `cp-update`) for your terminal.
-* **Droid Integration**: Automatically injects the necessary model configurations into `~/.factory/config.json` so models appear instantly in Droid.
+* **Droid Integration**: Automatically injects configurations for models like **Gemini 2.5 Pro**, **Qwen3**, **GLM 4.6**, **Kiro**, and more into `~/.factory/config.json`.
 
 ## 📦 Quick Install for macOS
 
-Open your Terminal and run the following command:
+Open your Terminal and run:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/refs/heads/main/install)"
@@ -23,24 +24,34 @@ Open your Terminal and run the following command:
 
 ## 🐧 Quick Install for Linux
 
-Open your Terminal and run the following command:
+Open your Terminal and run:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/refs/heads/main/install-linux)"
 ```
 
+## 🪟 Quick Install for Windows
+
+Open **PowerShell** (Run as Administrator recommended) and execute:
+
+```powershell
+irm https://raw.githubusercontent.com/khmuhtadin/cliproxy-for-mac/refs/heads/main/install.ps1 | iex
+```
+
 ## 🛠️ Menu Options
 
-When you run the script, you will see an interactive menu:
+The installer provides an interactive menu:
 
-1.  **Install Homebrew** (macOS Only) / **Install Dependencies** (Linux Only): Required package manager and dependencies.
-2.  **Install Git & Go**: Required dependencies.
-3.  **Install / Update CLIProxy Core**: Updates the core binary and merges new models into your config.
-4.  **FULL INSTALL (Recommended)**: Runs everything in order (1 -> 2 -> 3).
+*   **macOS/Linux**:
+    1.  Install Dependencies (Homebrew/Git/Go).
+    2.  Install / Update CLIProxy Core.
+    3.  **FULL INSTALL** (Recommended).
+*   **Windows**:
+    1.  Install / Update CLIProxy Core (Checks dependencies automatically).
 
 ## 📖 How to Use
 
-After installation is complete, **restart your terminal** to load the shortcuts.
+After installation, **restart your terminal** to load the shortcuts.
 
 ### 1. Login to Providers
 
@@ -72,21 +83,21 @@ cp-update
 
 1.  Open Droid.
 2.  Go to Model selection.
-3.  You will see new models like **"Claude Opus 4.5 Thinking [Antigravity]"** or **"GPT-5 Mini [Copilot]"**.
+3.  You will see new models like **"Claude Opus 4.5 Thinking [Antigravity]"**, **"Gemini 2.5 Pro"**, or **"Qwen3 Coder Plus"**.
 4.  Select one and start chatting!
 
 ## ⌨️ Shortcuts Reference
 
 * `cp-login` : Open the login menu.
 * `cp-start` : Start the proxy server.
-* `cp-update`: **(New)** Auto-update the installer and core binary.
+* `cp-update`: Auto-update the installer and core binary.
 
 ## 📂 File Locations
 
-  * **Binary**: `~/bin/cliproxyapi-plus`
-  * **Config**: `~/.cli-proxy-api/config.yaml`
-  * **Scripts**: `~/.cli-proxy-api/scripts/`
-  * **Droid Config**: `~/.factory/config.json`
+| Platform | Binary | Config | Scripts | Droid Config |
+| :--- | :--- | :--- | :--- | :--- |
+| **macOS/Linux** | `~/bin/cliproxyapi-plus` | `~/.cli-proxy-api/config.yaml` | `~/.cli-proxy-api/scripts/` | `~/.factory/config.json` |
+| **Windows** | `$HOME\bin\cliproxyapi-plus.exe` | `$HOME\.cli-proxy-api\config.yaml` | `$HOME\.cli-proxy-api\scripts\` | `$HOME\.factory\config.json` |
 
 ## Credits
 
