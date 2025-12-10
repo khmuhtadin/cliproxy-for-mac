@@ -14,19 +14,9 @@ It handles everything from installing dependencies (Go, Git), configuring the lo
 * **Helper Scripts & Shortcuts**: Generates easy-to-use aliases (`cp-login`, `cp-start`, `cp-update`) for your terminal.
 * **Droid Integration**: Automatically injects configurations for models like **Gemini 2.5 Pro**, **Qwen3**, **GLM 4.6**, **Kiro**, and more into `~/.factory/config.json`.
 
-## 🎨 Enhanced Dashboard
+## Dashboard
 
-The installer now includes a **premium, modern dashboard** for monitoring and managing your CLIProxy server!
-
-### Dashboard Features:
-- ✨ **Modern Glassmorphism UI** with animated backgrounds
-- 📊 **Real-time Monitoring**: Server status, uptime, and PID
-- 🔌 **Provider Management**: Visual display of active AI providers (Gemini, Claude, Copilot, etc.)
-- 🤖 **Model Viewer**: See all available models at a glance
-- 📝 **Activity Log**: Real-time event logging with color-coded messages
-- 🎮 **Server Controls**: Start, stop, restart buttons (with helpful fallback instructions)
-- 🔄 **Auto-refresh**: Data updates every 10 seconds
-- 📱 **Responsive Design**: Works on desktop and mobile
+The installer now includes a **dashboard** for monitoring and managing your CLIProxy server!
 
 ### Accessing the Dashboard:
 
@@ -41,12 +31,6 @@ Or access directly in your browser:
 ```
 http://localhost:8317/dashboard.html
 ```
-
-### Dashboard Screenshots:
-- Premium dark theme with gradient backgrounds
-- Hover effects and smooth animations
-- Clean, modern typography (Google Fonts - Inter)
-- Professional color scheme optimized for readability
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install)"
