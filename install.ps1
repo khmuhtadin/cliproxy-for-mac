@@ -28,7 +28,7 @@ function Write-Cyan { param($Text) Write-Host $Text -ForegroundColor Cyan }
 
 function Check-Dependencies {
     $missing = $false
-    
+
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         Write-Red "[Error] Git not found."
         Write-Host "Please install Git for Windows: https://git-scm.com/download/win"
@@ -71,14 +71,14 @@ function cp-update {
 
     # Read current profile
     $currentProfileContent = Get-Content $PowerShellProfile -Raw -ErrorAction SilentlyContinue
-    
+
     # Remove old CLIProxy shortcuts block if exists
     if ($currentProfileContent -match "(?s)# --- CLIProxy Shortcuts ---.*?(?=\r?\n# ---|$)") {
         Write-Host "Removing old shortcuts..."
         $currentProfileContent = $currentProfileContent -replace "(?s)# --- CLIProxy Shortcuts ---.*?function cp-update \{[^}]+\}", ""
         Set-Content -Path $PowerShellProfile -Value $currentProfileContent.Trim()
     }
-    
+
     # Add new shortcuts
     if (-not ($currentProfileContent -match "# --- CLIProxy Shortcuts ---")) {
         Add-Content -Path $PowerShellProfile -Value $shortcutBlock
@@ -100,11 +100,11 @@ function Install-CLIProxy {
 
     # Add Bin to Path if needed (Temporary for this session, User needs to set env var persistently if not set)
     $env:Path += ";$BinDir"
-    
+
     # Clone & Build
     $TempDir = Join-Path $env:TEMP ("cliproxy_build_" + (Get-Random))
     New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
-    
+
     Write-Host "Cloning repository..."
     try {
         git clone --depth 1 $RepoUrl $TempDir
@@ -116,7 +116,7 @@ function Install-CLIProxy {
         Remove-Item -Recurse -Force $TempDir -ErrorAction SilentlyContinue
         exit 1
     }
-    
+
     Write-Host "Building binary..."
     Push-Location $TempDir
     try {
@@ -130,11 +130,11 @@ function Install-CLIProxy {
         Remove-Item -Recurse -Force $TempDir -ErrorAction SilentlyContinue
         exit 1
     }
-    
+
     Move-Item -Force -Path "cliproxyapi-plus.exe" -Destination "$BinDir\cliproxyapi-plus.exe"
     Pop-Location
     Remove-Item -Recurse -Force $TempDir
-    
+
     Write-Green "[OK] Binary built and installed successfully."
 
     # Config.yaml
@@ -152,7 +152,7 @@ quota-exceeded:
     }
 
     # Helper Scripts (PowerShell versions)
-    
+
     # 1. Start Script
     $startScript = @"
 Write-Host "Starting CLIProxy on http://localhost:8317"
@@ -191,7 +191,7 @@ switch (`$choice) {
 
     # --- Droid Config Injection (Smart Merge) ---
     Write-Yellow "Checking Droid configuration..."
-    
+
     # Ensure directory exists
     if (-not (Test-Path (Split-Path $DroidConfigFile))) {
         New-Item -ItemType Directory -Force -Path (Split-Path $DroidConfigFile) | Out-Null
@@ -210,7 +210,6 @@ switch (`$choice) {
         @{ model_display_name = "GPT-5.1 Codex Max [Codex]"; model = "gpt-5.1-codex-max"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
         @{ model_display_name = "Gemini 3 Ultra [Antigravity]"; model = "gemini-3-ultra-preview"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
         @{ model_display_name = "Llama 4 405B [Meta]"; model = "llama-4-405b-instruct"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
-        @{ model_display_name = "DeepSeek V3.2 [Antigravity]"; model = "deepseek-v3.2-chat"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
         @{ model_display_name = "Nano Banana [Local]"; model = "nano-banana-v1"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
         @{ model_display_name = "Gemini 2.5 Pro [Gemini]"; model = "gemini-2.5-pro"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
         @{ model_display_name = "Qwen3 Coder Plus [Qwen]"; model = "qwen3-coder-plus"; base_url = "http://localhost:8317/v1"; api_key = "sk-dummy"; provider = "openai" },
@@ -225,7 +224,7 @@ switch (`$choice) {
         Write-Host "Existing config found. Merging models..."
         try {
             $jsonContent = Get-Content $DroidConfigFile -Raw | ConvertFrom-Json
-            
+
             # Ensure custom_models array exists
             if (-not $jsonContent.PSObject.Properties['custom_models']) {
                 $jsonContent | Add-Member -MemberType NoteProperty -Name "custom_models" -Value @()

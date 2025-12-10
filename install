@@ -26,7 +26,7 @@ check_brew() {
 install_brew() {
     echo -e "${YELLOW}Installing Homebrew...${NC}"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    
+
     if [[ -f "/opt/homebrew/bin/brew" ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
@@ -50,7 +50,7 @@ install_dependencies() {
 
     echo -e "${YELLOW}Installing/Checking Go...${NC}"
     brew install go || echo "Go already installed or updated."
-    
+
     echo -e "${GREEN}[OK] Dependencies ready.${NC}"
 }
 
@@ -61,19 +61,19 @@ setup_shortcuts() {
     fi
 
     echo -e "${YELLOW}Adding shortcuts (cp-login, cp-start) to $SHELL_CONFIG...${NC}"
-    
+
     # Remove old aliases if they exist to prevent duplicates
     sed -i '' '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
     sed -i '' '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
     sed -i '' '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
-    
+
     # Add new aliases
     echo "" >> "$SHELL_CONFIG"
     echo "# CLIProxy Shortcuts" >> "$SHELL_CONFIG"
     echo "alias cp-login=\"$HOME/.cli-proxy-api/scripts/login.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-start=\"$HOME/.cli-proxy-api/scripts/start.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install | bash -s -- -update\"" >> "$SHELL_CONFIG"
-    
+
     echo -e "${GREEN}[OK] Shortcuts added!${NC}"
 }
 
@@ -85,7 +85,7 @@ install_cliproxy() {
     fi
 
     echo -e "${YELLOW}>>> Starting CLIProxy Installation...${NC}"
-    
+
     BIN_DIR="$HOME/bin"
     CONFIG_DIR="$HOME/.cli-proxy-api"
     SCRIPTS_DIR="$CONFIG_DIR/scripts"
@@ -102,7 +102,7 @@ install_cliproxy() {
         rm -rf "$TEMP_DIR"
         exit 1
     fi
-    
+
     echo "Building binary..."
     cd "$TEMP_DIR"
     if ! go build -o cliproxyapi-plus ./cmd/server; then
@@ -114,7 +114,7 @@ install_cliproxy() {
     mv -f cliproxyapi-plus "$BIN_DIR/cliproxyapi-plus"
     cd -
     rm -rf "$TEMP_DIR"
-    
+
     echo -e "${GREEN}[OK] Binary built and installed successfully.${NC}"
 
     # Config - Only create if it doesn't exist to preserve user settings
@@ -172,7 +172,7 @@ EOF
     # Droid Config Injection
     DROID_FILE="$HOME/.factory/config.json"
     mkdir -p "$(dirname "$DROID_FILE")"
-    
+
     # Define target models
     cat > "/tmp/cliproxy_new_models.json" <<EOF
 {
@@ -188,7 +188,6 @@ EOF
         { "model_display_name": "GPT-5.1 Codex Max [Codex]", "model": "gpt-5.1-codex-max", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
         { "model_display_name": "Gemini 3 Ultra [Antigravity]", "model": "gemini-3-ultra-preview", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
         { "model_display_name": "Llama 4 405B [Meta]", "model": "llama-4-405b-instruct", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
-        { "model_display_name": "DeepSeek V3.2 [Antigravity]", "model": "deepseek-v3.2-chat", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
         { "model_display_name": "Nano Banana [Local]", "model": "nano-banana-v1", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
         { "model_display_name": "Gemini 2.5 Pro [Gemini]", "model": "gemini-2.5-pro", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
         { "model_display_name": "Qwen3 Coder Plus [Qwen]", "model": "qwen3-coder-plus", "base_url": "http://localhost:8317/v1", "api_key": "sk-dummy", "provider": "openai" },
@@ -206,7 +205,7 @@ EOF
         echo -e "${GREEN}[OK] Droid config created.${NC}"
     else
         echo -e "${YELLOW}[!] config.json exists, checking for missing models...${NC}"
-        
+
         # Download and use shared merge utility
         MERGE_UTIL="/tmp/merge_config_$$.go"
         if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/merge-config.go" -o "$MERGE_UTIL"; then
