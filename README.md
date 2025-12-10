@@ -14,11 +14,6 @@ It handles everything from installing dependencies (Go, Git), configuring the lo
 * **Helper Scripts & Shortcuts**: Generates easy-to-use aliases (`cp-login`, `cp-start`, `cp-update`) for your terminal.
 * **Droid Integration**: Automatically injects configurations for models like **Gemini 2.5 Pro**, **Qwen3**, **GLM 4.6**, **Kiro**, and more into `~/.factory/config.json`.
 
-## 📦 Quick Install for macOS
-
-Open your Terminal and run:
-
-
 ## 🎨 Enhanced Dashboard
 
 The installer now includes a **premium, modern dashboard** for monitoring and managing your CLIProxy server!
