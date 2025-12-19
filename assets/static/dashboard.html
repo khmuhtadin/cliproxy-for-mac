@@ -1082,27 +1082,41 @@
         // Fetch models
         async function fetchModels() {
             try {
-                // Use management config to get API keys
-                const configResponse = await fetch(`${API_BASE}/management/config`);
+                let apiKey = 'sk-dummy'; // Default fallback
 
-                if (configResponse.ok) {
-                    const config = await configResponse.json();
-                    const apiKeys = config['api-keys'] || config.apiKeys || [];
-                    const apiKey = apiKeys.length > 0 ? apiKeys[0] : 'sk-dummy';
+                try {
+                    // Use management config to get API keys
+                    const configResponse = await fetch(`${API_BASE}/management/config`);
 
-                    const modelsResponse = await fetch(window.location.origin + '/v1/models', {
-                        headers: {
-                            'Authorization': `Bearer ${apiKey}`
+                    if (configResponse.ok) {
+                        const config = await configResponse.json();
+                        const apiKeys = config['api-keys'] || config.apiKeys || [];
+                        if (apiKeys.length > 0) {
+                            apiKey = apiKeys[0];
                         }
-                    });
-
-                    if (modelsResponse.ok) {
-                        const data = await modelsResponse.json();
-                        updateModels(data.data || []);
                     }
+                } catch (configError) {
+                    // Ignore config fetch error (likely auth required), proceed with default key
+                    console.warn('Failed to fetch config for API key, using default:', configError);
+                }
+
+                const modelsResponse = await fetch(window.location.origin + '/v1/models', {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+
+                if (modelsResponse.ok) {
+                    const data = await modelsResponse.json();
+                    updateModels(data.data || []);
+                } else {
+                    const errText = await modelsResponse.text();
+                    console.error('Failed to fetch models:', modelsResponse.status, errText);
+                    document.getElementById('modelsGrid').innerHTML = `<div class="model-tag" style="background:rgba(239, 68, 68, 0.1);color:#FCA5A5;border-color:rgba(239, 68, 68, 0.3)">Error: ${modelsResponse.status}</div>`;
                 }
             } catch (error) {
                 console.error('Failed to fetch models:', error);
+                document.getElementById('modelsGrid').innerHTML = `<div class="model-tag" style="background:rgba(239, 68, 68, 0.1);color:#FCA5A5;border-color:rgba(239, 68, 68, 0.3)">Error loading models</div>`;
             }
         }
 
