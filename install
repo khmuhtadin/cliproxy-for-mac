@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ==============================================================================
-# CLIProxy Ultimate Installer for macOS
-# Includes: Homebrew, Go, Git, CLIProxyAPIPlus, and Shortcuts
+# CLIProxy Universal Installer
+# Works on macOS and Linux
 # ==============================================================================
 
 # --- Colors ---
@@ -14,9 +14,18 @@ NC='\033[0m' # No Color
 
 # --- Helper Functions ---
 
+detect_os() {
+    OS="$(uname -s)"
+    case "$OS" in
+        Linux*)     echo "linux";;
+        Darwin*)    echo "macos";;
+        *)          echo "unknown";;
+    esac
+}
+
 check_brew() {
     if command -v brew &> /dev/null; then
-        echo -e "${GREEN}[OK] Homebrew is already installed.${NC}"
+        echo -e "${GREEN}[OK] Homebrew is installed.${NC}"
         return 0
     else
         return 1
@@ -36,21 +45,50 @@ install_brew() {
 }
 
 install_dependencies() {
-    if ! check_brew; then
-        echo -e "${RED}[Error] Homebrew is required to install Git and Go.${NC}"
-        echo "Please run option 1 (Install Homebrew) first."
-        return 1
+    PLATFORM=$(detect_os)
+    
+    if [ "$PLATFORM" == "macos" ]; then
+        if ! check_brew; then
+            echo -e "${RED}[Error] Homebrew is generally required for macOS setup to install Git/Go easily.${NC}"
+            echo -e "${YELLOW}Attempting to install Homebrew...${NC}"
+            install_brew
+        fi
+        
+        echo -e "${YELLOW}Updating Homebrew...${NC}"
+        brew update
+        
+        echo -e "${YELLOW}Checking Git...${NC}"
+        brew install git || echo "Git already installed/updated."
+        
+        echo -e "${YELLOW}Checking Go...${NC}"
+        brew install go || echo "Go already installed/updated."
+        
+    elif [ "$PLATFORM" == "linux" ]; then
+        echo -e "${YELLOW}Detected Linux. Installing dependencies...${NC}"
+        if command -v apt-get &> /dev/null; then
+            echo "Using apt-get..."
+            sudo apt-get update
+            sudo apt-get install -y git golang
+        elif command -v dnf &> /dev/null; then
+            echo "Using dnf..."
+            sudo dnf install -y git golang
+        elif command -v pacman &> /dev/null; then
+            echo "Using pacman..."
+            sudo pacman -S --noconfirm git go
+        elif command -v zypper &> /dev/null; then
+            echo "Using zypper..."
+            sudo zypper install -y git go
+        elif command -v yum &> /dev/null; then
+            echo "Using yum..."
+            sudo yum install -y git golang
+        else
+            echo -e "${YELLOW}[Warning] Could not detect package manager. Please ensure Git and Go are installed manually.${NC}"
+        fi
+    else
+        echo -e "${RED}[Error] Unknown operating system.${NC}"
+        exit 1
     fi
-
-    echo -e "${YELLOW}Updating Homebrew...${NC}"
-    brew update
-
-    echo -e "${YELLOW}Installing/Checking Git...${NC}"
-    brew install git || echo "Git already installed or updated."
-
-    echo -e "${YELLOW}Installing/Checking Go...${NC}"
-    brew install go || echo "Go already installed or updated."
-
+    
     echo -e "${GREEN}[OK] Dependencies ready.${NC}"
 }
 
@@ -60,18 +98,28 @@ setup_shortcuts() {
         SHELL_CONFIG="$HOME/.bashrc"
     fi
 
-    echo -e "${YELLOW}Adding shortcuts (cp-login, cp-start) to $SHELL_CONFIG...${NC}"
+    echo -e "${YELLOW}Adding shortcuts to $SHELL_CONFIG...${NC}"
 
     # Remove old aliases if they exist to prevent duplicates
-    sed -i '' '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
-    sed -i '' '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
-    sed -i '' '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
-    # Remove old aliases if they exist to prevent duplicates
-    sed -i '' '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
-    sed -i '' '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
-    sed -i '' '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
-    sed -i '' '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
-    sed -i '' '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
+    # Use generic sed compatible with both mac (BSD) and linux (GNU)
+    # The empty string argument '' for -i works on Mac but fails on Linux.
+    # Linux expects no space or argument if no backup extension is provided, or simple -i.
+    
+    PLATFORM=$(detect_os)
+    if [ "$PLATFORM" == "macos" ]; then
+        sed -i '' '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
+    else
+        # Linux sed
+        sed -i '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
+    fi
 
     # Add new aliases
     echo "" >> "$SHELL_CONFIG"
@@ -82,13 +130,13 @@ setup_shortcuts() {
     echo "alias cp-stop=\"$HOME/.cli-proxy-api/scripts/stop.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-claude=\"$HOME/.cli-proxy-api/scripts/cp-claude.sh\"" >> "$SHELL_CONFIG"
 
-    echo -e "${GREEN}[OK] Shortcuts added!${NC}"
+    echo -e "${GREEN}[OK] Shortcuts added.${NC}"
 }
 
 install_cliproxy() {
     if ! command -v go &> /dev/null; then
         echo -e "${RED}[Error] Go is not found!${NC}"
-        echo "Please run option 2 or 4 to install dependencies first."
+        echo "Please install dependencies first."
         exit 1
     fi
 
@@ -105,13 +153,13 @@ install_cliproxy() {
     mkdir -p "$STATIC_DIR"
 
     # Copy enhanced dashboard
-    echo "📊 Installing enhanced dashboard..."
+    echo "Installing enhanced dashboard..."
     DASHBOARD_SRC="$(dirname "$0")/assets/static/dashboard.html"
     if [ -f "$DASHBOARD_SRC" ]; then
         cp "$DASHBOARD_SRC" "$STATIC_DIR/dashboard.html"
         echo -e "${GREEN}[OK] Dashboard installed from local assets${NC}"
     else
-        # Fallback: try to download from GitHub
+        # Fallback to download
         if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/assets/static/dashboard.html" -o "$STATIC_DIR/dashboard.html" 2>/dev/null; then
             echo -e "${GREEN}[OK] Dashboard downloaded from GitHub${NC}"
         else
@@ -120,7 +168,7 @@ install_cliproxy() {
     fi
 
     # Install cp-db command
-    echo "🔮 Installing cp-db shortcut..."
+    echo "Installing cp-db feature..."
     cat > "/tmp/cp-db" <<'EOF'
 #!/bin/bash
 
@@ -130,15 +178,15 @@ install_cliproxy() {
 DASHBOARD_URL="http://localhost:8317/dashboard.html"
 PORT=8317
 
-echo "🔮 CLIProxy Dashboard Launcher"
+echo "CLIProxy Dashboard Launcher"
 echo ""
 
 # Check if server is already running
 if lsof -i :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
     PID=$(lsof -i :$PORT -sTCP:LISTEN -t)
-    echo "✅ Server already running (PID: $PID)"
+    echo "Server already running (PID: $PID)"
 else
-    echo "⚠️  Server not running, starting now..."
+    echo "Server not running, starting now..."
     
     # Determine start command
     CP_START_CMD=""
@@ -150,29 +198,29 @@ else
 
     if [ -n "$CP_START_CMD" ]; then
         "$CP_START_CMD" &
-        echo "⏳ Waiting for server to start..."
+        echo "Waiting for server to start..."
         
         # Wait up to 10 seconds for server to start
         for i in {1..10}; do
             sleep 1
             if lsof -i :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
                 PID=$(lsof -i :$PORT -sTCP:LISTEN -t)
-                echo "✅ Server started successfully (PID: $PID)"
+                echo "Server started successfully (PID: $PID)"
                 break
             fi
             if [ $i -eq 10 ]; then
-                echo "❌ Server failed to start. Please check logs."
+                echo "Server failed to start. Please check logs."
                 exit 1
             fi
         done
     else
-        echo "❌ cp-start command not found. Please install CLIProxy first."
+        echo "cp-start command not found. Please install CLIProxy first."
         exit 1
     fi
 fi
 
 echo ""
-echo "🌐 Opening dashboard: $DASHBOARD_URL"
+echo "Opening dashboard: $DASHBOARD_URL"
 echo ""
 
 # Open dashboard in default browser
@@ -182,9 +230,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Linux
     if command -v xdg-open >/dev/null 2>&1; then
-        xdg-open "$DASHBOARD_URL"
+        xdg-open "$DASHBOARD_URL" >/dev/null 2>&1
     elif command -v gnome-open >/dev/null 2>&1; then
-        gnome-open "$DASHBOARD_URL"
+        gnome-open "$DASHBOARD_URL" >/dev/null 2>&1
     else
         echo "Please open manually: $DASHBOARD_URL"
     fi
@@ -192,7 +240,7 @@ else
     echo "Please open manually: $DASHBOARD_URL"
 fi
 
-echo "✨ Dashboard opened successfully!"
+echo "Dashboard opened successfully!"
 EOF
     sudo mv /tmp/cp-db /usr/local/bin/cp-db
     sudo chmod +x /usr/local/bin/cp-db
@@ -222,7 +270,7 @@ EOF
 
     echo -e "${GREEN}[OK] Binary built and installed successfully.${NC}"
 
-    # Config - Only create if it doesn't exist to preserve user settings
+    # Config - Only create if it doesn't exist
     if [ ! -f "$CONFIG_DIR/config.yaml" ]; then
         cat > "$CONFIG_DIR/config.yaml" <<EOF
 port: 8317
@@ -272,11 +320,12 @@ case \$c in
   6) "\$BINARY" --config "\$CONFIG" -qwen-login ;;
   7) "\$BINARY" --config "\$CONFIG" -iflow-login ;;
   8) "\$BINARY" --config "\$CONFIG" -kiro-login ;;
-  *) echo "Invalid" ;;
+  *) echo "Invalid choice" ;;
 esac
 EOF
     chmod +x "$SCRIPTS_DIR/login.sh"
-    # Stop Script
+    
+    # Stop Script (Enhanced with auto-kill by port)
     cat > "$SCRIPTS_DIR/stop.sh" <<'EOF'
 #!/bin/bash
 # Stop CLIProxy server
@@ -303,6 +352,7 @@ fi
 EOF
     chmod +x "$SCRIPTS_DIR/stop.sh"
 
+    # CP-Claude Script (Interactive + Auto-Start)
     cat > "$SCRIPTS_DIR/cp-claude.sh" <<'EOF'
 #!/bin/bash
 
@@ -328,7 +378,7 @@ check_server() {
 
 # Auto-start logic
 if ! check_server; then
-    echo "⚠️  Server not running on port $PORT. Auto-starting..."
+    echo "Server not running on port $PORT. Auto-starting..."
     
     # Determine start command
     CP_START_CMD=""
@@ -340,37 +390,37 @@ if ! check_server; then
 
     if [ -n "$CP_START_CMD" ]; then
         "$CP_START_CMD" >/dev/null 2>&1 &
-        echo "⏳ Waiting for server..."
+        echo "Waiting for server..."
         
         # Wait up to 10 seconds
         for i in {1..10}; do
             sleep 1
             if check_server; then
-                echo "✅ Server started."
+                echo "Server started."
                 break
             fi
             if [ $i -eq 10 ]; then
-                echo "❌ Failed to auto-start server."
+                echo "Failed to auto-start server."
                 exit 1
             fi
         done
         # Give it a small extra buffer for API readiness
         sleep 1
     else
-        echo "❌ cp-start command not found. Cannot auto-start."
+        echo "cp-start command not found. Cannot auto-start."
         exit 1
     fi
 fi
 
 # Interactive Mode: Fetch and select models
-echo "🔍 Fetching available models..."
+echo "Fetching available models..."
 
 # Fetch models using curl
 RESPONSE=$(curl -s -H "Authorization: Bearer $API_KEY" "$PROXY_URL/v1/models")
 
 # Check if curl failed (even after auto-start attempt)
 if [ $? -ne 0 ]; then
-    echo "❌ Failed to connect to proxy at $PROXY_URL"
+    echo "Failed to connect to proxy at $PROXY_URL"
     exit 1
 fi
 
@@ -389,7 +439,7 @@ except Exception as e:
 ")
 
 if [[ "$MODELS" == ERROR* ]]; then
-    echo "❌ Failed to parse models."
+    echo "Failed to parse models."
     echo "Response: $RESPONSE"
     exit 1
 fi
@@ -405,12 +455,12 @@ if [ ${#MODEL_ARRAY[@]} -eq 0 ]; then
     MODEL_ARRAY=($MODELS)
     
     if [ ${#MODEL_ARRAY[@]} -eq 0 ]; then
-         echo "❌ No models found."
+         echo "No models found."
          exit 1
     fi
 fi
 
-echo "🤖 Available Models:"
+echo "Available Models:"
 i=1
 for model in "${MODEL_ARRAY[@]}"; do
     echo "  $i) $model"
@@ -423,12 +473,12 @@ read -p "Select model (1-${#MODEL_ARRAY[@]}): " selection
 if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 1 ] && [ "$selection" -le "${#MODEL_ARRAY[@]}" ]; then
     SELECTED_MODEL="${MODEL_ARRAY[$((selection-1))]}"
     echo ""
-    echo "🚀 Launching Claude Code with model: $SELECTED_MODEL"
+    echo "Launching Claude Code with model: $SELECTED_MODEL"
     echo "   (Env: ANTHROPIC_BASE_URL=$ANTHROPIC_BASE_URL)"
     echo ""
     exec claude --model "$SELECTED_MODEL"
 else
-    echo "❌ Invalid selection."
+    echo "Invalid selection."
     exit 1
 fi
 EOF
@@ -489,7 +539,7 @@ EOF
     echo -e "${GREEN}========================================${NC}"
     echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
     echo -e "${GREEN}========================================${NC}"
-    echo "Restart your terminal or run 'source ~/.zshrc' to use shortcuts:"
+    echo "Restart your terminal or run source ~/.zshrc (or ~/.bashrc) to use shortcuts:"
     echo -e "  1. Login:  ${CYAN}cp-login${NC}"
     echo -e "  2. Start:  ${CYAN}cp-start${NC}"
     echo -e "  3. Stop:   ${CYAN}cp-stop${NC}"
@@ -503,7 +553,6 @@ if [[ "$1" == "-update" ]]; then
     echo -e "${CYAN}========================================${NC}"
     echo -e "${CYAN}   Updating CLIProxy...${NC}"
     echo -e "${CYAN}========================================${NC}"
-    if ! check_brew; then install_brew; fi
     install_dependencies
     install_cliproxy
     echo -e "${GREEN}Update complete!${NC}"
@@ -514,26 +563,25 @@ fi
 
 clear
 echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}   CLIProxy macOS Installer Manager${NC}"
+echo -e "${CYAN}   CLIProxy Universal Installer Manager${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
-echo "1. Install Homebrew (Required for Git/Go)"
-echo "2. Install Git & Go (Via Homebrew)"
-echo "3. Install / Update CLIProxy Core"
-echo "4. FULL INSTALL (Recommended for first run)"
-echo "5. Exit"
+echo "Detected Platform: $(detect_os)"
 echo ""
-read -p "Please select your choice (1-5): " choice
+echo "1. Install Dependencies (Git & Go)"
+echo "2. Install / Update CLIProxy Core"
+echo "3. FULL INSTALL (Recommended for first run)"
+echo "4. Exit"
+echo ""
+read -p "Please select your choice (1-4): " choice
 
 case $choice in
-    1) install_brew ;;
-    2) install_dependencies ;;
-    3) install_cliproxy ;;
-    4)
-        if ! check_brew; then install_brew; fi
+    1) install_dependencies ;;
+    2) install_cliproxy ;;
+    3)
         install_dependencies
         install_cliproxy
         ;;
-    5) exit 0 ;;
+    4) exit 0 ;;
     *) echo "Invalid choice." ;;
 esac

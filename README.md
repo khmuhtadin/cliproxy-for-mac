@@ -7,7 +7,7 @@ It handles everything from installing dependencies (Go, Git), configuring the lo
 ## Features
 
 * **Cross-Platform**: Works on **macOS**, **Linux**, and **Windows**.
-* **All-in-One Installation**: Automatically checks and installs **Homebrew** (macOS), package managers (Linux), or checks for **Git/Go** (Windows).
+* **Auto-Detect OS**: Automatically detects your operating system and runs the appropriate installation steps with a single command.
 * **Smart Config Merge**: Intelligently adds new models to your `config.json` without overwriting your existing custom configurations.
 * **Auto-Update**: Built-in self-updater keeps both the installer and the core CLIProxy binary up to date.
 * **Auto-Build**: Clones the latest `CLIProxyAPIPlus` repository and builds the binary for your specific architecture.
@@ -30,7 +30,7 @@ cp-db
 Or access directly in your browser:
 `http://localhost:8317/dashboard.html`
 
-## Quick Install for macOS
+## Quick Install (macOS & Linux)
 
 Open your Terminal and run:
 
@@ -38,13 +38,7 @@ Open your Terminal and run:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install)"
 ```
 
-## Quick Install for Linux
-
-Open your Terminal and run:
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install-linux)"
-```
+*This single command automatically detects your OS and installs the necessary components.*
 
 ## Quick Install for Windows
 
@@ -58,12 +52,9 @@ irm https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install
 
 The installer provides an interactive menu:
 
-*   **macOS/Linux**:
-    1.  Install Dependencies (Homebrew/Git/Go).
-    2.  Install / Update CLIProxy Core.
-    3.  **FULL INSTALL** (Recommended).
-*   **Windows**:
-    1.  Install / Update CLIProxy Core (Checks dependencies automatically).
+1.  **Install Dependencies**: Installs Git and Go (via Homebrew on macOS, or package manager on Linux).
+2.  **Install / Update CLIProxy Core**: Builds and installs the core binary.
+3.  **FULL INSTALL** (Recommended): Does everything.
 
 ## How to Use
 
