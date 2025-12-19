@@ -4,23 +4,23 @@ Automated installer for **CLIProxyAPIPlus**. This script simplifies the process 
 
 It handles everything from installing dependencies (Go, Git), configuring the local proxy server, to managing updates.
 
-## 🚀 Features
+## Features
 
 * **Cross-Platform**: Works on **macOS**, **Linux**, and **Windows**.
 * **All-in-One Installation**: Automatically checks and installs **Homebrew** (macOS), package managers (Linux), or checks for **Git/Go** (Windows).
 * **Smart Config Merge**: Intelligently adds new models to your `config.json` without overwriting your existing custom configurations.
 * **Auto-Update**: Built-in self-updater keeps both the installer and the core CLIProxy binary up to date.
 * **Auto-Build**: Clones the latest `CLIProxyAPIPlus` repository and builds the binary for your specific architecture.
-* **Helper Scripts & Shortcuts**: Generates easy-to-use aliases (`cp-login`, `cp-start`, `cp-update`) for your terminal.
+* **Helper Scripts & Shortcuts**: Generates easy-to-use aliases (`cp-login`, `cp-start`, `cp-update`, `cp-claude`) for your terminal.
 * **Droid Integration**: Automatically injects configurations for models like **Gemini 2.5 Pro**, **Qwen3**, **GLM 4.6**, **Kiro**, and more into `~/.factory/config.json`.
 
 ## Dashboard
 
-The installer now includes a **dashboard** for monitoring and managing your CLIProxy server!
+The installer now includes a **dashboard** for monitoring and managing your CLIProxy server.
 
 ### Accessing the Dashboard:
 
-After installation, use the new `cp-db` command:
+After installation, use the `cp-db` command:
 
 ```bash
 # Smart launcher - auto-starts server if needed, then opens dashboard
@@ -28,31 +28,33 @@ cp-db
 ```
 
 Or access directly in your browser:
-```
-http://localhost:8317/dashboard.html
-```
+`http://localhost:8317/dashboard.html`
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install)"
-```
-
-## 🐧 Quick Install for Linux
+## Quick Install for macOS
 
 Open your Terminal and run:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install-linux)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install)"
 ```
 
-## 🪟 Quick Install for Windows
+## Quick Install for Linux
+
+Open your Terminal and run:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install-linux)"
+```
+
+## Quick Install for Windows
 
 Open **PowerShell** (Run as Administrator recommended) and execute:
 
 ```powershell
-irm https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/refs/heads/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install.ps1 | iex
 ```
 
-## 🛠️ Menu Options
+## Menu Options
 
 The installer provides an interactive menu:
 
@@ -63,7 +65,7 @@ The installer provides an interactive menu:
 *   **Windows**:
     1.  Install / Update CLIProxy Core (Checks dependencies automatically).
 
-## 📖 How to Use
+## How to Use
 
 After installation, **restart your terminal** to load the shortcuts.
 
@@ -101,22 +103,37 @@ To update the installer script, the core binary, and add new models to your conf
 cp-update
 ```
 
-### 5. Usage in Droid/Cursor
+### 5. Claude Code Integration
+
+Use the `cp-claude` command to run Claude Code with the proxy automatically configured.
+
+```bash
+# Interactive mode (select model from menu)
+cp-claude
+
+# Direct mode (specify model)
+cp-claude --model "gpt-oss-120b-medium"
+```
+
+*Note: The server will auto-start if it is not already running.*
+
+### 6. Usage in Droid/Cursor
 
 1.  Open Droid.
 2.  Go to Model selection.
 3.  You will see new models like **"Claude Opus 4.5 Thinking [Antigravity]"**, **"Gemini 2.5 Pro"**, or **"Qwen3 Coder Plus"**.
-4.  Select one and start chatting!
+4.  Select one and start chatting.
 
-## ⌨️ Shortcuts Reference
+## Shortcuts Reference
 
 * `cp-login` : Open the login menu.
 * `cp-start` : Start the proxy server.
 * `cp-stop`  : Stop the proxy server.
 * `cp-update`: Auto-update the installer and core binary.
 * `cp-db`    : Open the monitoring dashboard.
+* `cp-claude`: Run Claude Code with proxy configuration.
 
-## 📂 File Locations
+## File Locations
 
 | Platform | Binary | Config | Scripts | Droid Config |
 | :--- | :--- | :--- | :--- | :--- |
