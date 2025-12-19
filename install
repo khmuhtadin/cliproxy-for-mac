@@ -2,7 +2,7 @@
 
 # ==============================================================================
 # CLIProxy Universal Installer
-# Works on macOS and Linux
+# One Script to Rule Them All: macOS, Linux, Windows (Git Bash)
 # ==============================================================================
 
 # --- Colors ---
@@ -19,6 +19,7 @@ detect_os() {
     case "$OS" in
         Linux*)     echo "linux";;
         Darwin*)    echo "macos";;
+        MINGW*|MSYS*|CYGWIN*) echo "windows";;
         *)          echo "unknown";;
     esac
 }
@@ -84,8 +85,27 @@ install_dependencies() {
         else
             echo -e "${YELLOW}[Warning] Could not detect package manager. Please ensure Git and Go are installed manually.${NC}"
         fi
+    elif [ "$PLATFORM" == "windows" ]; then
+        echo -e "${YELLOW}Detected Windows (Git Bash/MSYS). Checking dependencies...${NC}"
+        
+        if command -v git &> /dev/null; then
+             echo -e "${GREEN}[OK] Git is installed.${NC}"
+        else
+             echo -e "${RED}[Error] Git not found.${NC}"
+             echo "Please install Git for Windows: https://git-scm.com/download/win"
+             exit 1
+        fi
+
+        if command -v go &> /dev/null; then
+             echo -e "${GREEN}[OK] Go is installed.${NC}"
+        else
+             echo -e "${RED}[Error] Go not found.${NC}"
+             echo "Please install Go for Windows: https://go.dev/dl/"
+             echo "After installing, restart your terminal and try again."
+             exit 1
+        fi
     else
-        echo -e "${RED}[Error] Unknown operating system.${NC}"
+        echo -e "${RED}[Error] Unknown operating system: $(uname -s)${NC}"
         exit 1
     fi
     
@@ -101,10 +121,6 @@ setup_shortcuts() {
     echo -e "${YELLOW}Adding shortcuts to $SHELL_CONFIG...${NC}"
 
     # Remove old aliases if they exist to prevent duplicates
-    # Use generic sed compatible with both mac (BSD) and linux (GNU)
-    # The empty string argument '' for -i works on Mac but fails on Linux.
-    # Linux expects no space or argument if no backup extension is provided, or simple -i.
-    
     PLATFORM=$(detect_os)
     if [ "$PLATFORM" == "macos" ]; then
         sed -i '' '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
@@ -113,7 +129,7 @@ setup_shortcuts() {
         sed -i '' '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
     else
-        # Linux sed
+        # Linux & Windows (Git Bash has standard sed usually)
         sed -i '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
@@ -134,6 +150,8 @@ setup_shortcuts() {
 }
 
 install_cliproxy() {
+    PLATFORM=$(detect_os)
+    
     if ! command -v go &> /dev/null; then
         echo -e "${RED}[Error] Go is not found!${NC}"
         echo "Please install dependencies first."
@@ -169,12 +187,25 @@ install_cliproxy() {
 
     # Install cp-db command
     echo "Installing cp-db feature..."
-    cat > "/tmp/cp-db" <<'EOF'
+    
+    # Determine dashboard open command
+    OPEN_CMD="open" # macOS default
+    if [ "$PLATFORM" == "linux" ]; then
+        if command -v xdg-open >/dev/null 2>&1; then
+            OPEN_CMD="xdg-open"
+        elif command -v gnome-open >/dev/null 2>&1; then
+            OPEN_CMD="gnome-open"
+        else
+            OPEN_CMD="echo 'Please open manually: '"
+        fi
+    elif [ "$PLATFORM" == "windows" ]; then
+        OPEN_CMD="start"
+    fi
+
+    cat > "/tmp/cp-db" <<EOF
 #!/bin/bash
 
 # CLIProxy Dashboard Launcher
-# Checks if server is running, starts if needed, then opens dashboard
-
 DASHBOARD_URL="http://localhost:8317/dashboard.html"
 PORT=8317
 
@@ -182,69 +213,56 @@ echo "CLIProxy Dashboard Launcher"
 echo ""
 
 # Check if server is already running
-if lsof -i :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
-    PID=$(lsof -i :$PORT -sTCP:LISTEN -t)
-    echo "Server already running (PID: $PID)"
+if lsof -i :\$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
+    PID=\$(lsof -i :\$PORT -sTCP:LISTEN -t)
+    echo "Server already running (PID: \$PID)"
 else
     echo "Server not running, starting now..."
     
-    # Determine start command
     CP_START_CMD=""
     if command -v cp-start >/dev/null 2>&1; then
         CP_START_CMD="cp-start"
-    elif [ -x "$HOME/.cli-proxy-api/scripts/start.sh" ]; then
-        CP_START_CMD="$HOME/.cli-proxy-api/scripts/start.sh"
+    elif [ -x "\$HOME/.cli-proxy-api/scripts/start.sh" ]; then
+        CP_START_CMD="\$HOME/.cli-proxy-api/scripts/start.sh"
     fi
 
-    if [ -n "$CP_START_CMD" ]; then
-        "$CP_START_CMD" &
+    if [ -n "\$CP_START_CMD" ]; then
+        "\$CP_START_CMD" >/dev/null 2>&1 &
         echo "Waiting for server to start..."
         
-        # Wait up to 10 seconds for server to start
         for i in {1..10}; do
             sleep 1
-            if lsof -i :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
-                PID=$(lsof -i :$PORT -sTCP:LISTEN -t)
-                echo "Server started successfully (PID: $PID)"
+            if lsof -i :\$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
+                echo "Server started successfully"
                 break
             fi
-            if [ $i -eq 10 ]; then
-                echo "Server failed to start. Please check logs."
+            if [ \$i -eq 10 ]; then
+                echo "Server failed to start."
                 exit 1
             fi
         done
     else
-        echo "cp-start command not found. Please install CLIProxy first."
+        echo "cp-start command not found."
         exit 1
     fi
 fi
 
 echo ""
-echo "Opening dashboard: $DASHBOARD_URL"
+echo "Opening dashboard: \$DASHBOARD_URL"
 echo ""
 
-# Open dashboard in default browser
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    open "$DASHBOARD_URL"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # Linux
-    if command -v xdg-open >/dev/null 2>&1; then
-        xdg-open "$DASHBOARD_URL" >/dev/null 2>&1
-    elif command -v gnome-open >/dev/null 2>&1; then
-        gnome-open "$DASHBOARD_URL" >/dev/null 2>&1
-    else
-        echo "Please open manually: $DASHBOARD_URL"
-    fi
-else
-    echo "Please open manually: $DASHBOARD_URL"
-fi
-
-echo "Dashboard opened successfully!"
+$OPEN_CMD "\$DASHBOARD_URL" >/dev/null 2>&1
+echo "Dashboard launcher finished."
 EOF
-    sudo mv /tmp/cp-db /usr/local/bin/cp-db
-    sudo chmod +x /usr/local/bin/cp-db
-    echo -e "${GREEN}[OK] cp-db installed${NC}"
+
+    # Install cp-db to BIN_DIR instead of /usr/local/bin (no sudo required) to avoid Windows permission issues
+    mv /tmp/cp-db "$BIN_DIR/cp-db"
+    chmod +x "$BIN_DIR/cp-db"
+    
+    # Add BIN_DIR to path in shortcuts if not present, but for now we assume user adds it or run aliases
+    # We can also alias cp-db in setup_shortcuts to point to $HOME/bin/cp-db to be safe
+    
+    echo -e "${GREEN}[OK] cp-db installed to $BIN_DIR/cp-db${NC}"
 
 
     # Clone & Build
@@ -258,13 +276,19 @@ EOF
 
     echo "Building binary..."
     cd "$TEMP_DIR"
-    if ! go build -o cliproxyapi-plus ./cmd/server; then
+    
+    BINARY_NAME="cliproxyapi-plus"
+    if [ "$PLATFORM" == "windows" ]; then
+        BINARY_NAME="cliproxyapi-plus.exe"
+    fi
+    
+    if ! go build -o "$BINARY_NAME" ./cmd/server; then
         echo -e "${RED}[Error] Failed to build binary${NC}"
         cd -
         rm -rf "$TEMP_DIR"
         exit 1
     fi
-    mv -f cliproxyapi-plus "$BIN_DIR/cliproxyapi-plus"
+    mv -f "$BINARY_NAME" "$BIN_DIR/$BINARY_NAME"
     cd -
     rm -rf "$TEMP_DIR"
 
@@ -293,13 +317,13 @@ EOF
     cat > "$SCRIPTS_DIR/start.sh" <<EOF
 #!/bin/bash
 echo "Starting CLIProxy on http://localhost:8317"
-"$BIN_DIR/cliproxyapi-plus" --config "$CONFIG_DIR/config.yaml"
+"$BIN_DIR/$BINARY_NAME" --config "$CONFIG_DIR/config.yaml"
 EOF
     chmod +x "$SCRIPTS_DIR/start.sh"
 
     cat > "$SCRIPTS_DIR/login.sh" <<EOF
 #!/bin/bash
-BINARY="$BIN_DIR/cliproxyapi-plus"
+BINARY="$BIN_DIR/$BINARY_NAME"
 CONFIG="$CONFIG_DIR/config.yaml"
 clear
 echo "1. Antigravity (Claude/Gemini)"
@@ -325,7 +349,7 @@ esac
 EOF
     chmod +x "$SCRIPTS_DIR/login.sh"
     
-    # Stop Script (Enhanced with auto-kill by port)
+    # Stop Script
     cat > "$SCRIPTS_DIR/stop.sh" <<'EOF'
 #!/bin/bash
 # Stop CLIProxy server
@@ -404,7 +428,6 @@ if ! check_server; then
                 exit 1
             fi
         done
-        # Give it a small extra buffer for API readiness
         sleep 1
     else
         echo "cp-start command not found. Cannot auto-start."
@@ -412,19 +435,16 @@ if ! check_server; then
     fi
 fi
 
-# Interactive Mode: Fetch and select models
+# Interactive Mode
 echo "Fetching available models..."
 
-# Fetch models using curl
 RESPONSE=$(curl -s -H "Authorization: Bearer $API_KEY" "$PROXY_URL/v1/models")
 
-# Check if curl failed (even after auto-start attempt)
 if [ $? -ne 0 ]; then
     echo "Failed to connect to proxy at $PROXY_URL"
     exit 1
 fi
 
-# Parse models using python3 to ensure compatibility
 MODELS=$(echo "$RESPONSE" | python3 -c "
 import sys, json
 try:
@@ -444,11 +464,9 @@ if [[ "$MODELS" == ERROR* ]]; then
     exit 1
 fi
 
-# Convert to array
 MODEL_ARRAY=($MODELS)
 
 if [ ${#MODEL_ARRAY[@]} -eq 0 ]; then
-    # Fallback/Retry once if empty (sometimes happens on fresh start)
     sleep 1
     RESPONSE=$(curl -s -H "Authorization: Bearer $API_KEY" "$PROXY_URL/v1/models")
     MODELS=$(echo "$RESPONSE" | python3 -c "import sys, json; print(' '.join([m['id'] for m in json.load(sys.stdin)['data']]))" 2>/dev/null)
@@ -521,7 +539,6 @@ EOF
     else
         echo -e "${YELLOW}[!] config.json exists, checking for missing models...${NC}"
 
-        # Download and use shared merge utility
         MERGE_UTIL="/tmp/merge_config_$$.go"
         if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/merge-config.go" -o "$MERGE_UTIL"; then
             go run "$MERGE_UTIL" "$DROID_FILE" "/tmp/cliproxy_new_models.json"
@@ -532,8 +549,8 @@ EOF
     fi
     rm -f "/tmp/cliproxy_new_models.json"
 
-
-    # CALL SHORTCUT SETUP
+    # Add extra alias for cp-db since we installed it in bin folder, to be sure
+    echo "alias cp-db=\"$BIN_DIR/cp-db\"" >> "$SHELL_CONFIG"
     setup_shortcuts
 
     echo -e "${GREEN}========================================${NC}"
@@ -545,6 +562,7 @@ EOF
     echo -e "  3. Stop:   ${CYAN}cp-stop${NC}"
     echo -e "  4. Update: ${CYAN}cp-update${NC} (Fetches latest core & installer)"
     echo -e "  5. Claude: ${CYAN}cp-claude${NC} (Runs Claude Code with Proxy)"
+    echo -e "  6. DB:     ${CYAN}cp-db${NC}     (Open Dashboard)"
 }
 
 # --- Main Execution ---
