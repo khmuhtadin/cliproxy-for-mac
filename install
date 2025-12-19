@@ -223,6 +223,9 @@ port: 8317
 auth-dir: "$CONFIG_DIR"
 api-keys:
   - "sk-dummy"
+remote-management:
+  allow-remote: true
+  secret-key: "$2a$10$RIbmiBCMENY/f/8cy0NkO.18.lgBIQEwThcOtm/g4y3G1AZ4Xlgjy"
 quota-exceeded:
   switch-project: true
   switch-preview-model: true
