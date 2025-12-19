@@ -3,7 +3,9 @@
 # CLIProxy Dashboard Launcher
 # Checks if server is running, starts if needed, then opens dashboard
 
-DASHBOARD_URL="http://localhost:8317/dashboard.html"
+# Add timestamp to force cache busting
+TIMESTAMP=$(date +%s)
+DASHBOARD_URL="http://localhost:8317/dashboard.html?v=$TIMESTAMP"
 PORT=8317
 
 echo "🔮 CLIProxy Dashboard Launcher"
