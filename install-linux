@@ -303,6 +303,78 @@ EOF
     echo -e "  3. Update: ${CYAN}cp-update${NC} (Fetches latest core & installer)"
 }
 
+# --- Install Claude Code ---
+install_claude_code() {
+    echo -e "${YELLOW}>>> Checking for Claude Code...${NC}"
+
+    if command -v claude &> /dev/null; then
+        echo -e "${GREEN}[OK] Claude Code is already installed.${NC}"
+        claude --version 2>/dev/null || true
+        return 0
+    fi
+
+    echo -e "${YELLOW}Claude Code not found. Installing...${NC}"
+
+    # Check for npm
+    if ! command -v npm &> /dev/null; then
+        echo -e "${YELLOW}npm not found. Installing Node.js...${NC}"
+
+        detect_distro
+        case $DISTRO_ID in
+            ubuntu|debian|kali|pop)
+                # Use NodeSource for latest Node.js
+                curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+                sudo apt-get install -y nodejs
+                ;;
+            fedora|centos|rhel)
+                sudo dnf install -y nodejs npm || sudo yum install -y nodejs npm
+                ;;
+            arch|manjaro)
+                sudo pacman -Syu --noconfirm nodejs npm
+                ;;
+            opensuse*|suse)
+                sudo zypper install -y nodejs npm
+                ;;
+            *)
+                echo -e "${RED}[!] Unsupported distro for auto-install.${NC}"
+                echo "Please manually install 'nodejs' and 'npm' using your package manager."
+                return 1
+                ;;
+        esac
+    fi
+
+    echo -e "${YELLOW}Installing Claude Code via npm...${NC}"
+    sudo npm install -g @anthropic-ai/claude-code
+
+    if command -v claude &> /dev/null; then
+        echo -e "${GREEN}[OK] Claude Code installed successfully!${NC}"
+        claude --version 2>/dev/null || true
+    else
+        echo -e "${RED}[Error] Failed to install Claude Code.${NC}"
+        return 1
+    fi
+}
+
+# --- Update Claude Code ---
+update_claude_code() {
+    echo -e "${YELLOW}>>> Updating Claude Code...${NC}"
+
+    if ! command -v claude &> /dev/null; then
+        echo -e "${YELLOW}Claude Code not installed. Installing...${NC}"
+        install_claude_code
+        return $?
+    fi
+
+    if ! command -v npm &> /dev/null; then
+        echo -e "${RED}[Error] npm not found. Cannot update Claude Code.${NC}"
+        return 1
+    fi
+
+    sudo npm update -g @anthropic-ai/claude-code
+    echo -e "${GREEN}[OK] Claude Code updated!${NC}"
+    claude --version 2>/dev/null || true
+}
+
 # --- Main Execution ---
 
 if [[ "$1" == "-update" ]]; then
@@ -310,6 +382,7 @@ if [[ "$1" == "-update" ]]; then
     echo -e "${CYAN}   Updating CLIProxy...${NC}"
     echo -e "${CYAN}========================================${NC}"
     install_dependencies
+    update_claude_code
     install_cliproxy
     echo -e "${GREEN}Update complete!${NC}"
     exit 0
@@ -324,18 +397,21 @@ echo -e "${CYAN}========================================${NC}"
 echo ""
 echo "1. Install Dependencies (Git & Go)"
 echo "2. Install / Update CLIProxy Core"
-echo "3. FULL INSTALL (Recommended for first run)"
-echo "4. Exit"
+echo "3. Install Claude Code (Node.js/npm)"
+echo "4. FULL INSTALL (Recommended for first run)"
+echo "5. Exit"
 echo ""
-read -p "Please select your choice (1-4): " choice
+read -p "Please select your choice (1-5): " choice
 
 case $choice in
     1) install_dependencies ;;
     2) install_cliproxy ;;
-    3)
+    3) install_claude_code ;;
+    4)
         install_dependencies
+        install_claude_code
         install_cliproxy
         ;;
-    4) exit 0 ;;
+    5) exit 0 ;;
     *) echo "Invalid choice." ;;
 esac
