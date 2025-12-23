@@ -754,38 +754,84 @@ if [[ "$1" == "-update" ]]; then
     echo -e "${CYAN}========================================${NC}"
     echo ""
 
-    # 1. Update Claude Code (npm or brew)
+    # 1. Update Claude Code (auto-detect: brew cask, brew formula, or npm)
     echo -e "${YELLOW}>>> Updating Claude Code...${NC}"
     CLAUDE_UPDATED=false
+    CLAUDE_INSTALL_METHOD="unknown"
 
-    # Check if installed via Homebrew
-    if command -v brew &> /dev/null; then
-        if brew list claude-code &> /dev/null 2>&1 || brew list --cask claude-code &> /dev/null 2>&1; then
-            echo "Detected Claude Code installed via Homebrew"
-            brew upgrade claude-code 2>/dev/null || brew upgrade --cask claude-code 2>/dev/null || echo "Already up to date"
-            echo -e "${GREEN}[OK] Claude Code updated (brew)${NC}"
-            CLAUDE_UPDATED=true
+    # Auto-detect installation method
+    if command -v claude &> /dev/null; then
+        CLAUDE_PATH=$(which claude)
+
+        # Check if symlink points to Homebrew Caskroom
+        if [[ -L "$CLAUDE_PATH" ]]; then
+            CLAUDE_REAL_PATH=$(readlink "$CLAUDE_PATH" 2>/dev/null || readlink -f "$CLAUDE_PATH" 2>/dev/null)
+            if [[ "$CLAUDE_REAL_PATH" == *"/Caskroom/"* ]]; then
+                CLAUDE_INSTALL_METHOD="brew-cask"
+            elif [[ "$CLAUDE_REAL_PATH" == *"/Cellar/"* ]]; then
+                CLAUDE_INSTALL_METHOD="brew-formula"
+            fi
+        fi
+
+        # Fallback: check npm if not detected via brew
+        if [ "$CLAUDE_INSTALL_METHOD" = "unknown" ] && command -v npm &> /dev/null; then
+            if npm list -g @anthropic-ai/claude-code &> /dev/null 2>&1; then
+                CLAUDE_INSTALL_METHOD="npm"
+            fi
+        fi
+
+        # Fallback: check brew list directly
+        if [ "$CLAUDE_INSTALL_METHOD" = "unknown" ] && command -v brew &> /dev/null; then
+            if brew list --cask claude-code &> /dev/null 2>&1; then
+                CLAUDE_INSTALL_METHOD="brew-cask"
+            elif brew list claude-code &> /dev/null 2>&1; then
+                CLAUDE_INSTALL_METHOD="brew-formula"
+            fi
         fi
     fi
 
-    # Check if installed via npm (if not already updated via brew)
-    if [ "$CLAUDE_UPDATED" = false ] && command -v npm &> /dev/null; then
-        if npm list -g @anthropic-ai/claude-code &> /dev/null 2>&1; then
-            echo "Detected Claude Code installed via npm"
+    # Update based on detected method
+    case "$CLAUDE_INSTALL_METHOD" in
+        "brew-cask")
+            echo "Detected: Claude Code installed via Homebrew Cask"
+            # Get current and latest version
+            CURRENT_VER=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+            LATEST_VER=$(brew info --cask claude-code 2>/dev/null | grep -oE '^==> claude-code: [0-9]+\.[0-9]+\.[0-9]+' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+
+            if [ "$CURRENT_VER" = "$LATEST_VER" ]; then
+                echo -e "${GREEN}[OK] Claude Code is already up to date (v$CURRENT_VER)${NC}"
+            else
+                echo "Updating from v$CURRENT_VER to v$LATEST_VER..."
+                brew reinstall --cask claude-code
+                echo -e "${GREEN}[OK] Claude Code updated to v$LATEST_VER (brew cask)${NC}"
+            fi
+            CLAUDE_UPDATED=true
+            ;;
+        "brew-formula")
+            echo "Detected: Claude Code installed via Homebrew formula"
+            if brew upgrade claude-code 2>&1 | tee /dev/stderr | grep -q "already installed"; then
+                echo -e "${GREEN}[OK] Claude Code is already up to date${NC}"
+            else
+                echo -e "${GREEN}[OK] Claude Code updated (brew)${NC}"
+            fi
+            CLAUDE_UPDATED=true
+            ;;
+        "npm")
+            echo "Detected: Claude Code installed via npm"
             npm update -g @anthropic-ai/claude-code
             echo -e "${GREEN}[OK] Claude Code updated (npm)${NC}"
             CLAUDE_UPDATED=true
-        fi
-    fi
-
-    # If not found via either method
-    if [ "$CLAUDE_UPDATED" = false ]; then
-        if command -v claude &> /dev/null; then
-            echo -e "${YELLOW}[!] Claude Code found but install method unknown, please update manually${NC}"
-        else
-            echo -e "${YELLOW}[!] Claude Code not installed, skipping${NC}"
-        fi
-    fi
+            ;;
+        *)
+            if command -v claude &> /dev/null; then
+                echo -e "${YELLOW}[!] Claude Code found but install method unknown${NC}"
+                echo "    Path: $(which claude)"
+                echo "    Please update manually via brew or npm"
+            else
+                echo -e "${YELLOW}[!] Claude Code not installed, skipping${NC}"
+            fi
+            ;;
+    esac
     echo ""
 
     # 2. Update CLIProxy Core
