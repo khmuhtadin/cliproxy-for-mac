@@ -17,14 +17,32 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
             min-height: 100vh;
             padding: 24px;
+            color: #e2e8f0;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
+        }
+
+        /* Glassmorphism base */
+        .glass {
+            background: rgba(255, 140, 50, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 140, 50, 0.15);
+            border-radius: 16px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
         }
 
         /* Header */
@@ -34,9 +52,6 @@
             align-items: center;
             margin-bottom: 32px;
             padding: 20px 24px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .header-left {
@@ -46,26 +61,27 @@
         }
 
         .logo {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-            border-radius: 12px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #ff8c32 0%, #f97316 50%, #ea580c 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            font-size: 26px;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
         }
 
         .title-group h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: #1e293b;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .title-group .subtitle {
             font-size: 13px;
-            color: #64748b;
+            color: rgba(255,255,255,0.6);
         }
 
         .header-right {
@@ -78,49 +94,54 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
-            background: #ecfdf5;
-            border-radius: 20px;
+            padding: 10px 18px;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 24px;
             font-size: 13px;
             font-weight: 500;
-            color: #059669;
+            color: #4ade80;
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
-            background: #10b981;
+            background: #22c55e;
             border-radius: 50%;
+            box-shadow: 0 0 12px #22c55e;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; box-shadow: 0 0 12px #22c55e; }
+            50% { opacity: 0.6; box-shadow: 0 0 6px #22c55e; }
         }
 
         .refresh-btn {
-            padding: 10px 16px;
-            background: #f1f5f9;
-            border: none;
-            border-radius: 10px;
+            padding: 10px 18px;
+            background: rgba(255, 140, 50, 0.15);
+            border: 1px solid rgba(255, 140, 50, 0.3);
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 500;
-            color: #475569;
+            color: #fb923c;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .refresh-btn:hover {
-            background: #e2e8f0;
+            background: rgba(255, 140, 50, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
         }
 
         .refresh-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
 
         /* Stats Bar */
@@ -128,101 +149,127 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            padding: 20px 24px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
         }
 
         .stat-label {
             font-size: 12px;
-            color: #64748b;
+            color: rgba(255,255,255,0.5);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: #1e293b;
+            color: #fff;
         }
 
-        .stat-value.success { color: #059669; }
-        .stat-value.warning { color: #d97706; }
-        .stat-value.error { color: #dc2626; }
+        .stat-value.success { color: #4ade80; }
+        .stat-value.warning { color: #fbbf24; }
+        .stat-value.error { color: #f87171; }
 
         /* Accounts Grid */
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 16px;
+        .section-header {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
         }
 
         .accounts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
         }
 
         /* Account Card */
         .account-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 24px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f97316, #fb923c);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
         .account-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 40px rgba(249, 115, 22, 0.2);
         }
 
-        .account-card.error {
-            border-left: 4px solid #ef4444;
+        .account-card:hover::before {
+            opacity: 1;
         }
 
-        .account-card.active {
-            border-left: 4px solid #10b981;
+        .account-card.error::before {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            opacity: 1;
+        }
+
+        .account-card.active::before {
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            opacity: 1;
         }
 
         .account-header {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 14px;
+            margin-bottom: 20px;
         }
 
         .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             color: white;
             flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
 
-        .avatar.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .avatar.purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-        .avatar.green { background: linear-gradient(135deg, #10b981, #059669); }
-        .avatar.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .avatar.pink { background: linear-gradient(135deg, #ec4899, #be185d); }
+        .avatar.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .avatar.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .avatar.rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+        .avatar.violet { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .avatar.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .avatar.emerald { background: linear-gradient(135deg, #10b981, #059669); }
 
         .account-info {
             flex: 1;
@@ -232,46 +279,48 @@
         .account-name {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 4px;
         }
 
         .account-name span {
             font-size: 15px;
             font-weight: 600;
-            color: #1e293b;
+            color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .badge {
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             flex-shrink: 0;
         }
 
         .badge.pro {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #f97316, #ea580c);
             color: white;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
         }
 
         .badge.free {
-            background: #e2e8f0;
-            color: #64748b;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
         }
 
         .badge.error {
-            background: #fee2e2;
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
         }
 
         .account-email {
             font-size: 13px;
-            color: #64748b;
+            color: rgba(255,255,255,0.5);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -279,42 +328,42 @@
 
         .sync-indicator {
             position: absolute;
-            top: 16px;
-            right: 16px;
-            font-size: 16px;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
         }
 
         /* Quota Bars */
         .quota-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
         .quota-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .quota-icon {
-            font-size: 14px;
-            width: 20px;
+            font-size: 16px;
+            width: 24px;
             text-align: center;
         }
 
         .quota-name {
             font-size: 13px;
-            color: #475569;
-            width: 90px;
+            color: rgba(255,255,255,0.7);
+            width: 95px;
             flex-shrink: 0;
         }
 
         .quota-bar-container {
             flex: 1;
             height: 8px;
-            background: #e2e8f0;
+            background: rgba(255,255,255,0.1);
             border-radius: 4px;
             overflow: hidden;
         }
@@ -325,57 +374,63 @@
             transition: width 0.5s ease;
         }
 
-        .quota-bar.high { background: linear-gradient(90deg, #10b981, #34d399); }
-        .quota-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-        .quota-bar.low { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .quota-bar.high { background: linear-gradient(90deg, #22c55e, #4ade80); box-shadow: 0 0 12px rgba(34, 197, 94, 0.5); }
+        .quota-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); box-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
+        .quota-bar.low { background: linear-gradient(90deg, #ef4444, #f87171); box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); }
 
-        .quota-time {
-            font-size: 11px;
-            color: #94a3b8;
-            min-width: 50px;
+        .quota-value {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            min-width: 55px;
             text-align: right;
+            font-weight: 500;
         }
 
         /* Card Actions */
         .card-actions {
             display: flex;
-            gap: 8px;
-            padding-top: 12px;
-            border-top: 1px solid #f1f5f9;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
 
         .action-btn {
             flex: 1;
-            padding: 10px 16px;
+            padding: 12px 18px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .action-btn.use {
-            background: #f1f5f9;
-            color: #475569;
+            background: rgba(249, 115, 22, 0.15);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #fb923c;
         }
 
         .action-btn.use:hover {
-            background: #e2e8f0;
+            background: rgba(249, 115, 22, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
         }
 
         .action-btn.delete {
             background: transparent;
-            color: #94a3b8;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
         }
 
         .action-btn.delete:hover {
-            background: #fef2f2;
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
         }
 
         /* Loading State */
@@ -384,18 +439,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 60px;
-            color: #64748b;
+            padding: 80px;
+            color: rgba(255,255,255,0.6);
         }
 
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #e2e8f0;
-            border-top-color: #6366f1;
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #f97316;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -405,13 +460,13 @@
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 60px;
-            color: #64748b;
+            padding: 80px;
+            color: rgba(255,255,255,0.5);
         }
 
         .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 16px;
+            font-size: 56px;
+            margin-bottom: 20px;
         }
 
         /* Toast Notification */
@@ -420,17 +475,19 @@
             bottom: 24px;
             right: 24px;
             padding: 16px 24px;
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
             color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             transform: translateY(100px);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             z-index: 1000;
         }
 
@@ -439,8 +496,15 @@
             opacity: 1;
         }
 
-        .toast.success { background: #059669; }
-        .toast.error { background: #dc2626; }
+        .toast.success { border-color: rgba(34, 197, 94, 0.3); }
+        .toast.error { border-color: rgba(239, 68, 68, 0.3); }
+
+        .quota-note {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+            margin-bottom: 14px;
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -462,18 +526,18 @@
 <body>
     <div class="container">
         <!-- Header -->
-        <div class="header">
+        <div class="header glass">
             <div class="header-left">
-                <div class="logo">🔮</div>
+                <div class="logo">⚡</div>
                 <div class="title-group">
                     <h1>CLIProxyAPI+ Dashboard</h1>
-                    <div class="subtitle">Account Quota Monitoring (Real-time)</div>
+                    <div class="subtitle">Account Quota Monitoring</div>
                 </div>
             </div>
             <div class="header-right">
                 <div class="status-badge">
                     <div class="status-dot"></div>
-                    <span>Server Running</span>
+                    <span>Server Online</span>
                 </div>
                 <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
                     🔄 Refresh
@@ -483,34 +547,39 @@
 
         <!-- Stats Bar -->
         <div class="stats-bar">
-            <div class="stat-card">
+            <div class="stat-card glass-card">
+                <div class="stat-icon">📊</div>
                 <div class="stat-label">Total Accounts</div>
                 <div class="stat-value" id="totalAccounts">-</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card glass-card">
+                <div class="stat-icon">✅</div>
                 <div class="stat-label">Active</div>
                 <div class="stat-value success" id="activeAccounts">-</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card glass-card">
+                <div class="stat-icon">⚠️</div>
                 <div class="stat-label">Error</div>
                 <div class="stat-value error" id="errorAccounts">-</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card glass-card">
+                <div class="stat-icon">🕐</div>
                 <div class="stat-label">Last Updated</div>
                 <div class="stat-value" id="lastUpdated" style="font-size: 16px;">-</div>
             </div>
         </div>
 
-        <!-- Section Title -->
-        <div class="section-title">
-            👤 Authenticated Accounts
+        <!-- Section Header -->
+        <div class="section-header">
+            <span class="section-icon">👤</span>
+            <span class="section-title">Authenticated Accounts</span>
         </div>
 
         <!-- Accounts Grid -->
         <div class="accounts-grid" id="accountsGrid">
             <div class="loading">
                 <div class="loading-spinner"></div>
-                <span>Loading accounts and quotas...</span>
+                <span>Loading accounts...</span>
             </div>
         </div>
     </div>
@@ -523,10 +592,10 @@
         const MANAGEMENT_KEY = 'sk-dummy';
 
         // QUOTA_CACHE_START
-        const EMBEDDED_QUOTA_CACHE = {"lastUpdated": "2025-12-25T02:58:06.735334", "accounts": {"antigravity-lurgrowthn8n_gmail_com.json": {"email": "lurgrowthn8n@gmail.com", "quota": {"geminiPro": {"remaining": 0.9937499999999999, "resetTime": "2025-12-25T00:50:42Z", "count": 4}, "claude": {"remaining": 0.7760000000000001, "resetTime": "2025-12-25T00:04:59Z", "count": 3}, "geminiFlash": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:07Z", "count": 4}, "geminiImage": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:07Z", "count": 1}}, "fetchedAt": "2025-12-25T02:58:07.500609"}, "antigravity-contactkhaisastudio_gmail_com.json": {"email": "contactkhaisastudio@gmail.com", "quota": {"geminiPro": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 4}, "claude": {"remaining": 0.996, "resetTime": "2025-12-25T00:57:22Z", "count": 3}, "geminiFlash": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 4}, "geminiImage": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 1}}, "fetchedAt": "2025-12-25T02:58:07.815417"}, "antigravity-devkhmuhtadinn_gmail_com.json": {"email": "devkhmuhtadinn@gmail.com", "quota": {"geminiPro": {"remaining": 0.996875, "resetTime": "2025-12-25T00:52:21Z", "count": 4}, "claude": {"remaining": 0.7639999999999999, "resetTime": "2025-12-25T00:04:53Z", "count": 3}, "geminiFlash": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 4}, "geminiImage": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 1}}, "fetchedAt": "2025-12-25T02:58:08.193141"}, "antigravity-devkhmuhtadin_gmail_com.json": {"email": "devkhmuhtadin@gmail.com", "quota": {"geminiPro": {"remaining": 0.99375, "resetTime": "2025-12-25T00:58:08Z", "count": 4}, "claude": {"remaining": 0.7959999999999999, "resetTime": "2025-12-25T00:04:48Z", "count": 3}, "geminiFlash": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 4}, "geminiImage": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:08Z", "count": 1}}, "fetchedAt": "2025-12-25T02:58:08.605415"}, "antigravity-contactmuhtadin_gmail_com.json": {"email": "contactmuhtadin@gmail.com", "quota": {"geminiPro": {"remaining": 0.9953125, "resetTime": "2025-12-25T00:58:09Z", "count": 4}, "claude": {"remaining": 0.904, "resetTime": "2025-12-25T00:04:36Z", "count": 3}, "geminiFlash": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:09Z", "count": 4}, "geminiImage": {"remaining": 1.0, "resetTime": "2025-12-25T00:58:09Z", "count": 1}}, "fetchedAt": "2025-12-25T02:58:08.987661"}}};
+        const EMBEDDED_QUOTA_CACHE = null;
         // QUOTA_CACHE_END
 
-        const avatarColors = ['blue', 'purple', 'green', 'orange', 'pink', 'cyan'];
+        const avatarColors = ['orange', 'amber', 'rose', 'violet', 'cyan', 'emerald'];
         let accountsData = [];
         let quotaCache = EMBEDDED_QUOTA_CACHE || { accounts: {} };
 
@@ -601,53 +670,10 @@
             }
         }
 
-        async function fetchAccountQuota(account) {
-            // Quota is now loaded from cache file (quota-cache.json)
-            // The quota-fetcher.py script updates the cache periodically
-            return null;
-        }
-
-        function parseQuotaData(models) {
-            const result = {
-                geminiPro: { remaining: 0, resetTime: null, count: 0 },
-                claude: { remaining: 0, resetTime: null, count: 0 },
-                geminiFlash: { remaining: 0, resetTime: null, count: 0 },
-                geminiImage: { remaining: 0, resetTime: null, count: 0 }
-            };
-
-            for (const [name, info] of Object.entries(models)) {
-                const quota = info.quotaInfo || {};
-                const remaining = quota.remainingFraction || 0;
-                const resetTime = quota.resetTime || null;
-
-                const nameLower = name.toLowerCase();
-
-                if (nameLower.includes('claude')) {
-                    result.claude.remaining += remaining;
-                    result.claude.count++;
-                    if (resetTime) result.claude.resetTime = resetTime;
-                } else if (nameLower.includes('image')) {
-                    result.geminiImage.remaining += remaining;
-                    result.geminiImage.count++;
-                    if (resetTime) result.geminiImage.resetTime = resetTime;
-                } else if (nameLower.includes('flash')) {
-                    result.geminiFlash.remaining += remaining;
-                    result.geminiFlash.count++;
-                    if (resetTime) result.geminiFlash.resetTime = resetTime;
-                } else if (nameLower.includes('pro') || nameLower.includes('2.5')) {
-                    result.geminiPro.remaining += remaining;
-                    result.geminiPro.count++;
-                    if (resetTime) result.geminiPro.resetTime = resetTime;
-                }
-            }
-
-            // Average out the remaining fractions
-            if (result.geminiPro.count > 0) result.geminiPro.remaining /= result.geminiPro.count;
-            if (result.claude.count > 0) result.claude.remaining /= result.claude.count;
-            if (result.geminiFlash.count > 0) result.geminiFlash.remaining /= result.geminiFlash.count;
-            if (result.geminiImage.count > 0) result.geminiImage.remaining /= result.geminiImage.count;
-
-            return result;
+        function getQuotaBarClass(remaining) {
+            if (remaining >= 0.5) return 'high';
+            if (remaining >= 0.2) return 'medium';
+            return 'low';
         }
 
         function formatResetTime(resetTimeStr) {
@@ -673,12 +699,6 @@
             } catch {
                 return '';
             }
-        }
-
-        function getQuotaBarClass(remaining) {
-            if (remaining >= 0.5) return 'high';
-            if (remaining >= 0.2) return 'medium';
-            return 'low';
         }
 
         function updateStats(accounts) {
@@ -726,10 +746,10 @@
                             <div class="quota-item">
                                 <span class="quota-icon">${icon}</span>
                                 <span class="quota-name">${name}</span>
-                                <div class="quota-bar-container" style="background: #f1f5f9;">
-                                    <div class="quota-bar" style="width: 100%; background: linear-gradient(90deg, #cbd5e1, #e2e8f0);"></div>
+                                <div class="quota-bar-container">
+                                    <div class="quota-bar" style="width: 100%; background: rgba(255,255,255,0.1);"></div>
                                 </div>
-                                <span class="quota-time" style="color: #94a3b8;">N/A</span>
+                                <span class="quota-value">N/A</span>
                             </div>
                         `;
                     }
@@ -740,13 +760,13 @@
                             <div class="quota-bar-container">
                                 <div class="quota-bar ${getQuotaBarClass(percent/100)}" style="width: ${percent}%"></div>
                             </div>
-                            <span class="quota-time">${resetTime || `${percent}%`}</span>
+                            <span class="quota-value">${resetTime || `${percent}%`}</span>
                         </div>
                     `;
                 };
 
                 return `
-                    <div class="account-card ${isError ? 'error' : 'active'}">
+                    <div class="account-card glass-card ${isError ? 'error' : 'active'}">
                         ${isError ? '<div class="sync-indicator">⚠️</div>' : ''}
 
                         <div class="account-header">
@@ -764,13 +784,13 @@
                         </div>
 
                         <div class="quota-list">
-                            ${renderQuotaBar('✨', 'Gemini Pro', geminiProPercent, hasQuota ? formatResetTime(quota.geminiPro?.resetTime) : null)}
-                            ${renderQuotaBar('🌟', 'Claude', claudePercent, hasQuota ? formatResetTime(quota.claude?.resetTime) : null)}
+                            ${renderQuotaBar('💎', 'Gemini Pro', geminiProPercent, hasQuota ? formatResetTime(quota.geminiPro?.resetTime) : null)}
+                            ${renderQuotaBar('🤖', 'Claude', claudePercent, hasQuota ? formatResetTime(quota.claude?.resetTime) : null)}
                             ${renderQuotaBar('⚡', 'Gemini Flash', geminiFlashPercent, hasQuota ? formatResetTime(quota.geminiFlash?.resetTime) : null)}
                             ${renderQuotaBar('🎨', 'Gemini Image', geminiImagePercent, hasQuota ? formatResetTime(quota.geminiImage?.resetTime) : null)}
                         </div>
 
-                        <div class="quota-note" style="font-size: 11px; color: #94a3b8; text-align: center; margin-bottom: 12px;">
+                        <div class="quota-note">
                             ${hasQuota ? '' : 'Run: python3 ~/.cli-proxy-api/scripts/quota-fetcher.py'}
                         </div>
 
@@ -779,7 +799,7 @@
                                 ⇄ Use
                             </button>
                             <button class="action-btn delete" onclick="deleteAccount('${account.id}')">
-                                Delete 🗑️
+                                🗑️ Delete
                             </button>
                         </div>
                     </div>

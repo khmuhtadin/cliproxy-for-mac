@@ -378,6 +378,7 @@ install_cliproxy() {
 # CLIProxy Dashboard Launcher
 DASHBOARD_URL="http://localhost:8317/dashboard.html"
 PORT=8317
+QUOTA_FETCHER="\$HOME/.cli-proxy-api/scripts/quota-fetcher.py"
 
 echo "CLIProxy Dashboard Launcher"
 echo ""
@@ -388,7 +389,7 @@ if lsof -i :\$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
     echo "Server already running (PID: \$PID)"
 else
     echo "Server not running, starting now..."
-    
+
     CP_START_CMD=""
     if command -v cp-start >/dev/null 2>&1; then
         CP_START_CMD="cp-start"
@@ -399,7 +400,7 @@ else
     if [ -n "\$CP_START_CMD" ]; then
         "\$CP_START_CMD" >/dev/null 2>&1 &
         echo "Waiting for server to start..."
-        
+
         for i in {1..10}; do
             sleep 1
             if lsof -i :\$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
@@ -415,6 +416,20 @@ else
         echo "cp-start command not found."
         exit 1
     fi
+fi
+
+# Run quota fetcher to update dashboard data
+if [ -f "\$QUOTA_FETCHER" ] && command -v python3 >/dev/null 2>&1; then
+    echo "Fetching quota data..."
+    python3 "\$QUOTA_FETCHER" 2>/dev/null
+    echo "Quota data updated."
+fi
+
+# Setup cron job if not exists
+CRON_CMD="*/10 * * * * /usr/bin/python3 \$HOME/.cli-proxy-api/scripts/quota-fetcher.py >/dev/null 2>&1"
+if ! crontab -l 2>/dev/null | grep -q "quota-fetcher.py"; then
+    (crontab -l 2>/dev/null; echo "\$CRON_CMD") | crontab - 2>/dev/null
+    echo "Cron job added (auto-refresh every 10 min)"
 fi
 
 echo ""
