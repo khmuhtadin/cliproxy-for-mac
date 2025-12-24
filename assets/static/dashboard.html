@@ -9,11 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -23,12 +19,8 @@
             color: #e2e8f0;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -41,89 +33,55 @@
             border-radius: 16px;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
 
         .logo {
-            width: 48px;
-            height: 48px;
+            width: 48px; height: 48px;
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 24px;
             box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
         }
 
-        .title-group h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .title-group .subtitle {
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-        }
+        .title-group h1 { font-size: 20px; font-weight: 700; color: #fff; }
+        .title-group .subtitle { font-size: 12px; color: rgba(255,255,255,0.5); }
 
         .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex; align-items: center; gap: 8px;
             padding: 8px 16px;
             background: rgba(34, 197, 94, 0.12);
             border: 1px solid rgba(34, 197, 94, 0.25);
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #4ade80;
+            font-size: 13px; font-weight: 500; color: #4ade80;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
+            width: 8px; height: 8px;
+            background: #22c55e; border-radius: 50%;
             box-shadow: 0 0 10px #22c55e;
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* Tab Navigation */
         .tab-nav {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 24px;
-            padding: 6px;
+            display: flex; gap: 4px;
+            margin-bottom: 24px; padding: 6px;
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            width: fit-content;
+            border-radius: 12px; width: fit-content;
         }
 
         .tab-btn {
-            padding: 10px 24px;
-            border: none;
+            padding: 10px 24px; border: none;
             background: transparent;
             color: rgba(255,255,255,0.5);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 8px;
+            font-size: 14px; font-weight: 500;
+            cursor: pointer; border-radius: 8px;
             transition: all 0.2s ease;
         }
 
-        .tab-btn:hover {
-            color: rgba(255,255,255,0.8);
-            background: rgba(255,255,255,0.05);
-        }
+        .tab-btn:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); }
 
         .tab-btn.active {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
@@ -131,164 +89,79 @@
             box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
         }
 
-        .tab-content {
-            display: none;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
+            gap: 16px; margin-bottom: 28px;
         }
 
         .stat-card {
             padding: 20px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            text-align: center;
+            border-radius: 14px; text-align: center;
         }
 
-        .stat-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
+        .stat-icon { font-size: 24px; margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .stat-label { font-size: 12px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value.success { color: #4ade80; }
-        .stat-value.warning { color: #fbbf24; }
         .stat-value.orange { color: #fb923c; }
 
-        /* Usage Section */
         .section-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
+            border-radius: 16px; padding: 24px; margin-bottom: 20px;
         }
 
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 16px; font-weight: 600; color: #fff;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        .section-title .icon {
-            font-size: 18px;
-        }
+        .section-title .icon { font-size: 18px; }
 
         .refresh-btn {
             padding: 8px 16px;
             background: rgba(249, 115, 22, 0.12);
             border: 1px solid rgba(249, 115, 22, 0.25);
             border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #fb923c;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 13px; font-weight: 500; color: #fb923c;
+            cursor: pointer; transition: all 0.2s ease;
         }
 
-        .refresh-btn:hover {
-            background: rgba(249, 115, 22, 0.2);
-        }
+        .refresh-btn:hover { background: rgba(249, 115, 22, 0.2); }
+        .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .refresh-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .usage-list { display: flex; flex-direction: column; gap: 14px; }
 
-        /* Model Usage Bars */
-        .usage-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .usage-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .usage-icon {
-            font-size: 20px;
-            width: 32px;
-            text-align: center;
-        }
-
-        .usage-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .usage-name {
-            font-size: 13px;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .usage-item { display: flex; align-items: center; gap: 16px; }
+        .usage-icon { font-size: 20px; width: 32px; text-align: center; }
+        .usage-info { flex: 1; min-width: 0; }
+        .usage-name { font-size: 13px; color: rgba(255,255,255,0.9); margin-bottom: 6px; }
 
         .usage-bar-container {
-            height: 6px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 3px;
-            overflow: hidden;
+            height: 6px; background: rgba(255,255,255,0.08);
+            border-radius: 3px; overflow: hidden;
         }
 
-        .usage-bar {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
+        .usage-bar { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
         .usage-bar.claude { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
-        .usage-bar.gemini { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
         .usage-bar.gemini-pro { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
         .usage-bar.gemini-flash { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
         .usage-bar.image { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .usage-bar.default { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
 
-        .usage-value {
-            font-size: 13px;
-            color: rgba(255,255,255,0.6);
-            min-width: 70px;
-            text-align: right;
-            font-weight: 500;
-        }
+        .usage-value { font-size: 13px; color: rgba(255,255,255,0.6); min-width: 80px; text-align: right; font-weight: 500; }
 
-        /* Quota Section */
         .quota-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -302,55 +175,21 @@
             border-radius: 12px;
         }
 
-        .quota-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .quota-name {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #fff;
-        }
-
-        .quota-percent {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
+        .quota-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .quota-name { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #fff; }
+        .quota-percent { font-size: 14px; font-weight: 600; }
         .quota-percent.high { color: #4ade80; }
         .quota-percent.medium { color: #fbbf24; }
         .quota-percent.low { color: #f87171; }
 
-        .quota-bar-container {
-            height: 8px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .quota-bar {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
+        .quota-bar-container { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+        .quota-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
         .quota-bar.high { background: linear-gradient(90deg, #22c55e, #4ade80); }
         .quota-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
         .quota-bar.low { background: linear-gradient(90deg, #ef4444, #f87171); }
 
-        .quota-reset {
-            font-size: 11px;
-            color: rgba(255,255,255,0.4);
-            margin-top: 8px;
-        }
+        .quota-reset { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; }
 
-        /* Account Cards */
         .accounts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -365,28 +204,14 @@
             transition: all 0.2s ease;
         }
 
-        .account-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(249, 115, 22, 0.2);
-        }
+        .account-card:hover { transform: translateY(-2px); border-color: rgba(249, 115, 22, 0.2); }
 
-        .account-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 16px;
-        }
+        .account-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
 
         .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 600; color: white;
         }
 
         .avatar.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
@@ -396,140 +221,39 @@
         .avatar.emerald { background: linear-gradient(135deg, #10b981, #059669); }
         .avatar.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
-        .account-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .account-info { flex: 1; min-width: 0; }
+        .account-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+        .account-email { font-size: 12px; color: rgba(255,255,255,0.4); }
 
-        .account-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 2px;
-        }
+        .account-status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .account-status.active { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .account-status.error { background: rgba(239, 68, 68, 0.15); color: #f87171; }
 
-        .account-email {
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
-        }
+        .account-quotas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
 
-        .account-status {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+        .mini-quota { padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; }
+        .mini-quota-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .mini-quota-name { font-size: 11px; color: rgba(255,255,255,0.5); }
+        .mini-quota-value { font-size: 12px; font-weight: 600; }
 
-        .account-status.active {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-        }
-
-        .account-status.error {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-        }
-
-        .account-quotas {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .mini-quota {
-            padding: 10px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 8px;
-        }
-
-        .mini-quota-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .mini-quota-name {
-            font-size: 11px;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .mini-quota-value {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .mini-bar {
-            height: 4px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .mini-bar-fill {
-            height: 100%;
-            border-radius: 2px;
-        }
-
+        .mini-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+        .mini-bar-fill { height: 100%; border-radius: 2px; }
         .mini-bar-fill.high { background: #4ade80; }
         .mini-bar-fill.medium { background: #fbbf24; }
         .mini-bar-fill.low { background: #f87171; }
 
-        .card-actions {
-            display: flex;
-            gap: 8px;
-        }
+        .card-actions { display: flex; gap: 8px; }
+        .action-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .action-btn.primary { background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.25); color: #fb923c; }
+        .action-btn.primary:hover { background: rgba(249, 115, 22, 0.25); }
+        .action-btn.danger { background: transparent; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+        .action-btn.danger:hover { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.25); color: #f87171; }
 
-        .action-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .action-btn.primary {
-            background: rgba(249, 115, 22, 0.15);
-            border: 1px solid rgba(249, 115, 22, 0.25);
-            color: #fb923c;
-        }
-
-        .action-btn.primary:hover {
-            background: rgba(249, 115, 22, 0.25);
-        }
-
-        .action-btn.danger {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.4);
-        }
-
-        .action-btn.danger:hover {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.25);
-            color: #f87171;
-        }
-
-        /* Empty & Loading States */
-        .empty-state, .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: rgba(255,255,255,0.4);
-        }
-
-        .empty-state .icon, .loading .icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
+        .empty-state, .loading { text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.4); }
+        .empty-state .icon, .loading .icon { font-size: 48px; margin-bottom: 16px; }
 
         .loading-spinner {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border: 3px solid rgba(255,255,255,0.1);
             border-top-color: #f97316;
             border-radius: 50%;
@@ -537,49 +261,33 @@
             margin: 0 auto 16px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Toast */
         .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
+            position: fixed; bottom: 24px; right: 24px;
             padding: 14px 20px;
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 12px;
-            font-size: 14px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
+            color: white; border-radius: 12px; font-size: 14px;
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.3s ease; z-index: 1000;
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
+        .toast.show { transform: translateY(0); opacity: 1; }
         .toast.success { border-color: rgba(34, 197, 94, 0.3); }
         .toast.error { border-color: rgba(239, 68, 68, 0.3); }
 
-        /* Responsive */
         @media (max-width: 768px) {
             body { padding: 16px; }
             .header { flex-direction: column; gap: 16px; align-items: flex-start; }
-            .accounts-grid { grid-template-columns: 1fr; }
-            .quota-grid { grid-template-columns: 1fr; }
+            .accounts-grid, .quota-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div class="header-left">
                 <div class="logo">⚡</div>
@@ -594,7 +302,6 @@
             </div>
         </div>
 
-        <!-- Tab Navigation -->
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
             <button class="tab-btn" onclick="switchTab('usage')">Usage History</button>
@@ -603,11 +310,10 @@
 
         <!-- Dashboard Tab -->
         <div id="tab-dashboard" class="tab-content active">
-            <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">📊</div>
-                    <div class="stat-value" id="totalRequests">-</div>
+                    <div class="stat-value" id="totalRequests">0</div>
                     <div class="stat-label">Total Requests</div>
                 </div>
                 <div class="stat-card">
@@ -627,22 +333,16 @@
                 </div>
             </div>
 
-            <!-- Quota Overview -->
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-title">
                         <span class="icon">📈</span>
                         Quota Overview (All Accounts)
                     </div>
-                    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
-                        🔄 Refresh
-                    </button>
+                    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">🔄 Refresh</button>
                 </div>
                 <div class="quota-grid" id="quotaOverview">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <span>Loading quota data...</span>
-                    </div>
+                    <div class="loading"><div class="loading-spinner"></div><span>Loading...</span></div>
                 </div>
             </div>
         </div>
@@ -655,12 +355,10 @@
                         <span class="icon">📊</span>
                         Usage by Model
                     </div>
+                    <button class="refresh-btn" onclick="loadUsageData()">🔄 Refresh</button>
                 </div>
                 <div class="usage-list" id="usageList">
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <span>Loading usage data...</span>
-                    </div>
+                    <div class="loading"><div class="loading-spinner"></div><span>Loading usage data...</span></div>
                 </div>
             </div>
         </div>
@@ -674,15 +372,11 @@
                 </div>
             </div>
             <div class="accounts-grid" id="accountsGrid">
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <span>Loading accounts...</span>
-                </div>
+                <div class="loading"><div class="loading-spinner"></div><span>Loading accounts...</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
     <script>
@@ -697,16 +391,16 @@
         let accountsData = [];
         let quotaCache = EMBEDDED_QUOTA_CACHE || { accounts: {} };
 
-        // Tab switching
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
             document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
             document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Load usage data when switching to usage tab
+            if (tabName === 'usage') loadUsageData();
         }
 
-        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             refreshData();
             setInterval(refreshData, 30000);
@@ -714,16 +408,24 @@
 
         async function refreshData() {
             const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) {
-                refreshBtn.disabled = true;
-                refreshBtn.textContent = '⏳ Loading...';
-            }
+            if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.textContent = '⏳ Loading...'; }
 
             try {
-                if (EMBEDDED_QUOTA_CACHE) {
-                    quotaCache = EMBEDDED_QUOTA_CACHE;
-                }
+                if (EMBEDDED_QUOTA_CACHE) quotaCache = EMBEDDED_QUOTA_CACHE;
 
+                // Fetch usage stats for total requests
+                try {
+                    const usageResp = await fetch(`${API_BASE}/management/usage`, {
+                        headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                    });
+                    if (usageResp.ok) {
+                        const usageData = await usageResp.json();
+                        document.getElementById('totalRequests').textContent =
+                            (usageData.usage?.total_requests || 0).toLocaleString();
+                    }
+                } catch (e) { console.log('Usage fetch failed'); }
+
+                // Fetch accounts
                 const response = await fetch(`${API_BASE}/management/auth-files`, {
                     headers: { 'X-Management-Key': MANAGEMENT_KEY }
                 });
@@ -732,46 +434,108 @@
 
                 const data = await response.json();
                 const files = data.files || [];
-
-                const accounts = files.filter(f =>
-                    f.type === 'antigravity' && f.email && !f.path.includes('/static/')
-                );
+                const accounts = files.filter(f => f.type === 'antigravity' && f.email && !f.path.includes('/static/'));
 
                 const accountsWithQuota = accounts.map(account => {
                     const cachedData = quotaCache.accounts?.[account.id];
-                    return {
-                        ...account,
-                        quota: cachedData?.quota || null,
-                        quotaFetchedAt: cachedData?.fetchedAt || null
-                    };
+                    return { ...account, quota: cachedData?.quota || null };
                 });
 
                 accountsData = accountsWithQuota;
                 updateStats(accountsWithQuota);
                 renderQuotaOverview(accountsWithQuota);
-                renderUsageList(accountsWithQuota);
                 renderAccounts(accountsWithQuota);
 
-                const lastUpdate = quotaCache.lastUpdated
-                    ? new Date(quotaCache.lastUpdated).toLocaleTimeString()
-                    : new Date().toLocaleTimeString();
-                document.getElementById('lastUpdated').textContent = lastUpdate;
+                document.getElementById('lastUpdated').textContent =
+                    quotaCache.lastUpdated ? new Date(quotaCache.lastUpdated).toLocaleTimeString() : new Date().toLocaleTimeString();
 
             } catch (error) {
                 console.error('Error:', error);
                 showToast('Failed to load data', 'error');
             } finally {
-                if (refreshBtn) {
-                    refreshBtn.disabled = false;
-                    refreshBtn.textContent = '🔄 Refresh';
-                }
+                if (refreshBtn) { refreshBtn.disabled = false; refreshBtn.textContent = '🔄 Refresh'; }
             }
+        }
+
+        async function loadUsageData() {
+            const container = document.getElementById('usageList');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div><span>Loading...</span></div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/management/usage`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
+
+                if (!response.ok) throw new Error('Failed');
+
+                const data = await response.json();
+                const apis = data.usage?.apis || {};
+
+                document.getElementById('totalRequests').textContent =
+                    (data.usage?.total_requests || 0).toLocaleString();
+
+                const models = Object.entries(apis).map(([name, info]) => ({
+                    name,
+                    icon: getModelIcon(name),
+                    color: getModelColor(name),
+                    requests: info.requests || 0,
+                    tokens: info.tokens || 0
+                })).sort((a, b) => b.requests - a.requests);
+
+                if (models.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <p>No usage data yet</p>
+                            <p style="font-size: 12px; margin-top: 8px; color: rgba(255,255,255,0.3);">
+                                Start using models via cp-claude to see stats
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const maxReq = Math.max(...models.map(m => m.requests), 1);
+                container.innerHTML = models.map(m => `
+                    <div class="usage-item">
+                        <span class="usage-icon">${m.icon}</span>
+                        <div class="usage-info">
+                            <div class="usage-name">${m.name}</div>
+                            <div class="usage-bar-container">
+                                <div class="usage-bar ${m.color}" style="width: ${(m.requests / maxReq) * 100}%"></div>
+                            </div>
+                        </div>
+                        <span class="usage-value">${m.requests.toLocaleString()} req</span>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Could not load usage data</p></div>';
+            }
+        }
+
+        function getModelIcon(name) {
+            const n = name.toLowerCase();
+            if (n.includes('opus')) return '🧠';
+            if (n.includes('claude')) return '🤖';
+            if (n.includes('image')) return '🎨';
+            if (n.includes('flash')) return '⚡';
+            if (n.includes('pro') || n.includes('2.5') || n.includes('3-')) return '💎';
+            return '🔮';
+        }
+
+        function getModelColor(name) {
+            const n = name.toLowerCase();
+            if (n.includes('claude')) return 'claude';
+            if (n.includes('image')) return 'image';
+            if (n.includes('flash')) return 'gemini-flash';
+            if (n.includes('pro') || n.includes('2.5')) return 'gemini-pro';
+            return 'default';
         }
 
         function updateStats(accounts) {
             document.getElementById('totalAccounts').textContent = accounts.length;
             document.getElementById('activeAccounts').textContent = accounts.filter(a => a.status === 'active').length;
-            document.getElementById('totalRequests').textContent = '-'; // Would need API support
         }
 
         function getQuotaClass(remaining) {
@@ -783,38 +547,31 @@
         function formatResetTime(resetTimeStr) {
             if (!resetTimeStr) return '';
             try {
-                const resetTime = new Date(resetTimeStr);
-                const now = new Date();
-                const diffMs = resetTime - now;
-                if (diffMs < 0) return 'Reset';
-                const diffMins = Math.floor(diffMs / 60000);
-                const diffHours = Math.floor(diffMins / 60);
-                if (diffHours > 0) return `${diffHours}h ${diffMins % 60}m`;
-                if (diffMins > 0) return `${diffMins}m`;
-                return '<1m';
+                const diff = new Date(resetTimeStr) - new Date();
+                if (diff < 0) return 'Reset';
+                const mins = Math.floor(diff / 60000);
+                const hrs = Math.floor(mins / 60);
+                if (hrs > 0) return `${hrs}h ${mins % 60}m`;
+                return mins > 0 ? `${mins}m` : '<1m';
             } catch { return ''; }
         }
 
         function renderQuotaOverview(accounts) {
             const container = document.getElementById('quotaOverview');
-
-            // Aggregate quota across all accounts
-            const aggregated = {
-                geminiPro: { total: 0, count: 0, resetTime: null },
-                claude: { total: 0, count: 0, resetTime: null },
-                geminiFlash: { total: 0, count: 0, resetTime: null },
-                geminiImage: { total: 0, count: 0, resetTime: null }
+            const agg = {
+                geminiPro: { total: 0, count: 0, reset: null },
+                claude: { total: 0, count: 0, reset: null },
+                geminiFlash: { total: 0, count: 0, reset: null },
+                geminiImage: { total: 0, count: 0, reset: null }
             };
 
             accounts.forEach(acc => {
                 if (acc.quota) {
-                    ['geminiPro', 'claude', 'geminiFlash', 'geminiImage'].forEach(key => {
+                    Object.keys(agg).forEach(key => {
                         if (acc.quota[key]) {
-                            aggregated[key].total += acc.quota[key].remaining || 0;
-                            aggregated[key].count++;
-                            if (acc.quota[key].resetTime) {
-                                aggregated[key].resetTime = acc.quota[key].resetTime;
-                            }
+                            agg[key].total += acc.quota[key].remaining || 0;
+                            agg[key].count++;
+                            if (acc.quota[key].resetTime) agg[key].reset = acc.quota[key].resetTime;
                         }
                     });
                 }
@@ -828,166 +585,53 @@
             ];
 
             container.innerHTML = quotas.map(q => {
-                const data = aggregated[q.key];
-                const avg = data.count > 0 ? data.total / data.count : 0;
-                const percent = Math.round(avg * 100);
+                const d = agg[q.key];
+                const avg = d.count > 0 ? d.total / d.count : 0;
+                const pct = Math.round(avg * 100);
                 const cls = getQuotaClass(avg);
-                const reset = formatResetTime(data.resetTime);
+                const reset = formatResetTime(d.reset);
 
                 return `
                     <div class="quota-card">
                         <div class="quota-header">
-                            <div class="quota-name">
-                                <span>${q.icon}</span>
-                                ${q.name}
-                            </div>
-                            <span class="quota-percent ${cls}">${percent}%</span>
+                            <div class="quota-name"><span>${q.icon}</span> ${q.name}</div>
+                            <span class="quota-percent ${cls}">${pct}%</span>
                         </div>
                         <div class="quota-bar-container">
-                            <div class="quota-bar ${cls}" style="width: ${percent}%"></div>
+                            <div class="quota-bar ${cls}" style="width: ${pct}%"></div>
                         </div>
-                        <div class="quota-reset">${reset ? `Resets in ${reset}` : `${data.count} accounts`}</div>
+                        <div class="quota-reset">${reset ? `Resets in ${reset}` : `${d.count} accounts`}</div>
                     </div>
                 `;
             }).join('');
-        }
-
-        async function renderUsageList(accounts) {
-            const container = document.getElementById('usageList');
-
-            try {
-                // Fetch real usage data from API
-                const response = await fetch(`${API_BASE}/management/usage`, {
-                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch usage');
-
-                const data = await response.json();
-                const usage = data.usage || {};
-                const apis = usage.apis || {};
-
-                // Update total requests stat
-                document.getElementById('totalRequests').textContent = (usage.total_requests || 0).toLocaleString();
-
-                // Convert APIs object to array and sort by requests
-                const models = Object.entries(apis).map(([name, info]) => {
-                    const icon = getModelIcon(name);
-                    const color = getModelColor(name);
-                    return {
-                        name,
-                        icon,
-                        color,
-                        requests: info.requests || 0,
-                        tokens: info.tokens || 0
-                    };
-                }).sort((a, b) => b.requests - a.requests);
-
-                if (models.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📊</div>
-                            <p>No usage data yet</p>
-                            <p style="font-size: 12px; margin-top: 8px;">Start using models via cp-claude to see stats</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                const maxRequests = Math.max(...models.map(m => m.requests), 1);
-
-                container.innerHTML = models.map(model => {
-                    const barWidth = (model.requests / maxRequests) * 100;
-                    return `
-                        <div class="usage-item">
-                            <span class="usage-icon">${model.icon}</span>
-                            <div class="usage-info">
-                                <div class="usage-name">${model.name}</div>
-                                <div class="usage-bar-container">
-                                    <div class="usage-bar ${model.color}" style="width: ${barWidth}%"></div>
-                                </div>
-                            </div>
-                            <span class="usage-value">${model.requests.toLocaleString()} req</span>
-                        </div>
-                    `;
-                }).join('');
-
-                // Also render hourly/daily charts if available
-                renderUsageCharts(usage);
-
-            } catch (error) {
-                console.error('Usage fetch error:', error);
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">⚠️</div>
-                        <p>Could not load usage data</p>
-                    </div>
-                `;
-            }
-        }
-
-        function getModelIcon(name) {
-            const n = name.toLowerCase();
-            if (n.includes('claude') && n.includes('opus')) return '🧠';
-            if (n.includes('claude')) return '🤖';
-            if (n.includes('image') || n.includes('imagen')) return '🎨';
-            if (n.includes('flash')) return '⚡';
-            if (n.includes('pro') || n.includes('2.5') || n.includes('3-')) return '💎';
-            return '🔮';
-        }
-
-        function getModelColor(name) {
-            const n = name.toLowerCase();
-            if (n.includes('claude')) return 'claude';
-            if (n.includes('image')) return 'image';
-            if (n.includes('flash')) return 'gemini-flash';
-            if (n.includes('pro') || n.includes('2.5') || n.includes('3-')) return 'gemini-pro';
-            return 'gemini';
-        }
-
-        function renderUsageCharts(usage) {
-            // Render hourly usage if container exists
-            const hourlyData = usage.requests_by_hour || {};
-            const dailyData = usage.requests_by_day || {};
-
-            // Could add chart visualization here if needed
-            console.log('Hourly usage:', hourlyData);
-            console.log('Daily usage:', dailyData);
         }
 
         function renderAccounts(accounts) {
             const grid = document.getElementById('accountsGrid');
 
             if (accounts.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📭</div>
-                        <p>No authenticated accounts found</p>
-                    </div>
-                `;
+                grid.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No accounts found</p></div>';
                 return;
             }
 
-            grid.innerHTML = accounts.map((account, index) => {
-                const initial = (account.email || '?').charAt(0).toUpperCase();
-                const email = account.email || 'unknown';
-                const maskedEmail = email.charAt(0) + '***@' + email.split('@')[1];
-                const colorClass = avatarColors[index % avatarColors.length];
-                const isActive = account.status === 'active';
-                const quota = account.quota;
+            grid.innerHTML = accounts.map((acc, i) => {
+                const initial = (acc.email || '?').charAt(0).toUpperCase();
+                const email = acc.email || 'unknown';
+                const masked = email.charAt(0) + '***@' + email.split('@')[1];
+                const color = avatarColors[i % avatarColors.length];
+                const active = acc.status === 'active';
+                const q = acc.quota;
 
-                const renderMiniQuota = (name, value) => {
-                    const percent = value !== null ? Math.round(value * 100) : 0;
-                    const cls = getQuotaClass(value || 0);
+                const miniQ = (name, val) => {
+                    const pct = val !== null ? Math.round(val * 100) : 0;
+                    const cls = getQuotaClass(val || 0);
                     return `
                         <div class="mini-quota">
                             <div class="mini-quota-header">
                                 <span class="mini-quota-name">${name}</span>
-                                <span class="mini-quota-value ${cls}">${value !== null ? percent + '%' : 'N/A'}</span>
+                                <span class="mini-quota-value ${cls}">${val !== null ? pct + '%' : 'N/A'}</span>
                             </div>
-                            <div class="mini-bar">
-                                <div class="mini-bar-fill ${cls}" style="width: ${percent}%"></div>
-                            </div>
+                            <div class="mini-bar"><div class="mini-bar-fill ${cls}" style="width: ${pct}%"></div></div>
                         </div>
                     `;
                 };
@@ -995,59 +639,46 @@
                 return `
                     <div class="account-card">
                         <div class="account-header">
-                            <div class="avatar ${colorClass}">${initial}</div>
+                            <div class="avatar ${color}">${initial}</div>
                             <div class="account-info">
-                                <div class="account-name">${maskedEmail.split('@')[0]}</div>
-                                <div class="account-email">${maskedEmail}</div>
+                                <div class="account-name">${masked.split('@')[0]}</div>
+                                <div class="account-email">${masked}</div>
                             </div>
-                            <span class="account-status ${isActive ? 'active' : 'error'}">
-                                ${isActive ? 'Active' : 'Error'}
-                            </span>
+                            <span class="account-status ${active ? 'active' : 'error'}">${active ? 'Active' : 'Error'}</span>
                         </div>
                         <div class="account-quotas">
-                            ${renderMiniQuota('Gemini Pro', quota?.geminiPro?.remaining)}
-                            ${renderMiniQuota('Claude', quota?.claude?.remaining)}
-                            ${renderMiniQuota('Flash', quota?.geminiFlash?.remaining)}
-                            ${renderMiniQuota('Image', quota?.geminiImage?.remaining)}
+                            ${miniQ('Gemini Pro', q?.geminiPro?.remaining)}
+                            ${miniQ('Claude', q?.claude?.remaining)}
+                            ${miniQ('Flash', q?.geminiFlash?.remaining)}
+                            ${miniQ('Image', q?.geminiImage?.remaining)}
                         </div>
                         <div class="card-actions">
-                            <button class="action-btn primary" onclick="useAccount('${account.id}')">Use</button>
-                            <button class="action-btn danger" onclick="deleteAccount('${account.id}')">Delete</button>
+                            <button class="action-btn primary" onclick="useAccount('${acc.id}')">Use</button>
+                            <button class="action-btn danger" onclick="deleteAccount('${acc.id}')">Delete</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        async function useAccount(accountId) {
-            showToast(`Switching to: ${accountId}`, 'success');
-        }
+        async function useAccount(id) { showToast(`Switching to: ${id}`, 'success'); }
 
-        async function deleteAccount(accountId) {
-            if (!confirm(`Delete account?\n\n${accountId}`)) return;
-
+        async function deleteAccount(id) {
+            if (!confirm(`Delete account?\n\n${id}`)) return;
             try {
-                const response = await fetch(`${API_BASE}/management/auth-files/${accountId}`, {
-                    method: 'DELETE',
-                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                const r = await fetch(`${API_BASE}/management/auth-files/${id}`, {
+                    method: 'DELETE', headers: { 'X-Management-Key': MANAGEMENT_KEY }
                 });
-
-                if (response.ok) {
-                    showToast('Account deleted', 'success');
-                    refreshData();
-                } else {
-                    throw new Error('Failed');
-                }
-            } catch (error) {
-                showToast('Failed to delete', 'error');
-            }
+                if (r.ok) { showToast('Account deleted', 'success'); refreshData(); }
+                else throw new Error();
+            } catch { showToast('Failed to delete', 'error'); }
         }
 
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type} show`;
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `toast ${type} show`;
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
     </script>
 </body>
