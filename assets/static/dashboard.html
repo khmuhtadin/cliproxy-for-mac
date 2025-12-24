@@ -852,35 +852,107 @@
             }).join('');
         }
 
-        function renderUsageList(accounts) {
+        async function renderUsageList(accounts) {
             const container = document.getElementById('usageList');
 
-            // Create model usage visualization
-            const models = [
-                { name: 'gemini-2.5-pro-preview', icon: '💎', color: 'gemini-pro', requests: Math.floor(Math.random() * 2000) },
-                { name: 'claude-sonnet-4-20250514', icon: '🤖', color: 'claude', requests: Math.floor(Math.random() * 1500) },
-                { name: 'claude-opus-4-5-thinking', icon: '🧠', color: 'claude', requests: Math.floor(Math.random() * 800) },
-                { name: 'gemini-2.5-flash', icon: '⚡', color: 'gemini-flash', requests: Math.floor(Math.random() * 3000) },
-                { name: 'gemini-image-gen', icon: '🎨', color: 'image', requests: Math.floor(Math.random() * 500) }
-            ];
+            try {
+                // Fetch real usage data from API
+                const response = await fetch(`${API_BASE}/management/usage`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
 
-            const maxRequests = Math.max(...models.map(m => m.requests));
+                if (!response.ok) throw new Error('Failed to fetch usage');
 
-            container.innerHTML = models.map(model => {
-                const barWidth = (model.requests / maxRequests) * 100;
-                return `
-                    <div class="usage-item">
-                        <span class="usage-icon">${model.icon}</span>
-                        <div class="usage-info">
-                            <div class="usage-name">${model.name}</div>
-                            <div class="usage-bar-container">
-                                <div class="usage-bar ${model.color}" style="width: ${barWidth}%"></div>
-                            </div>
+                const data = await response.json();
+                const usage = data.usage || {};
+                const apis = usage.apis || {};
+
+                // Update total requests stat
+                document.getElementById('totalRequests').textContent = (usage.total_requests || 0).toLocaleString();
+
+                // Convert APIs object to array and sort by requests
+                const models = Object.entries(apis).map(([name, info]) => {
+                    const icon = getModelIcon(name);
+                    const color = getModelColor(name);
+                    return {
+                        name,
+                        icon,
+                        color,
+                        requests: info.requests || 0,
+                        tokens: info.tokens || 0
+                    };
+                }).sort((a, b) => b.requests - a.requests);
+
+                if (models.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <p>No usage data yet</p>
+                            <p style="font-size: 12px; margin-top: 8px;">Start using models via cp-claude to see stats</p>
                         </div>
-                        <span class="usage-value">${model.requests.toLocaleString()} req</span>
+                    `;
+                    return;
+                }
+
+                const maxRequests = Math.max(...models.map(m => m.requests), 1);
+
+                container.innerHTML = models.map(model => {
+                    const barWidth = (model.requests / maxRequests) * 100;
+                    return `
+                        <div class="usage-item">
+                            <span class="usage-icon">${model.icon}</span>
+                            <div class="usage-info">
+                                <div class="usage-name">${model.name}</div>
+                                <div class="usage-bar-container">
+                                    <div class="usage-bar ${model.color}" style="width: ${barWidth}%"></div>
+                                </div>
+                            </div>
+                            <span class="usage-value">${model.requests.toLocaleString()} req</span>
+                        </div>
+                    `;
+                }).join('');
+
+                // Also render hourly/daily charts if available
+                renderUsageCharts(usage);
+
+            } catch (error) {
+                console.error('Usage fetch error:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <p>Could not load usage data</p>
                     </div>
                 `;
-            }).join('');
+            }
+        }
+
+        function getModelIcon(name) {
+            const n = name.toLowerCase();
+            if (n.includes('claude') && n.includes('opus')) return '🧠';
+            if (n.includes('claude')) return '🤖';
+            if (n.includes('image') || n.includes('imagen')) return '🎨';
+            if (n.includes('flash')) return '⚡';
+            if (n.includes('pro') || n.includes('2.5') || n.includes('3-')) return '💎';
+            return '🔮';
+        }
+
+        function getModelColor(name) {
+            const n = name.toLowerCase();
+            if (n.includes('claude')) return 'claude';
+            if (n.includes('image')) return 'image';
+            if (n.includes('flash')) return 'gemini-flash';
+            if (n.includes('pro') || n.includes('2.5') || n.includes('3-')) return 'gemini-pro';
+            return 'gemini';
+        }
+
+        function renderUsageCharts(usage) {
+            // Render hourly usage if container exists
+            const hourlyData = usage.requests_by_hour || {};
+            const dailyData = usage.requests_by_day || {};
+
+            // Could add chart visualization here if needed
+            console.log('Hourly usage:', hourlyData);
+            console.log('Daily usage:', dailyData);
         }
 
         function renderAccounts(accounts) {
