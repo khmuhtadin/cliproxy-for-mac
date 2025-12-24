@@ -63,27 +63,39 @@ install_dependencies() {
         
         echo -e "${YELLOW}Checking Go...${NC}"
         brew install go || echo "Go already installed/updated."
-        
+
+        echo -e "${YELLOW}Checking Python3...${NC}"
+        if ! command -v python3 &> /dev/null; then
+            brew install python3
+        else
+            echo "Python3 already installed."
+        fi
+        pip3 install --quiet requests 2>/dev/null || python3 -m pip install --quiet requests 2>/dev/null
+
     elif [ "$PLATFORM" == "linux" ]; then
         echo -e "${YELLOW}Detected Linux. Installing dependencies...${NC}"
         if command -v apt-get &> /dev/null; then
             echo "Using apt-get..."
             sudo apt-get update
-            sudo apt-get install -y git golang
+            sudo apt-get install -y git golang python3 python3-pip
+            pip3 install --quiet requests 2>/dev/null || python3 -m pip install --quiet requests 2>/dev/null
         elif command -v dnf &> /dev/null; then
             echo "Using dnf..."
-            sudo dnf install -y git golang
+            sudo dnf install -y git golang python3 python3-pip
+            pip3 install --quiet requests 2>/dev/null
         elif command -v pacman &> /dev/null; then
             echo "Using pacman..."
-            sudo pacman -S --noconfirm git go
+            sudo pacman -S --noconfirm git go python python-pip python-requests
         elif command -v zypper &> /dev/null; then
             echo "Using zypper..."
-            sudo zypper install -y git go
+            sudo zypper install -y git go python3 python3-pip
+            pip3 install --quiet requests 2>/dev/null
         elif command -v yum &> /dev/null; then
             echo "Using yum..."
-            sudo yum install -y git golang
+            sudo yum install -y git golang python3 python3-pip
+            pip3 install --quiet requests 2>/dev/null
         else
-            echo -e "${YELLOW}[Warning] Could not detect package manager. Please ensure Git and Go are installed manually.${NC}"
+            echo -e "${YELLOW}[Warning] Could not detect package manager. Please ensure Git, Go, and Python3 are installed manually.${NC}"
         fi
     elif [ "$PLATFORM" == "windows" ]; then
         echo -e "${YELLOW}Detected Windows (Git Bash/MSYS). Checking dependencies...${NC}"
@@ -103,6 +115,14 @@ install_dependencies() {
              echo "Please install Go for Windows: https://go.dev/dl/"
              echo "After installing, restart your terminal and try again."
              exit 1
+        fi
+
+        if command -v python3 &> /dev/null || command -v python &> /dev/null; then
+             echo -e "${GREEN}[OK] Python is installed.${NC}"
+             pip install --quiet requests 2>/dev/null || python -m pip install --quiet requests 2>/dev/null
+        else
+             echo -e "${YELLOW}[Warning] Python not found. Quota fetcher will not work.${NC}"
+             echo "Please install Python: https://www.python.org/downloads/"
         fi
     else
         echo -e "${RED}[Error] Unknown operating system: $(uname -s)${NC}"
@@ -699,6 +719,20 @@ EOF
     fi
     rm -f "/tmp/cliproxy_new_models.json"
 
+    # Download quota-fetcher.py and setup cron
+    echo -e "${YELLOW}Setting up quota fetcher...${NC}"
+    if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/assets/scripts/quota-fetcher.py" -o "$SCRIPTS_DIR/quota-fetcher.py" 2>/dev/null; then
+        chmod +x "$SCRIPTS_DIR/quota-fetcher.py"
+        echo -e "${GREEN}[OK] Quota fetcher installed${NC}"
+
+        # Setup cron job (every 10 minutes)
+        CRON_CMD="*/10 * * * * /usr/bin/python3 $HOME/.cli-proxy-api/scripts/quota-fetcher.py >/dev/null 2>&1"
+        if ! crontab -l 2>/dev/null | grep -q "quota-fetcher.py"; then
+            (crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
+            echo -e "${GREEN}[OK] Cron job added (runs every 10 min)${NC}"
+        fi
+    fi
+
     # Add extra alias for cp-db since we installed it in bin folder, to be sure
     echo "alias cp-db=\"$BIN_DIR/cp-db\"" >> "$SHELL_CONFIG"
     setup_shortcuts
@@ -867,6 +901,15 @@ if [[ "$1" == "-update" ]]; then
     if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/assets/scripts/quota-fetcher.py" -o "$SCRIPTS_DIR/quota-fetcher.py" 2>/dev/null; then
         chmod +x "$SCRIPTS_DIR/quota-fetcher.py"
         echo -e "${GREEN}[OK] Quota fetcher script updated${NC}"
+
+        # Setup cron job for quota fetcher (every 10 minutes)
+        CRON_CMD="*/10 * * * * /usr/bin/python3 $HOME/.cli-proxy-api/scripts/quota-fetcher.py >/dev/null 2>&1"
+        if ! crontab -l 2>/dev/null | grep -q "quota-fetcher.py"; then
+            (crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
+            echo -e "${GREEN}[OK] Cron job added (runs every 10 min)${NC}"
+        else
+            echo -e "${CYAN}[i] Cron job already exists${NC}"
+        fi
     fi
     echo ""
 
