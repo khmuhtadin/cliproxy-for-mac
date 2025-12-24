@@ -854,7 +854,18 @@ if [[ "$1" == "-update" ]]; then
         echo ""
     fi
 
-    # 4. Update Superpowers (if installed)
+    # 4. Update Dashboard
+    echo -e "${YELLOW}>>> Updating Dashboard...${NC}"
+    STATIC_DIR="$HOME/.cli-proxy-api/static"
+    mkdir -p "$STATIC_DIR"
+    if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/assets/static/dashboard.html" -o "$STATIC_DIR/dashboard.html" 2>/dev/null; then
+        echo -e "${GREEN}[OK] Dashboard updated${NC}"
+    else
+        echo -e "${YELLOW}[!] Could not update dashboard${NC}"
+    fi
+    echo ""
+
+    # 5. Update Superpowers (if installed)
     if command -v claude &> /dev/null; then
         # Check if superpowers plugin is installed by trying to update it
         echo -e "${YELLOW}>>> Updating Superpowers plugin...${NC}"
@@ -873,6 +884,7 @@ if [[ "$1" == "-update" ]]; then
     echo "  - Claude Code (npm/brew)"
     echo "  - CLIProxy Core (binary + scripts)"
     echo "  - Claude Statusline (if installed)"
+    echo "  - Dashboard"
     echo "  - Superpowers plugin (if installed)"
     exit 0
 fi
