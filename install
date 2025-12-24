@@ -907,7 +907,8 @@ if [[ "$1" == "-update" ]]; then
     echo -e "${YELLOW}>>> Updating Dashboard...${NC}"
     STATIC_DIR="$HOME/.cli-proxy-api/static"
     SCRIPTS_DIR="$HOME/.cli-proxy-api/scripts"
-    mkdir -p "$STATIC_DIR" "$SCRIPTS_DIR"
+    BIN_DIR="$HOME/bin"
+    mkdir -p "$STATIC_DIR" "$SCRIPTS_DIR" "$BIN_DIR"
     if curl -fsSL "https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/assets/static/dashboard.html" -o "$STATIC_DIR/dashboard.html" 2>/dev/null; then
         echo -e "${GREEN}[OK] Dashboard updated${NC}"
     else
@@ -926,6 +927,86 @@ if [[ "$1" == "-update" ]]; then
             echo -e "${CYAN}[i] Cron job already exists${NC}"
         fi
     fi
+
+    # Update cp-db script
+    PLATFORM=$(detect_os)
+    if [ "$PLATFORM" == "macos" ]; then
+        OPEN_CMD="open"
+    elif [ "$PLATFORM" == "linux" ]; then
+        OPEN_CMD="xdg-open"
+    elif [ "$PLATFORM" == "windows" ]; then
+        OPEN_CMD="start"
+    fi
+
+    cat > "$BIN_DIR/cp-db" <<CPDBEOF
+#!/bin/bash
+
+# CLIProxy Dashboard Launcher
+DASHBOARD_URL="http://localhost:8317/dashboard.html"
+PORT=8317
+QUOTA_FETCHER="\$HOME/.cli-proxy-api/scripts/quota-fetcher.py"
+
+echo "CLIProxy Dashboard Launcher"
+echo ""
+
+# Check if server is already running
+if lsof -i :\$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
+    PID=\$(lsof -i :\$PORT -sTCP:LISTEN -t)
+    echo "Server already running (PID: \$PID)"
+else
+    echo "Server not running, starting now..."
+
+    CP_START_CMD=""
+    if command -v cp-start >/dev/null 2>&1; then
+        CP_START_CMD="cp-start"
+    elif [ -x "\$HOME/.cli-proxy-api/scripts/start.sh" ]; then
+        CP_START_CMD="\$HOME/.cli-proxy-api/scripts/start.sh"
+    fi
+
+    if [ -n "\$CP_START_CMD" ]; then
+        "\$CP_START_CMD" >/dev/null 2>&1 &
+        echo "Waiting for server to start..."
+
+        for i in {1..10}; do
+            sleep 1
+            if lsof -i :\$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
+                echo "Server started successfully"
+                break
+            fi
+            if [ \$i -eq 10 ]; then
+                echo "Server failed to start."
+                exit 1
+            fi
+        done
+    else
+        echo "cp-start command not found."
+        exit 1
+    fi
+fi
+
+# Run quota fetcher to update dashboard data
+if [ -f "\$QUOTA_FETCHER" ] && command -v python3 >/dev/null 2>&1; then
+    echo "Fetching quota data..."
+    python3 "\$QUOTA_FETCHER" 2>/dev/null
+    echo "Quota data updated."
+fi
+
+# Setup cron job if not exists
+CRON_CMD="*/10 * * * * /usr/bin/python3 \$HOME/.cli-proxy-api/scripts/quota-fetcher.py >/dev/null 2>&1"
+if ! crontab -l 2>/dev/null | grep -q "quota-fetcher.py"; then
+    (crontab -l 2>/dev/null; echo "\$CRON_CMD") | crontab - 2>/dev/null
+    echo "Cron job added (auto-refresh every 10 min)"
+fi
+
+echo ""
+echo "Opening dashboard: \$DASHBOARD_URL"
+echo ""
+
+$OPEN_CMD "\$DASHBOARD_URL" >/dev/null 2>&1
+echo "Dashboard launcher finished."
+CPDBEOF
+    chmod +x "$BIN_DIR/cp-db"
+    echo -e "${GREEN}[OK] cp-db script updated${NC}"
     echo ""
 
     # 5. Update Superpowers (if installed)
