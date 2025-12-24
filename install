@@ -148,6 +148,7 @@ setup_shortcuts() {
         sed -i '' '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-db/d' "$SHELL_CONFIG" 2>/dev/null || true
     else
         # Linux & Windows (Git Bash has standard sed usually)
         sed -i '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
@@ -155,6 +156,12 @@ setup_shortcuts() {
         sed -i '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-db/d' "$SHELL_CONFIG" 2>/dev/null || true
+    fi
+
+    # Remove old cp-db from /usr/local/bin if exists (legacy location)
+    if [ -f "/usr/local/bin/cp-db" ]; then
+        rm -f "/usr/local/bin/cp-db" 2>/dev/null || sudo rm -f "/usr/local/bin/cp-db" 2>/dev/null || true
     fi
 
     # Add new aliases
@@ -165,6 +172,7 @@ setup_shortcuts() {
     echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install | bash -s -- -update\"" >> "$SHELL_CONFIG"
     echo "alias cp-stop=\"$HOME/.cli-proxy-api/scripts/stop.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-claude=\"$HOME/.cli-proxy-api/scripts/cp-claude.sh\"" >> "$SHELL_CONFIG"
+    echo "alias cp-db=\"$HOME/bin/cp-db\"" >> "$SHELL_CONFIG"
 
     echo -e "${GREEN}[OK] Shortcuts added.${NC}"
 }
@@ -748,8 +756,6 @@ EOF
         fi
     fi
 
-    # Add extra alias for cp-db since we installed it in bin folder, to be sure
-    echo "alias cp-db=\"$BIN_DIR/cp-db\"" >> "$SHELL_CONFIG"
     setup_shortcuts
 
     # Ask about optional Claude Statusline

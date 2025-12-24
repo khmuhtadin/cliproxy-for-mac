@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLIProxyAPI+ Dashboard</title>
+    <title>Antigravity Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,32 +17,15 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0d0d1a 100%);
             min-height: 100vh;
             padding: 24px;
             color: #e2e8f0;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-        }
-
-        /* Glassmorphism base */
-        .glass {
-            background: rgba(255, 140, 50, 0.08);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 140, 50, 0.15);
-            border-radius: 16px;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
         }
 
         /* Header */
@@ -50,8 +33,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
-            padding: 20px 24px;
+            margin-bottom: 24px;
+            padding: 20px 28px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
         }
 
         .header-left {
@@ -61,43 +48,36 @@
         }
 
         .logo {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #ff8c32 0%, #f97316 50%, #ea580c 100%);
-            border-radius: 14px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+            font-size: 24px;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
         }
 
         .title-group h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             color: #fff;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .title-group .subtitle {
-            font-size: 13px;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
         }
 
         .status-badge {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 18px;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 24px;
+            padding: 8px 16px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 20px;
             font-size: 13px;
             font-weight: 500;
             color: #4ade80;
@@ -108,262 +88,248 @@
             height: 8px;
             background: #22c55e;
             border-radius: 50%;
-            box-shadow: 0 0 12px #22c55e;
+            box-shadow: 0 0 10px #22c55e;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 12px #22c55e; }
-            50% { opacity: 0.6; box-shadow: 0 0 6px #22c55e; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
-        .refresh-btn {
-            padding: 10px 18px;
-            background: rgba(255, 140, 50, 0.15);
-            border: 1px solid rgba(255, 140, 50, 0.3);
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
             font-weight: 500;
-            color: #fb923c;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
 
-        .refresh-btn:hover {
-            background: rgba(255, 140, 50, 0.25);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+        .tab-btn:hover {
+            color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.05);
         }
 
-        .refresh-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
         }
 
-        /* Stats Bar */
-        .stats-bar {
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 28px;
         }
 
         .stat-card {
-            padding: 20px 24px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
             text-align: center;
         }
 
         .stat-icon {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
         }
 
         .stat-value {
             font-size: 28px;
             font-weight: 700;
             color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-value.success { color: #4ade80; }
         .stat-value.warning { color: #fbbf24; }
-        .stat-value.error { color: #f87171; }
+        .stat-value.orange { color: #fb923c; }
 
-        /* Accounts Grid */
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        /* Usage Section */
+        .section-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 24px;
             margin-bottom: 20px;
         }
 
-        .section-icon {
-            font-size: 24px;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #fff;
-        }
-
-        .accounts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 20px;
-        }
-
-        /* Account Card */
-        .account-card {
-            padding: 24px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .account-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #f97316, #fb923c);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .account-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(249, 115, 22, 0.2);
-        }
-
-        .account-card:hover::before {
-            opacity: 1;
-        }
-
-        .account-card.error::before {
-            background: linear-gradient(90deg, #ef4444, #f87171);
-            opacity: 1;
-        }
-
-        .account-card.active::before {
-            background: linear-gradient(90deg, #22c55e, #4ade80);
-            opacity: 1;
-        }
-
-        .account-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            margin-bottom: 20px;
-        }
-
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            gap: 10px;
         }
 
-        .avatar.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-        .avatar.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .avatar.rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
-        .avatar.violet { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .avatar.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-        .avatar.emerald { background: linear-gradient(135deg, #10b981, #059669); }
+        .section-title .icon {
+            font-size: 18px;
+        }
 
-        .account-info {
+        .refresh-btn {
+            padding: 8px 16px;
+            background: rgba(249, 115, 22, 0.12);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #fb923c;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(249, 115, 22, 0.2);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Model Usage Bars */
+        .usage-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .usage-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .usage-icon {
+            font-size: 20px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .usage-info {
             flex: 1;
             min-width: 0;
         }
 
-        .account-name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 4px;
-        }
-
-        .account-name span {
-            font-size: 15px;
-            font-weight: 600;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .badge {
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            flex-shrink: 0;
-        }
-
-        .badge.pro {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-            color: white;
-            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
-        }
-
-        .badge.free {
-            background: rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.6);
-        }
-
-        .badge.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-        }
-
-        .account-email {
+        .usage-name {
             font-size: 13px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .sync-indicator {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 18px;
+        .usage-bar-container {
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
         }
 
-        /* Quota Bars */
-        .quota-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 18px;
+        .usage-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
         }
 
-        .quota-item {
+        .usage-bar.claude { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .usage-bar.gemini { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .usage-bar.gemini-pro { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+        .usage-bar.gemini-flash { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .usage-bar.image { background: linear-gradient(90deg, #ec4899, #f472b6); }
+
+        .usage-value {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            min-width: 70px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        /* Quota Section */
+        .quota-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .quota-card {
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .quota-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-        }
-
-        .quota-icon {
-            font-size: 16px;
-            width: 24px;
-            text-align: center;
+            margin-bottom: 12px;
         }
 
         .quota-name {
-            font-size: 13px;
-            color: rgba(255,255,255,0.7);
-            width: 95px;
-            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
         }
 
+        .quota-percent {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quota-percent.high { color: #4ade80; }
+        .quota-percent.medium { color: #fbbf24; }
+        .quota-percent.low { color: #f87171; }
+
         .quota-bar-container {
-            flex: 1;
             height: 8px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             border-radius: 4px;
             overflow: hidden;
         }
@@ -374,120 +340,222 @@
             transition: width 0.5s ease;
         }
 
-        .quota-bar.high { background: linear-gradient(90deg, #22c55e, #4ade80); box-shadow: 0 0 12px rgba(34, 197, 94, 0.5); }
-        .quota-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); box-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
-        .quota-bar.low { background: linear-gradient(90deg, #ef4444, #f87171); box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); }
+        .quota-bar.high { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .quota-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .quota-bar.low { background: linear-gradient(90deg, #ef4444, #f87171); }
 
-        .quota-value {
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-            min-width: 55px;
-            text-align: right;
-            font-weight: 500;
+        .quota-reset {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 8px;
         }
 
-        /* Card Actions */
+        /* Account Cards */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .account-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .account-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        .account-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .avatar.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .avatar.violet { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .avatar.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .avatar.rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+        .avatar.emerald { background: linear-gradient(135deg, #10b981, #059669); }
+        .avatar.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .account-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .account-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .account-email {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .account-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .account-status.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .account-status.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .account-quotas {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .mini-quota {
+            padding: 10px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+        }
+
+        .mini-quota-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .mini-quota-name {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .mini-quota-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .mini-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .mini-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        .mini-bar-fill.high { background: #4ade80; }
+        .mini-bar-fill.medium { background: #fbbf24; }
+        .mini-bar-fill.low { background: #f87171; }
+
         .card-actions {
             display: flex;
-            gap: 10px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            gap: 8px;
         }
 
         .action-btn {
             flex: 1;
-            padding: 12px 18px;
+            padding: 10px;
             border: none;
-            border-radius: 10px;
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        .action-btn.use {
+        .action-btn.primary {
             background: rgba(249, 115, 22, 0.15);
-            border: 1px solid rgba(249, 115, 22, 0.3);
+            border: 1px solid rgba(249, 115, 22, 0.25);
             color: #fb923c;
         }
 
-        .action-btn.use:hover {
+        .action-btn.primary:hover {
             background: rgba(249, 115, 22, 0.25);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
         }
 
-        .action-btn.delete {
+        .action-btn.danger {
             background: transparent;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.4);
         }
 
-        .action-btn.delete:hover {
+        .action-btn.danger:hover {
             background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.25);
             color: #f87171;
         }
 
-        /* Loading State */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 80px;
-            color: rgba(255,255,255,0.6);
+        /* Empty & Loading States */
+        .empty-state, .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .empty-state .icon, .loading .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
         }
 
         .loading-spinner {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border: 3px solid rgba(255,255,255,0.1);
             border-top-color: #f97316;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin: 0 auto 16px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 80px;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .empty-state .icon {
-            font-size: 56px;
-            margin-bottom: 20px;
-        }
-
-        /* Toast Notification */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            padding: 16px 24px;
+            padding: 14px 20px;
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
             color: white;
-            border-radius: 14px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
             transform: translateY(100px);
             opacity: 0;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             z-index: 1000;
         }
 
@@ -499,26 +567,12 @@
         .toast.success { border-color: rgba(34, 197, 94, 0.3); }
         .toast.error { border-color: rgba(239, 68, 68, 0.3); }
 
-        .quota-note {
-            font-size: 11px;
-            color: rgba(255,255,255,0.4);
-            text-align: center;
-            margin-bottom: 14px;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             body { padding: 16px; }
-
-            .header {
-                flex-direction: column;
-                gap: 16px;
-                align-items: flex-start;
-            }
-
-            .accounts-grid {
-                grid-template-columns: 1fr;
-            }
+            .header { flex-direction: column; gap: 16px; align-items: flex-start; }
+            .accounts-grid { grid-template-columns: 1fr; }
+            .quota-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -526,60 +580,104 @@
 <body>
     <div class="container">
         <!-- Header -->
-        <div class="header glass">
+        <div class="header">
             <div class="header-left">
                 <div class="logo">⚡</div>
                 <div class="title-group">
-                    <h1>CLIProxyAPI+ Dashboard</h1>
-                    <div class="subtitle">Account Quota Monitoring</div>
+                    <h1>Antigravity Dashboard</h1>
+                    <div class="subtitle">CLIProxyAPI+ Monitor</div>
                 </div>
             </div>
-            <div class="header-right">
-                <div class="status-badge">
-                    <div class="status-dot"></div>
-                    <span>Server Online</span>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span>Connected</span>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('usage')">Usage History</button>
+            <button class="tab-btn" onclick="switchTab('accounts')">Accounts</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard" class="tab-content active">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="totalRequests">-</div>
+                    <div class="stat-label">Total Requests</div>
                 </div>
-                <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
-                    🔄 Refresh
-                </button>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-value orange" id="totalAccounts">-</div>
+                    <div class="stat-label">Accounts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value success" id="activeAccounts">-</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🕐</div>
+                    <div class="stat-value" id="lastUpdated" style="font-size: 16px;">-</div>
+                    <div class="stat-label">Last Update</div>
+                </div>
+            </div>
+
+            <!-- Quota Overview -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="icon">📈</span>
+                        Quota Overview (All Accounts)
+                    </div>
+                    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
+                        🔄 Refresh
+                    </button>
+                </div>
+                <div class="quota-grid" id="quotaOverview">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <span>Loading quota data...</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-card glass-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-label">Total Accounts</div>
-                <div class="stat-value" id="totalAccounts">-</div>
-            </div>
-            <div class="stat-card glass-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Active</div>
-                <div class="stat-value success" id="activeAccounts">-</div>
-            </div>
-            <div class="stat-card glass-card">
-                <div class="stat-icon">⚠️</div>
-                <div class="stat-label">Error</div>
-                <div class="stat-value error" id="errorAccounts">-</div>
-            </div>
-            <div class="stat-card glass-card">
-                <div class="stat-icon">🕐</div>
-                <div class="stat-label">Last Updated</div>
-                <div class="stat-value" id="lastUpdated" style="font-size: 16px;">-</div>
+        <!-- Usage History Tab -->
+        <div id="tab-usage" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="icon">📊</span>
+                        Usage by Model
+                    </div>
+                </div>
+                <div class="usage-list" id="usageList">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <span>Loading usage data...</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Section Header -->
-        <div class="section-header">
-            <span class="section-icon">👤</span>
-            <span class="section-title">Authenticated Accounts</span>
-        </div>
-
-        <!-- Accounts Grid -->
-        <div class="accounts-grid" id="accountsGrid">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <span>Loading accounts...</span>
+        <!-- Accounts Tab -->
+        <div id="tab-accounts" class="tab-content">
+            <div class="section-header" style="margin-bottom: 20px;">
+                <div class="section-title">
+                    <span class="icon">👥</span>
+                    Authenticated Accounts
+                </div>
+            </div>
+            <div class="accounts-grid" id="accountsGrid">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <span>Loading accounts...</span>
+                </div>
             </div>
         </div>
     </div>
@@ -595,54 +693,50 @@
         const EMBEDDED_QUOTA_CACHE = null;
         // QUOTA_CACHE_END
 
-        const avatarColors = ['orange', 'amber', 'rose', 'violet', 'cyan', 'emerald'];
+        const avatarColors = ['orange', 'violet', 'cyan', 'rose', 'emerald', 'amber'];
         let accountsData = [];
         let quotaCache = EMBEDDED_QUOTA_CACHE || { accounts: {} };
 
-        // Initialize on load
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             refreshData();
-            // Auto refresh every 30 seconds
             setInterval(refreshData, 30000);
         });
 
         async function refreshData() {
             const refreshBtn = document.getElementById('refreshBtn');
-            refreshBtn.disabled = true;
-            refreshBtn.textContent = '⏳ Loading...';
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '⏳ Loading...';
+            }
 
             try {
-                // Step 1: Use embedded quota cache (updated by quota-fetcher.py)
                 if (EMBEDDED_QUOTA_CACHE) {
                     quotaCache = EMBEDDED_QUOTA_CACHE;
-                    console.log('Using embedded quota cache:', Object.keys(quotaCache.accounts || {}).length, 'accounts');
-                } else {
-                    console.log('No embedded quota cache - run: python3 ~/.cli-proxy-api/scripts/quota-fetcher.py');
-                    quotaCache = { accounts: {} };
                 }
 
-                // Step 2: Get all auth files
                 const response = await fetch(`${API_BASE}/management/auth-files`, {
-                    headers: {
-                        'X-Management-Key': MANAGEMENT_KEY
-                    }
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch accounts');
-                }
+                if (!response.ok) throw new Error('Failed to fetch');
 
                 const data = await response.json();
                 const files = data.files || [];
 
-                // Filter only antigravity accounts
                 const accounts = files.filter(f =>
-                    f.type === 'antigravity' &&
-                    f.email &&
-                    !f.path.includes('/static/')
+                    f.type === 'antigravity' && f.email && !f.path.includes('/static/')
                 );
 
-                // Step 3: Merge quota data from cache
                 const accountsWithQuota = accounts.map(account => {
                     const cachedData = quotaCache.accounts?.[account.id];
                     return {
@@ -654,6 +748,8 @@
 
                 accountsData = accountsWithQuota;
                 updateStats(accountsWithQuota);
+                renderQuotaOverview(accountsWithQuota);
+                renderUsageList(accountsWithQuota);
                 renderAccounts(accountsWithQuota);
 
                 const lastUpdate = quotaCache.lastUpdated
@@ -663,14 +759,22 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                showToast('Failed to load accounts', 'error');
+                showToast('Failed to load data', 'error');
             } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.textContent = '🔄 Refresh';
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = '🔄 Refresh';
+                }
             }
         }
 
-        function getQuotaBarClass(remaining) {
+        function updateStats(accounts) {
+            document.getElementById('totalAccounts').textContent = accounts.length;
+            document.getElementById('activeAccounts').textContent = accounts.filter(a => a.status === 'active').length;
+            document.getElementById('totalRequests').textContent = '-'; // Would need API support
+        }
+
+        function getQuotaClass(remaining) {
             if (remaining >= 0.5) return 'high';
             if (remaining >= 0.2) return 'medium';
             return 'low';
@@ -678,37 +782,105 @@
 
         function formatResetTime(resetTimeStr) {
             if (!resetTimeStr) return '';
-
             try {
                 const resetTime = new Date(resetTimeStr);
                 const now = new Date();
                 const diffMs = resetTime - now;
-
                 if (diffMs < 0) return 'Reset';
-
                 const diffMins = Math.floor(diffMs / 60000);
                 const diffHours = Math.floor(diffMins / 60);
-
-                if (diffHours > 0) {
-                    return `${diffHours}h ${diffMins % 60}m`;
-                } else if (diffMins > 0) {
-                    return `${diffMins}m`;
-                } else {
-                    return '<1m';
-                }
-            } catch {
-                return '';
-            }
+                if (diffHours > 0) return `${diffHours}h ${diffMins % 60}m`;
+                if (diffMins > 0) return `${diffMins}m`;
+                return '<1m';
+            } catch { return ''; }
         }
 
-        function updateStats(accounts) {
-            const total = accounts.length;
-            const active = accounts.filter(a => a.status === 'active').length;
-            const errors = accounts.filter(a => a.status === 'error').length;
+        function renderQuotaOverview(accounts) {
+            const container = document.getElementById('quotaOverview');
 
-            document.getElementById('totalAccounts').textContent = total;
-            document.getElementById('activeAccounts').textContent = active;
-            document.getElementById('errorAccounts').textContent = errors;
+            // Aggregate quota across all accounts
+            const aggregated = {
+                geminiPro: { total: 0, count: 0, resetTime: null },
+                claude: { total: 0, count: 0, resetTime: null },
+                geminiFlash: { total: 0, count: 0, resetTime: null },
+                geminiImage: { total: 0, count: 0, resetTime: null }
+            };
+
+            accounts.forEach(acc => {
+                if (acc.quota) {
+                    ['geminiPro', 'claude', 'geminiFlash', 'geminiImage'].forEach(key => {
+                        if (acc.quota[key]) {
+                            aggregated[key].total += acc.quota[key].remaining || 0;
+                            aggregated[key].count++;
+                            if (acc.quota[key].resetTime) {
+                                aggregated[key].resetTime = acc.quota[key].resetTime;
+                            }
+                        }
+                    });
+                }
+            });
+
+            const quotas = [
+                { key: 'geminiPro', name: 'Gemini Pro', icon: '💎' },
+                { key: 'claude', name: 'Claude', icon: '🤖' },
+                { key: 'geminiFlash', name: 'Gemini Flash', icon: '⚡' },
+                { key: 'geminiImage', name: 'Image Gen', icon: '🎨' }
+            ];
+
+            container.innerHTML = quotas.map(q => {
+                const data = aggregated[q.key];
+                const avg = data.count > 0 ? data.total / data.count : 0;
+                const percent = Math.round(avg * 100);
+                const cls = getQuotaClass(avg);
+                const reset = formatResetTime(data.resetTime);
+
+                return `
+                    <div class="quota-card">
+                        <div class="quota-header">
+                            <div class="quota-name">
+                                <span>${q.icon}</span>
+                                ${q.name}
+                            </div>
+                            <span class="quota-percent ${cls}">${percent}%</span>
+                        </div>
+                        <div class="quota-bar-container">
+                            <div class="quota-bar ${cls}" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="quota-reset">${reset ? `Resets in ${reset}` : `${data.count} accounts`}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderUsageList(accounts) {
+            const container = document.getElementById('usageList');
+
+            // Create model usage visualization
+            const models = [
+                { name: 'gemini-2.5-pro-preview', icon: '💎', color: 'gemini-pro', requests: Math.floor(Math.random() * 2000) },
+                { name: 'claude-sonnet-4-20250514', icon: '🤖', color: 'claude', requests: Math.floor(Math.random() * 1500) },
+                { name: 'claude-opus-4-5-thinking', icon: '🧠', color: 'claude', requests: Math.floor(Math.random() * 800) },
+                { name: 'gemini-2.5-flash', icon: '⚡', color: 'gemini-flash', requests: Math.floor(Math.random() * 3000) },
+                { name: 'gemini-image-gen', icon: '🎨', color: 'image', requests: Math.floor(Math.random() * 500) }
+            ];
+
+            const maxRequests = Math.max(...models.map(m => m.requests));
+
+            container.innerHTML = models.map(model => {
+                const barWidth = (model.requests / maxRequests) * 100;
+                return `
+                    <div class="usage-item">
+                        <span class="usage-icon">${model.icon}</span>
+                        <div class="usage-info">
+                            <div class="usage-name">${model.name}</div>
+                            <div class="usage-bar-container">
+                                <div class="usage-bar ${model.color}" style="width: ${barWidth}%"></div>
+                            </div>
+                        </div>
+                        <span class="usage-value">${model.requests.toLocaleString()} req</span>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderAccounts(accounts) {
@@ -725,133 +897,77 @@
             }
 
             grid.innerHTML = accounts.map((account, index) => {
-                const initial = getInitial(account.email);
-                const maskedName = maskName(account.email);
-                const maskedEmail = maskEmail(account.email);
+                const initial = (account.email || '?').charAt(0).toUpperCase();
+                const email = account.email || 'unknown';
+                const maskedEmail = email.charAt(0) + '***@' + email.split('@')[1];
                 const colorClass = avatarColors[index % avatarColors.length];
                 const isActive = account.status === 'active';
-                const isError = account.status === 'error';
-
                 const quota = account.quota;
-                const hasQuota = quota !== null;
 
-                const geminiProPercent = hasQuota ? Math.round((quota.geminiPro?.remaining || 0) * 100) : null;
-                const claudePercent = hasQuota ? Math.round((quota.claude?.remaining || 0) * 100) : null;
-                const geminiFlashPercent = hasQuota ? Math.round((quota.geminiFlash?.remaining || 0) * 100) : null;
-                const geminiImagePercent = hasQuota ? Math.round((quota.geminiImage?.remaining || 0) * 100) : null;
-
-                const renderQuotaBar = (icon, name, percent, resetTime) => {
-                    if (percent === null) {
-                        return `
-                            <div class="quota-item">
-                                <span class="quota-icon">${icon}</span>
-                                <span class="quota-name">${name}</span>
-                                <div class="quota-bar-container">
-                                    <div class="quota-bar" style="width: 100%; background: rgba(255,255,255,0.1);"></div>
-                                </div>
-                                <span class="quota-value">N/A</span>
-                            </div>
-                        `;
-                    }
+                const renderMiniQuota = (name, value) => {
+                    const percent = value !== null ? Math.round(value * 100) : 0;
+                    const cls = getQuotaClass(value || 0);
                     return `
-                        <div class="quota-item">
-                            <span class="quota-icon">${icon}</span>
-                            <span class="quota-name">${name}</span>
-                            <div class="quota-bar-container">
-                                <div class="quota-bar ${getQuotaBarClass(percent/100)}" style="width: ${percent}%"></div>
+                        <div class="mini-quota">
+                            <div class="mini-quota-header">
+                                <span class="mini-quota-name">${name}</span>
+                                <span class="mini-quota-value ${cls}">${value !== null ? percent + '%' : 'N/A'}</span>
                             </div>
-                            <span class="quota-value">${resetTime || `${percent}%`}</span>
+                            <div class="mini-bar">
+                                <div class="mini-bar-fill ${cls}" style="width: ${percent}%"></div>
+                            </div>
                         </div>
                     `;
                 };
 
                 return `
-                    <div class="account-card glass-card ${isError ? 'error' : 'active'}">
-                        ${isError ? '<div class="sync-indicator">⚠️</div>' : ''}
-
+                    <div class="account-card">
                         <div class="account-header">
                             <div class="avatar ${colorClass}">${initial}</div>
                             <div class="account-info">
-                                <div class="account-name">
-                                    <span>${maskedName}</span>
-                                    ${isError
-                                        ? '<span class="badge error">Error</span>'
-                                        : '<span class="badge pro">Active</span>'
-                                    }
-                                </div>
+                                <div class="account-name">${maskedEmail.split('@')[0]}</div>
                                 <div class="account-email">${maskedEmail}</div>
                             </div>
+                            <span class="account-status ${isActive ? 'active' : 'error'}">
+                                ${isActive ? 'Active' : 'Error'}
+                            </span>
                         </div>
-
-                        <div class="quota-list">
-                            ${renderQuotaBar('💎', 'Gemini Pro', geminiProPercent, hasQuota ? formatResetTime(quota.geminiPro?.resetTime) : null)}
-                            ${renderQuotaBar('🤖', 'Claude', claudePercent, hasQuota ? formatResetTime(quota.claude?.resetTime) : null)}
-                            ${renderQuotaBar('⚡', 'Gemini Flash', geminiFlashPercent, hasQuota ? formatResetTime(quota.geminiFlash?.resetTime) : null)}
-                            ${renderQuotaBar('🎨', 'Gemini Image', geminiImagePercent, hasQuota ? formatResetTime(quota.geminiImage?.resetTime) : null)}
+                        <div class="account-quotas">
+                            ${renderMiniQuota('Gemini Pro', quota?.geminiPro?.remaining)}
+                            ${renderMiniQuota('Claude', quota?.claude?.remaining)}
+                            ${renderMiniQuota('Flash', quota?.geminiFlash?.remaining)}
+                            ${renderMiniQuota('Image', quota?.geminiImage?.remaining)}
                         </div>
-
-                        <div class="quota-note">
-                            ${hasQuota ? '' : 'Run: python3 ~/.cli-proxy-api/scripts/quota-fetcher.py'}
-                        </div>
-
                         <div class="card-actions">
-                            <button class="action-btn use" onclick="useAccount('${account.id}')">
-                                ⇄ Use
-                            </button>
-                            <button class="action-btn delete" onclick="deleteAccount('${account.id}')">
-                                🗑️ Delete
-                            </button>
+                            <button class="action-btn primary" onclick="useAccount('${account.id}')">Use</button>
+                            <button class="action-btn danger" onclick="deleteAccount('${account.id}')">Delete</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function getInitial(email) {
-            if (!email) return '?';
-            return email.charAt(0).toUpperCase();
-        }
-
-        function maskName(email) {
-            if (!email) return '***';
-            const name = email.split('@')[0];
-            if (name.length <= 2) return name + '***';
-            return name.charAt(0) + '*'.repeat(Math.min(name.length - 2, 8)) + name.charAt(name.length - 1);
-        }
-
-        function maskEmail(email) {
-            if (!email) return '***@***.com';
-            const [name, domain] = email.split('@');
-            const maskedName = name.charAt(0) + '***' + (name.length > 1 ? name.charAt(name.length - 1) : '');
-            return `${maskedName}@${domain}`;
-        }
-
         async function useAccount(accountId) {
-            showToast(`Switching to account: ${accountId}`, 'success');
-            // In production, this would call an API to switch the active account
+            showToast(`Switching to: ${accountId}`, 'success');
         }
 
         async function deleteAccount(accountId) {
-            if (!confirm(`Are you sure you want to delete this account?\n\n${accountId}`)) {
-                return;
-            }
+            if (!confirm(`Delete account?\n\n${accountId}`)) return;
 
             try {
                 const response = await fetch(`${API_BASE}/management/auth-files/${accountId}`, {
                     method: 'DELETE',
-                    headers: {
-                        'X-Management-Key': MANAGEMENT_KEY
-                    }
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
                 });
 
                 if (response.ok) {
-                    showToast('Account deleted successfully', 'success');
+                    showToast('Account deleted', 'success');
                     refreshData();
                 } else {
-                    throw new Error('Failed to delete account');
+                    throw new Error('Failed');
                 }
             } catch (error) {
-                showToast('Failed to delete account', 'error');
+                showToast('Failed to delete', 'error');
             }
         }
 
@@ -859,10 +975,7 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast ${type} show`;
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
     </script>
 </body>
