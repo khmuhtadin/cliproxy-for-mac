@@ -1,6 +1,6 @@
 # CLIProxy Installer for macOS, Linux & Windows
 
-Automated installer for **CLIProxyAPIPlus**. This script simplifies the process of setting up custom AI models (Claude, Gemini, etc.) for use in Droid, Cursor, Claude Code, or other AI-powered editors.
+Automated installer for **CLIProxyAPIPlus**. This script simplifies the process of setting up custom AI models (Claude, Gemini, etc.) for use in Droid, Cursor, Claude Code, OpenCode, or other AI-powered editors.
 
 ## Features
 
@@ -8,7 +8,7 @@ Automated installer for **CLIProxyAPIPlus**. This script simplifies the process 
 * **Auto-Detect OS**: Automatically detects your platform and optimizes installation.
 * **Smart Config Merge**: Intelligently adds new models to your `config.json` without overwriting custom configurations.
 * **Auto-Update**: Built-in self-updater keeps both the installer and the core CLIProxy binary up to date.
-* **Helper Scripts**: Easy aliases (`cp-login`, `cp-start`, `cp-claude`, `cp-db`) for your terminal.
+* **Helper Scripts**: Easy aliases (`cp-login`, `cp-start`, `cp-claude`, `cp-opencode`, `cp-db`) for your terminal.
 * **Dashboard**: Real-time quota monitoring with tab-based interface.
 * **Quota Fetcher**: Auto-refresh quota data every 10 minutes via cron job.
 
@@ -29,6 +29,7 @@ Copy and run this single command in your terminal (**macOS Terminal**, **Linux B
 During installation, you can optionally install:
 * **[Claude Statusline](https://github.com/galpratama/claude-statusline)**: Displays AI model info, costs, and git status in Claude Code.
 * **[Superpowers](https://github.com/obra/superpowers)**: Advanced workflow skills for Claude Code (brainstorming, planning, TDD).
+* **[OpenCode](https://github.com/sst/opencode)**: Terminal AI coding agent by SST with cost tracking and MCP support.
 
 ## Dashboard
 
@@ -87,11 +88,18 @@ cp-stop
 cp-claude
 ```
 
-### 5. Update Everything
+### 5. OpenCode Integration
+```bash
+# Launch OpenCode with CLIProxy (auto-installs if needed)
+cp-opencode
+```
+OpenCode config is stored at `~/.config/opencode/opencode.json`
+
+### 6. Update Everything
 ```bash
 cp-update
 ```
-Updates: Claude Code, CLIProxy Core, Statusline, Dashboard, Superpowers.
+Updates: Claude Code, CLIProxy Core, Statusline, Dashboard, Superpowers, OpenCode.
 
 ## Shortcuts Reference
 
@@ -103,13 +111,14 @@ Updates: Claude Code, CLIProxy Core, Statusline, Dashboard, Superpowers.
 | `cp-update` | Update all components |
 | `cp-db` | Open Antigravity Dashboard |
 | `cp-claude` | Run Claude Code with proxy |
+| `cp-opencode` | Run OpenCode with proxy |
 
 ## File Locations
 
-| Platform | Binary | Config | Scripts | Dashboard |
-|----------|--------|--------|---------|-----------|
-| **macOS/Linux** | `~/bin/cliproxyapi-plus` | `~/.cli-proxy-api/config.yaml` | `~/.cli-proxy-api/scripts/` | `~/.cli-proxy-api/static/` |
-| **Windows** | `~/bin/cliproxyapi-plus.exe` | `~/.cli-proxy-api/config.yaml` | `~/.cli-proxy-api/scripts/` | `~/.cli-proxy-api/static/` |
+| Platform | Binary | Config | Scripts | Dashboard | OpenCode Config |
+|----------|--------|--------|---------|-----------|-----------------|
+| **macOS/Linux** | `~/bin/cliproxyapi-plus` | `~/.cli-proxy-api/config.yaml` | `~/.cli-proxy-api/scripts/` | `~/.cli-proxy-api/static/` | `~/.config/opencode/opencode.json` |
+| **Windows** | `~/bin/cliproxyapi-plus.exe` | `~/.cli-proxy-api/config.yaml` | `~/.cli-proxy-api/scripts/` | `~/.cli-proxy-api/static/` | `~/.config/opencode/opencode.json` |
 
 ## Troubleshooting
 
@@ -137,3 +146,4 @@ cp-login
 * Core app by [router-for-me/CLIProxyAPIPlus](https://github.com/router-for-me/CLIProxyAPIPlus).
 * Claude Statusline by [galpratama/claude-statusline](https://github.com/galpratama/claude-statusline).
 * Superpowers by [Jesse Vincent (obra)](https://github.com/obra/superpowers).
+* OpenCode by [SST](https://github.com/sst/opencode).

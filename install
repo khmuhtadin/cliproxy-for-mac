@@ -149,6 +149,7 @@ setup_shortcuts() {
         sed -i '' '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-db/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-opencode/d' "$SHELL_CONFIG" 2>/dev/null || true
     else
         # Linux & Windows (Git Bash has standard sed usually)
         sed -i '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
@@ -157,6 +158,7 @@ setup_shortcuts() {
         sed -i '/alias cp-stop/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-db/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-opencode/d' "$SHELL_CONFIG" 2>/dev/null || true
     fi
 
     # Remove old cp-db from /usr/local/bin if exists (legacy location)
@@ -173,6 +175,7 @@ setup_shortcuts() {
     echo "alias cp-stop=\"$HOME/.cli-proxy-api/scripts/stop.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-claude=\"$HOME/.cli-proxy-api/scripts/cp-claude.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-db=\"$HOME/bin/cp-db\"" >> "$SHELL_CONFIG"
+    echo "alias cp-opencode=\"$HOME/.cli-proxy-api/scripts/cp-opencode.sh\"" >> "$SHELL_CONFIG"
 
     echo -e "${GREEN}[OK] Shortcuts added.${NC}"
 }
@@ -279,6 +282,140 @@ EOF
     
     echo -e "${GREEN}[OK] Claude Statusline installed!${NC}"
     echo "    Restart Claude Code to see the statusline."
+}
+
+install_opencode() {
+    echo -e "${YELLOW}>>> Installing OpenCode...${NC}"
+
+    # Check if npm or bun is available
+    PKG_MANAGER=""
+    if command -v bun &> /dev/null; then
+        PKG_MANAGER="bun"
+    elif command -v npm &> /dev/null; then
+        PKG_MANAGER="npm"
+    else
+        echo -e "${RED}[Error] Neither npm nor bun found.${NC}"
+        echo "Please install Node.js (npm) or Bun first:"
+        echo "  - Node.js: https://nodejs.org/"
+        echo "  - Bun: https://bun.sh/"
+        echo ""
+        echo "Or use the official install script:"
+        echo "  curl -fsSL https://opencode.ai/install | bash"
+        return 1
+    fi
+
+    echo "Using $PKG_MANAGER to install OpenCode..."
+
+    if [ "$PKG_MANAGER" == "bun" ]; then
+        bun install -g opencode-ai@latest
+    else
+        npm install -g opencode-ai@latest
+    fi
+
+    if ! command -v opencode &> /dev/null; then
+        echo -e "${RED}[Error] OpenCode installation failed.${NC}"
+        echo "Try the official install script:"
+        echo "  curl -fsSL https://opencode.ai/install | bash"
+        return 1
+    fi
+
+    echo -e "${GREEN}[OK] OpenCode installed successfully${NC}"
+
+    # Configure OpenCode for CLIProxy
+    configure_opencode
+
+    echo -e "${GREEN}[OK] OpenCode is ready!${NC}"
+    echo "    Run: cp-opencode"
+}
+
+configure_opencode() {
+    echo -e "${YELLOW}Configuring OpenCode for CLIProxy...${NC}"
+
+    # OpenCode config location: ~/.config/opencode/opencode.json
+    OPENCODE_CONFIG_DIR="$HOME/.config/opencode"
+    OPENCODE_CONFIG="$OPENCODE_CONFIG_DIR/opencode.json"
+
+    mkdir -p "$OPENCODE_CONFIG_DIR"
+
+    # Create OpenCode configuration with CLIProxy custom provider
+    cat > "$OPENCODE_CONFIG" <<'OPENCODEEOF'
+{
+  "provider": {
+    "cliproxy": {
+      "name": "CLIProxy",
+      "type": "openai",
+      "baseURL": "http://localhost:8317/v1",
+      "envKey": "CLIPROXY_API_KEY",
+      "models": {
+        "gemini-claude-opus-4-5-thinking": {
+          "name": "Claude Opus 4.5 Thinking [Antigravity]",
+          "contextWindow": 200000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        },
+        "gemini-claude-sonnet-4-5": {
+          "name": "Claude Sonnet 4.5 [Antigravity]",
+          "contextWindow": 200000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        },
+        "gemini-claude-sonnet-4-5-thinking": {
+          "name": "Claude Sonnet 4.5 Thinking [Antigravity]",
+          "contextWindow": 200000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        },
+        "gemini-3-pro-preview": {
+          "name": "Gemini 3 Pro [Antigravity]",
+          "contextWindow": 1000000,
+          "maxOutputTokens": 65536,
+          "supportsStreaming": true
+        },
+        "gemini-2.5-pro": {
+          "name": "Gemini 2.5 Pro [Gemini]",
+          "contextWindow": 1000000,
+          "maxOutputTokens": 65536,
+          "supportsStreaming": true
+        },
+        "claude-opus-4.5": {
+          "name": "Claude Opus 4.5 [Copilot]",
+          "contextWindow": 200000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        },
+        "gpt-5-mini": {
+          "name": "GPT-5 Mini [Copilot]",
+          "contextWindow": 128000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        }
+      }
+    }
+  },
+  "model": {
+    "big": "cliproxy:gemini-claude-opus-4-5-thinking",
+    "small": "cliproxy:gemini-claude-sonnet-4-5"
+  }
+}
+OPENCODEEOF
+
+    # Set the API key environment variable
+    SHELL_CONFIG="$HOME/.zshrc"
+    if [ "$SHELL" == "/bin/bash" ]; then
+        SHELL_CONFIG="$HOME/.bashrc"
+    fi
+
+    # Add CLIPROXY_API_KEY if not exists
+    if ! grep -q "CLIPROXY_API_KEY" "$SHELL_CONFIG" 2>/dev/null; then
+        echo "" >> "$SHELL_CONFIG"
+        echo "# CLIProxy API Key for OpenCode" >> "$SHELL_CONFIG"
+        echo "export CLIPROXY_API_KEY=\"sk-dummy\"" >> "$SHELL_CONFIG"
+    fi
+
+    echo -e "${GREEN}[OK] OpenCode configured at $OPENCODE_CONFIG${NC}"
+    echo "    Models configured:"
+    echo "      - Big: gemini-claude-opus-4-5-thinking (via CLIProxy)"
+    echo "      - Small: gemini-claude-sonnet-4-5 (via CLIProxy)"
 }
 
 install_superpowers() {
@@ -696,6 +833,128 @@ fi
 EOF
     chmod +x "$SCRIPTS_DIR/cp-claude.sh"
 
+    # CP-OpenCode Script (Auto-Start + Config)
+    cat > "$SCRIPTS_DIR/cp-opencode.sh" <<'EOF'
+#!/bin/bash
+
+# Configuration
+PROXY_URL="http://localhost:8317"
+PORT=8317
+OPENCODE_CONFIG_DIR="$HOME/.config/opencode"
+OPENCODE_CONFIG="$OPENCODE_CONFIG_DIR/opencode.json"
+
+# Export API key for CLIProxy custom provider
+export CLIPROXY_API_KEY="sk-dummy"
+
+# Function to check if server is running
+check_server() {
+    lsof -i :$PORT -sTCP:LISTEN -t >/dev/null 2>&1
+    return $?
+}
+
+# Auto-start proxy server if not running
+if ! check_server; then
+    echo "CLIProxy server not running on port $PORT. Auto-starting..."
+
+    CP_START_CMD=""
+    if command -v cp-start >/dev/null 2>&1; then
+        CP_START_CMD="cp-start"
+    elif [ -x "$HOME/.cli-proxy-api/scripts/start.sh" ]; then
+        CP_START_CMD="$HOME/.cli-proxy-api/scripts/start.sh"
+    fi
+
+    if [ -n "$CP_START_CMD" ]; then
+        "$CP_START_CMD" >/dev/null 2>&1 &
+        echo "Waiting for server..."
+
+        for i in {1..10}; do
+            sleep 1
+            if check_server; then
+                echo "Server started."
+                break
+            fi
+            if [ $i -eq 10 ]; then
+                echo "Failed to auto-start server."
+                exit 1
+            fi
+        done
+        sleep 1
+    else
+        echo "cp-start command not found. Cannot auto-start."
+        exit 1
+    fi
+fi
+
+# Ensure OpenCode config exists with CLIProxy provider
+if [ ! -f "$OPENCODE_CONFIG" ]; then
+    echo "Creating OpenCode configuration..."
+    mkdir -p "$OPENCODE_CONFIG_DIR"
+    cat > "$OPENCODE_CONFIG" <<'CONFIGEOF'
+{
+  "provider": {
+    "cliproxy": {
+      "name": "CLIProxy",
+      "type": "openai",
+      "baseURL": "http://localhost:8317/v1",
+      "envKey": "CLIPROXY_API_KEY",
+      "models": {
+        "gemini-claude-opus-4-5-thinking": {
+          "name": "Claude Opus 4.5 Thinking [Antigravity]",
+          "contextWindow": 200000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        },
+        "gemini-claude-sonnet-4-5": {
+          "name": "Claude Sonnet 4.5 [Antigravity]",
+          "contextWindow": 200000,
+          "maxOutputTokens": 16384,
+          "supportsStreaming": true
+        },
+        "gemini-3-pro-preview": {
+          "name": "Gemini 3 Pro [Antigravity]",
+          "contextWindow": 1000000,
+          "maxOutputTokens": 65536,
+          "supportsStreaming": true
+        }
+      }
+    }
+  },
+  "model": {
+    "big": "cliproxy:gemini-claude-opus-4-5-thinking",
+    "small": "cliproxy:gemini-claude-sonnet-4-5"
+  }
+}
+CONFIGEOF
+    echo "OpenCode config created at $OPENCODE_CONFIG"
+fi
+
+# Check if OpenCode is installed
+if ! command -v opencode >/dev/null 2>&1; then
+    echo "OpenCode not found. Installing..."
+
+    if command -v bun >/dev/null 2>&1; then
+        bun install -g opencode-ai@latest
+    elif command -v npm >/dev/null 2>&1; then
+        npm install -g opencode-ai@latest
+    else
+        echo "Error: Neither npm nor bun found."
+        echo "Please install Node.js (npm) or Bun first."
+        echo "Or try: curl -fsSL https://opencode.ai/install | bash"
+        exit 1
+    fi
+fi
+
+echo ""
+echo "Launching OpenCode with CLIProxy..."
+echo "  Proxy: $PROXY_URL"
+echo "  Config: $OPENCODE_CONFIG"
+echo ""
+
+# Pass any arguments to opencode
+exec opencode "$@"
+EOF
+    chmod +x "$SCRIPTS_DIR/cp-opencode.sh"
+
     # Droid Config Injection
     DROID_FILE="$HOME/.factory/config.json"
     mkdir -p "$(dirname "$DROID_FILE")"
@@ -791,18 +1050,35 @@ EOF
         if [[ "$install_superpowers_choice" =~ ^[Yy]$ ]]; then
             install_superpowers
         fi
+
+        # Ask about optional OpenCode
+        echo ""
+        echo -e "${YELLOW}========================================${NC}"
+        echo -e "${YELLOW}   Optional: OpenCode (SST)${NC}"
+        echo -e "${YELLOW}========================================${NC}"
+        echo "OpenCode is a terminal AI coding agent by SST with:"
+        echo "  - Built-in cost tracking"
+        echo "  - MCP server support"
+        echo "  - Multi-provider support (via CLIProxy)"
+        echo ""
+        read -p "Install OpenCode? (y/n): " install_opencode_choice
+
+        if [[ "$install_opencode_choice" =~ ^[Yy]$ ]]; then
+            install_opencode
+        fi
     fi
 
     echo -e "${GREEN}========================================${NC}"
     echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
     echo -e "${GREEN}========================================${NC}"
     echo "Restart your terminal or run source ~/.zshrc (or ~/.bashrc) to use shortcuts:"
-    echo -e "  1. Login:  ${CYAN}cp-login${NC}"
-    echo -e "  2. Start:  ${CYAN}cp-start${NC}"
-    echo -e "  3. Stop:   ${CYAN}cp-stop${NC}"
-    echo -e "  4. Update: ${CYAN}cp-update${NC} (Fetches latest core & installer)"
-    echo -e "  5. Claude: ${CYAN}cp-claude${NC} (Runs Claude Code with Proxy)"
-    echo -e "  6. DB:     ${CYAN}cp-db${NC}     (Open Dashboard)"
+    echo -e "  1. Login:    ${CYAN}cp-login${NC}"
+    echo -e "  2. Start:    ${CYAN}cp-start${NC}"
+    echo -e "  3. Stop:     ${CYAN}cp-stop${NC}"
+    echo -e "  4. Update:   ${CYAN}cp-update${NC} (Fetches latest core & installer)"
+    echo -e "  5. Claude:   ${CYAN}cp-claude${NC} (Runs Claude Code with Proxy)"
+    echo -e "  6. OpenCode: ${CYAN}cp-opencode${NC} (Runs OpenCode with Proxy)"
+    echo -e "  7. DB:       ${CYAN}cp-db${NC}     (Open Dashboard)"
 }
 
 # --- Main Execution ---
@@ -1031,6 +1307,20 @@ CPDBEOF
         echo ""
     fi
 
+    # 6. Update OpenCode (if installed)
+    if command -v opencode &> /dev/null; then
+        echo -e "${YELLOW}>>> Updating OpenCode...${NC}"
+        if command -v bun &> /dev/null; then
+            bun update -g opencode-ai 2>/dev/null && echo -e "${GREEN}[OK] OpenCode updated (bun)${NC}"
+        elif command -v npm &> /dev/null; then
+            npm update -g opencode-ai 2>/dev/null && echo -e "${GREEN}[OK] OpenCode updated (npm)${NC}"
+        fi
+
+        # Update OpenCode config
+        configure_opencode
+        echo ""
+    fi
+
     echo -e "${GREEN}========================================${NC}"
     echo -e "${GREEN}   Full Update Complete!${NC}"
     echo -e "${GREEN}========================================${NC}"
@@ -1040,6 +1330,7 @@ CPDBEOF
     echo "  - Claude Statusline (if installed)"
     echo "  - Dashboard"
     echo "  - Superpowers plugin (if installed)"
+    echo "  - OpenCode (if installed)"
     exit 0
 fi
 
