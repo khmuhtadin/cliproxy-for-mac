@@ -1071,7 +1071,7 @@ EOF
     echo -e "${GREEN}========================================${NC}"
     echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
     echo -e "${GREEN}========================================${NC}"
-    echo "Restart your terminal or run source ~/.zshrc (or ~/.bashrc) to use shortcuts:"
+    echo "Available shortcuts:"
     echo -e "  1. Login:    ${CYAN}cp-login${NC}"
     echo -e "  2. Start:    ${CYAN}cp-start${NC}"
     echo -e "  3. Stop:     ${CYAN}cp-stop${NC}"
@@ -1079,6 +1079,28 @@ EOF
     echo -e "  5. Claude:   ${CYAN}cp-claude${NC} (Runs Claude Code with Proxy)"
     echo -e "  6. OpenCode: ${CYAN}cp-opencode${NC} (Runs OpenCode with Proxy)"
     echo -e "  7. DB:       ${CYAN}cp-db${NC}     (Open Dashboard)"
+    echo ""
+
+    # Auto-restart shell to apply new aliases
+    echo -e "${YELLOW}Restarting shell to apply changes...${NC}"
+    sleep 1
+
+    # Determine shell config and restart
+    SHELL_CONFIG="$HOME/.zshrc"
+    if [ "$SHELL" == "/bin/bash" ] || [[ "$SHELL" == *"bash"* ]]; then
+        SHELL_CONFIG="$HOME/.bashrc"
+    fi
+
+    PLATFORM=$(detect_os)
+    if [ "$PLATFORM" == "windows" ]; then
+        # Windows Git Bash - source config and exec new shell
+        echo "Reloading shell configuration..."
+        source "$SHELL_CONFIG" 2>/dev/null
+        exec "$SHELL"
+    else
+        # macOS & Linux - exec replaces current shell with fresh one
+        exec "$SHELL"
+    fi
 }
 
 # --- Main Execution ---
@@ -1331,7 +1353,28 @@ CPDBEOF
     echo "  - Dashboard"
     echo "  - Superpowers plugin (if installed)"
     echo "  - OpenCode (if installed)"
-    exit 0
+    echo ""
+
+    # Auto-restart shell to apply new aliases
+    echo -e "${YELLOW}Restarting shell to apply changes...${NC}"
+    sleep 1
+
+    # Determine shell config and restart
+    SHELL_CONFIG="$HOME/.zshrc"
+    if [ "$SHELL" == "/bin/bash" ] || [[ "$SHELL" == *"bash"* ]]; then
+        SHELL_CONFIG="$HOME/.bashrc"
+    fi
+
+    PLATFORM=$(detect_os)
+    if [ "$PLATFORM" == "windows" ]; then
+        # Windows Git Bash - source config and exec new shell
+        echo "Reloading shell configuration..."
+        source "$SHELL_CONFIG" 2>/dev/null
+        exec "$SHELL"
+    else
+        # macOS & Linux - exec replaces current shell with fresh one
+        exec "$SHELL"
+    fi
 fi
 
 # --- Main Menu ---
