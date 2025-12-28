@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Dashboard v2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0d0d1a 100%);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #e2e8f0;
+            --text-secondary: rgba(255,255,255,0.5);
+            --text-tertiary: rgba(255,255,255,0.4);
+        }
+
+        body.light-theme {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 50%, #f8f9fa 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #1a202c;
+            --text-secondary: rgba(0,0,0,0.6);
+            --text-tertiary: rgba(0,0,0,0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            padding: 24px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 20px 28px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .logo {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
+        }
+
+        .title-group h1 { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: var(--text-primary);
+        }
+        .title-group .subtitle { 
+            font-size: 12px; 
+            color: var(--text-secondary); 
+        }
+
+        .status-badge {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 16px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 20px;
+            font-size: 13px; font-weight: 500; color: #4ade80;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            background: #22c55e; border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        .theme-toggle {
+            padding: 8px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .tab-nav {
+            display: flex; gap: 4px;
+            margin-bottom: 24px; padding: 6px;
+            background: var(--card-bg);
+            border-radius: 12px; 
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 10px 24px; border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px; font-weight: 500;
+            cursor: pointer; border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover { 
+            color: var(--text-primary); 
+            background: rgba(249, 115, 22, 0.1); 
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 28px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px; 
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon { font-size: 24px; margin-bottom: 8px; }
+        .stat-value { 
+            font-size: 28px; 
+            font-weight: 700; 
+            color: var(--text-primary); 
+            margin-bottom: 4px; 
+        }
+        .stat-label { 
+            font-size: 12px; 
+            color: var(--text-tertiary); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        .stat-value.success { color: #4ade80; }
+        .stat-value.orange { color: #fb923c; }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px; 
+            padding: 24px; 
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 16px; 
+            font-weight: 600; 
+            color: var(--text-primary);
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+        }
+
+        .section-title .icon { font-size: 18px; }
+
+        .controls-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .auto-refresh-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #4ade80;
+        }
+
+        .auto-refresh-control input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .auto-refresh-control label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .refresh-btn {
+            padding: 8px 16px;
+            background: rgba(249, 115, 22, 0.12);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-radius: 8px;
+            font-size: 13px; 
+            font-weight: 500; 
+            color: #fb923c;
+            cursor: pointer; 
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover { background: rgba(249, 115, 22, 0.2); }
+        .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+        }
+
+        .usage-list { display: flex; flex-direction: column; gap: 14px; }
+
+        .usage-item { display: flex; align-items: center; gap: 16px; }
+        .usage-icon { font-size: 20px; width: 32px; text-align: center; }
+        .usage-info { flex: 1; min-width: 0; }
+        .usage-name { 
+            font-size: 13px; 
+            color: var(--text-primary); 
+            margin-bottom: 6px; 
+        }
+
+        .usage-bar-container {
+            height: 6px; 
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px; 
+            overflow: hidden;
+        }
+
+        body.light-theme .usage-bar-container {
+            background: rgba(0,0,0,0.08);
+        }
+
+        .usage-bar { 
+            height: 100%; 
+            border-radius: 3px; 
+            transition: width 0.5s ease; 
+        }
+        .usage-bar.claude { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .usage-bar.gemini-pro { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+        .usage-bar.gemini-flash { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .usage-bar.image { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .usage-bar.default { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+        .usage-value { 
+            font-size: 13px; 
+            color: var(--text-secondary); 
+            min-width: 80px; 
+            text-align: right; 
+            font-weight: 500; 
+        }
+
+        .quota-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .quota-card {
+            padding: 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .quota-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .quota-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 12px; 
+        }
+        .quota-name { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 14px; 
+            font-weight: 500; 
+            color: var(--text-primary); 
+        }
+        .quota-percent { font-size: 14px; font-weight: 600; }
+        .quota-percent.high { color: #4ade80; }
+        .quota-percent.medium { color: #fbbf24; }
+        .quota-percent.low { color: #f87171; }
+
+        .quota-bar-container { 
+            height: 8px; 
+            background: rgba(255,255,255,0.08); 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+
+        body.light-theme .quota-bar-container {
+            background: rgba(0,0,0,0.08);
+        }
+
+        .quota-bar { 
+            height: 100%; 
+            border-radius: 4px; 
+            transition: width 0.5s ease; 
+        }
+        .quota-bar.high { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .quota-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .quota-bar.low { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+        .quota-reset { 
+            font-size: 11px; 
+            color: var(--text-tertiary); 
+            margin-top: 8px; 
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .account-card {
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .account-card:hover { 
+            transform: translateY(-2px); 
+            border-color: rgba(249, 115, 22, 0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .account-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            margin-bottom: 16px; 
+        }
+
+        .avatar {
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 600; color: white;
+        }
+
+        .avatar.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .avatar.violet { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .avatar.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .avatar.rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+        .avatar.emerald { background: linear-gradient(135deg, #10b981, #059669); }
+        .avatar.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .account-info { flex: 1; min-width: 0; }
+        .account-name { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: var(--text-primary); 
+            margin-bottom: 2px; 
+        }
+        .account-email { 
+            font-size: 12px; 
+            color: var(--text-secondary); 
+        }
+
+        .account-status { 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+        }
+        .account-status.active { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .account-status.error { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+        .account-quotas { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; 
+            margin-bottom: 16px; 
+        }
+
+        .mini-quota { 
+            padding: 10px; 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+        }
+        .mini-quota-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 6px; 
+        }
+        .mini-quota-name { 
+            font-size: 11px; 
+            color: var(--text-secondary); 
+        }
+        .mini-quota-value { font-size: 12px; font-weight: 600; }
+
+        .mini-bar { 
+            height: 4px; 
+            background: rgba(255,255,255,0.08); 
+            border-radius: 2px; 
+            overflow: hidden; 
+        }
+
+        body.light-theme .mini-bar {
+            background: rgba(0,0,0,0.08);
+        }
+
+        .mini-bar-fill { height: 100%; border-radius: 2px; }
+        .mini-bar-fill.high { background: #4ade80; }
+        .mini-bar-fill.medium { background: #fbbf24; }
+        .mini-bar-fill.low { background: #f87171; }
+
+        .card-actions { display: flex; gap: 8px; }
+        .action-btn { 
+            flex: 1; 
+            padding: 10px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        .action-btn.primary { 
+            background: rgba(249, 115, 22, 0.15); 
+            border: 1px solid rgba(249, 115, 22, 0.25); 
+            color: #fb923c; 
+        }
+        .action-btn.primary:hover { background: rgba(249, 115, 22, 0.25); }
+        .action-btn.danger { 
+            background: transparent; 
+            border: 1px solid var(--card-border); 
+            color: var(--text-secondary); 
+        }
+        .action-btn.danger:hover { 
+            background: rgba(239, 68, 68, 0.15); 
+            border-color: rgba(239, 68, 68, 0.25); 
+            color: #f87171; 
+        }
+
+        .empty-state, .loading { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: var(--text-tertiary); 
+        }
+        .empty-state .icon, .loading .icon { 
+            font-size: 48px; 
+            margin-bottom: 16px; 
+        }
+
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #f97316;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        body.light-theme .loading-spinner {
+            border-color: rgba(0,0,0,0.1);
+            border-top-color: #f97316;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            padding: 14px 20px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white; border-radius: 12px; font-size: 14px;
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.3s ease; z-index: 1000;
+            max-width: 300px;
+        }
+
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-color: rgba(34, 197, 94, 0.3); }
+        .toast.error { border-color: rgba(239, 68, 68, 0.3); }
+
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .header { 
+                flex-direction: column; 
+                gap: 16px; 
+                align-items: flex-start; 
+            }
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .accounts-grid, .quota-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .stats-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+            }
+            .tab-nav { 
+                width: 100%; 
+                overflow-x: auto;
+            }
+            .tab-btn { 
+                flex: 1; 
+                text-align: center; 
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+            .chart-container { 
+                height: 250px; 
+            }
+            .controls-group {
+                width: 100%;
+            }
+            .auto-refresh-control,
+            .refresh-btn {
+                flex: 1;
+            }
+        }
+
+        .version-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 4px 12px;
+            background: rgba(249, 115, 22, 0.12);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fb923c;
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="version-badge">v2.0 Enhanced</div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">⚡</div>
+                <div class="title-group">
+                    <h1>Antigravity Dashboard v2</h1>
+                    <div class="subtitle">CLIProxyAPI+ Enhanced Monitor</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>Connected</span>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+            </div>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('usage')">📈 Usage</button>
+            <button class="tab-btn" onclick="switchTab('accounts')">👥 Accounts</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="totalRequests">0</div>
+                    <div class="stat-label">Total Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-value orange" id="totalAccounts">-</div>
+                    <div class="stat-label">Accounts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value success" id="activeAccounts">-</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🕐</div>
+                    <div class="stat-value" id="lastUpdated" style="font-size: 16px;">-</div>
+                    <div class="stat-label">Last Update</div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="icon">📈</span>
+                        Quota Overview (All Accounts)
+                    </div>
+                    <div class="controls-group">
+                        <div class="auto-refresh-control">
+                            <input type="checkbox" id="autoRefreshToggle" checked onchange="toggleAutoRefresh()">
+                            <label for="autoRefreshToggle">Auto (<span id="refreshCountdown">30</span>s)</label>
+                        </div>
+                        <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="quota-grid" id="quotaOverview">
+                    <div class="loading"><div class="loading-spinner"></div><span>Loading...</span></div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="quotaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage History Tab -->
+        <div id="tab-usage" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="icon">📊</span>
+                        Usage by Model
+                    </div>
+                    <button class="refresh-btn" onclick="loadUsageData()">🔄 Refresh</button>
+                </div>
+                <div class="usage-list" id="usageList">
+                    <div class="loading"><div class="loading-spinner"></div><span>Loading usage data...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts Tab -->
+        <div id="tab-accounts" class="tab-content">
+            <div class="section-header" style="margin-bottom: 20px;">
+                <div class="section-title">
+                    <span class="icon">👥</span>
+                    Authenticated Accounts
+                </div>
+            </div>
+            <div class="accounts-grid" id="accountsGrid">
+                <div class="loading"><div class="loading-spinner"></div><span>Loading accounts...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_BASE = window.location.origin + '/v0';
+        const MANAGEMENT_KEY = 'sk-dummy';
+
+        const EMBEDDED_QUOTA_CACHE = {"lastUpdated": "2025-12-28T14:10:00.918679", "accounts": {"antigravity-notifkhmuhtadin_gmail_com.json": {"email": "notifkhmuhtadin@gmail.com", "quota": {"geminiPro": {"remaining": 1.0, "resetTime": "2025-12-28T12:10:01Z", "count": 4}, "claude": {"remaining": 0.75, "resetTime": "2025-12-28T08:23:14Z", "count": 3}, "geminiFlash": {"remaining": 1.0, "resetTime": "2025-12-28T12:10:01Z", "count": 4}, "geminiImage": {"remaining": 1.0, "resetTime": "2025-12-28T12:10:01Z", "count": 1}}, "fetchedAt": "2025-12-28T14:10:01.885209"}}};
+
+        const avatarColors = ['orange', 'violet', 'cyan', 'rose', 'emerald', 'amber'];
+        let accountsData = [];
+        let quotaCache = EMBEDDED_QUOTA_CACHE || { accounts: {} };
+        let autoRefreshEnabled = true;
+        let refreshInterval = null;
+        let countdownInterval = null;
+        let remainingSeconds = 30;
+        let quotaChart = null;
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Find and activate the clicked tab button
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${tabName}'`)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Activate the corresponding tab content
+            const tabContent = document.getElementById(`tab-${tabName}`);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+
+            // Load data for specific tabs
+            if (tabName === 'usage') {
+                loadUsageData();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            initChart();
+            refreshData();
+            startAutoRefresh();
+        });
+
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            if (!autoRefreshEnabled) return;
+            
+            remainingSeconds = 30;
+            updateCountdown();
+            
+            refreshInterval = setInterval(() => {
+                refreshData();
+                remainingSeconds = 30;
+            }, 30000);
+            
+            countdownInterval = setInterval(() => {
+                remainingSeconds--;
+                updateCountdown();
+                if (remainingSeconds <= 0) remainingSeconds = 30;
+            }, 1000);
+        }
+
+        function updateCountdown() {
+            const elem = document.getElementById('refreshCountdown');
+            if (elem) elem.textContent = remainingSeconds;
+        }
+
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = document.getElementById('autoRefreshToggle').checked;
+            if (autoRefreshEnabled) {
+                startAutoRefresh();
+                showToast('✅ Auto-refresh enabled', 'success');
+            } else {
+                if (refreshInterval) clearInterval(refreshInterval);
+                if (countdownInterval) clearInterval(countdownInterval);
+                document.getElementById('refreshCountdown').textContent = '-';
+                showToast('⏸️ Auto-refresh paused', 'info');
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            showToast(`🎨 ${isLight ? 'Light' : 'Dark'} mode activated`, 'success');
+            if (quotaChart) updateChartTheme();
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('quotaChart');
+            if (!ctx) return;
+            
+            const isDark = !document.body.classList.contains('light-theme');
+            
+            quotaChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Gemini Pro', 'Claude', 'Gemini Flash', 'Image Gen'],
+                    datasets: [{
+                        label: 'Quota Remaining',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(6, 182, 212, 0.6)',
+                            'rgba(139, 92, 246, 0.6)',
+                            'rgba(245, 158, 11, 0.6)',
+                            'rgba(236, 72, 153, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(6, 182, 212, 1)',
+                            'rgba(139, 92, 246, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(236, 72, 153, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Average Quota Distribution Across All Accounts',
+                            color: isDark ? '#e2e8f0' : '#1a202c',
+                            font: { size: 14, weight: '600' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '% remaining';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { 
+                                color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)',
+                                callback: (value) => value + '%'
+                            },
+                            grid: { 
+                                color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' 
+                            }
+                        },
+                        x: {
+                            ticks: { 
+                                color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)' 
+                            },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartTheme() {
+            if (!quotaChart) return;
+            const isDark = !document.body.classList.contains('light-theme');
+            
+            quotaChart.options.plugins.title.color = isDark ? '#e2e8f0' : '#1a202c';
+            quotaChart.options.scales.y.ticks.color = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)';
+            quotaChart.options.scales.x.ticks.color = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)';
+            quotaChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+            quotaChart.update();
+        }
+
+        function updateChart(accounts) {
+            if (!quotaChart) return;
+            
+            const agg = {
+                geminiPro: { total: 0, count: 0 },
+                claude: { total: 0, count: 0 },
+                geminiFlash: { total: 0, count: 0 },
+                geminiImage: { total: 0, count: 0 }
+            };
+
+            accounts.forEach(acc => {
+                if (acc.quota) {
+                    Object.keys(agg).forEach(key => {
+                        if (acc.quota[key] && typeof acc.quota[key].remaining === 'number') {
+                            agg[key].total += acc.quota[key].remaining;
+                            agg[key].count++;
+                        }
+                    });
+                }
+            });
+
+            const safeCalc = (obj) => {
+                if (obj.count === 0) return 0;
+                const val = obj.total / obj.count;
+                return isNaN(val) ? 0 : Math.round(val * 100);
+            };
+
+            const data = [
+                safeCalc(agg.geminiPro),
+                safeCalc(agg.claude),
+                safeCalc(agg.geminiFlash),
+                safeCalc(agg.geminiImage)
+            ];
+
+            quotaChart.data.datasets[0].data = data;
+            quotaChart.update('none');
+        }
+
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.textContent = '⏳ Loading...'; }
+
+            try {
+                if (EMBEDDED_QUOTA_CACHE) quotaCache = EMBEDDED_QUOTA_CACHE;
+
+                try {
+                    const usageResp = await fetch(`${API_BASE}/management/usage`, {
+                        headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                    });
+                    if (usageResp.ok) {
+                        const usageData = await usageResp.json();
+                        document.getElementById('totalRequests').textContent =
+                            (usageData.usage?.total_requests || 0).toLocaleString();
+                    }
+                } catch (e) { console.log('Usage fetch failed'); }
+
+                const response = await fetch(`${API_BASE}/management/auth-files`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch');
+
+                const data = await response.json();
+                const files = data.files || [];
+                const accounts = files.filter(f => f.type === 'antigravity' && f.email && !f.path.includes('/static/'));
+
+                const accountsWithQuota = accounts.map(account => {
+                    const cachedData = quotaCache.accounts?.[account.id];
+                    return { ...account, quota: cachedData?.quota || null };
+                });
+
+                accountsData = accountsWithQuota;
+                updateStats(accountsWithQuota);
+                renderQuotaOverview(accountsWithQuota);
+                renderAccounts(accountsWithQuota);
+                updateChart(accountsWithQuota);
+
+                document.getElementById('lastUpdated').textContent =
+                    quotaCache.lastUpdated ? new Date(quotaCache.lastUpdated).toLocaleTimeString() : new Date().toLocaleTimeString();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('❌ Failed to load data', 'error');
+            } finally {
+                if (refreshBtn) { refreshBtn.disabled = false; refreshBtn.textContent = '🔄 Refresh'; }
+            }
+        }
+
+        async function loadUsageData() {
+            const container = document.getElementById('usageList');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div><span>Loading...</span></div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/management/usage`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
+
+                if (!response.ok) throw new Error('Failed');
+
+                const data = await response.json();
+                const apis = data.usage?.apis || {};
+
+                document.getElementById('totalRequests').textContent =
+                    (data.usage?.total_requests || 0).toLocaleString();
+
+                const models = Object.entries(apis).map(([name, info]) => ({
+                    name,
+                    icon: getModelIcon(name),
+                    color: getModelColor(name),
+                    requests: info.requests || 0,
+                    tokens: info.tokens || 0
+                })).sort((a, b) => b.requests - a.requests);
+
+                if (models.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <p>No usage data yet</p>
+                            <p style="font-size: 12px; margin-top: 8px; color: var(--text-tertiary);">
+                                Start using models to see statistics
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const maxReq = Math.max(...models.map(m => m.requests), 1);
+                container.innerHTML = models.map(m => `
+                    <div class="usage-item">
+                        <span class="usage-icon">${m.icon}</span>
+                        <div class="usage-info">
+                            <div class="usage-name">${m.name}</div>
+                            <div class="usage-bar-container">
+                                <div class="usage-bar ${m.color}" style="width: ${(m.requests / maxReq) * 100}%"></div>
+                            </div>
+                        </div>
+                        <span class="usage-value">${m.requests.toLocaleString()} req</span>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Could not load usage data</p></div>';
+            }
+        }
+
+        function getModelIcon(name) {
+            const n = name.toLowerCase();
+            if (n.includes('opus')) return '🧠';
+            if (n.includes('claude')) return '🤖';
+            if (n.includes('image')) return '🎨';
+            if (n.includes('flash')) return '⚡';
+            if (n.includes('pro') || n.includes('2.5') || n.includes('3-')) return '💎';
+            return '🔮';
+        }
+
+        function getModelColor(name) {
+            const n = name.toLowerCase();
+            if (n.includes('claude')) return 'claude';
+            if (n.includes('image')) return 'image';
+            if (n.includes('flash')) return 'gemini-flash';
+            if (n.includes('pro') || n.includes('2.5')) return 'gemini-pro';
+            return 'default';
+        }
+
+        function updateStats(accounts) {
+            document.getElementById('totalAccounts').textContent = accounts.length;
+            document.getElementById('activeAccounts').textContent = accounts.filter(a => a.status === 'active').length;
+        }
+
+        function getQuotaClass(remaining) {
+            if (remaining >= 0.5) return 'high';
+            if (remaining >= 0.2) return 'medium';
+            return 'low';
+        }
+
+        function formatResetTime(resetTimeStr) {
+            if (!resetTimeStr) return '';
+            try {
+                const diff = new Date(resetTimeStr) - new Date();
+                if (diff < 0) return 'Reset';
+                const mins = Math.floor(diff / 60000);
+                const hrs = Math.floor(mins / 60);
+                if (hrs > 0) return `${hrs}h ${mins % 60}m`;
+                return mins > 0 ? `${mins}m` : '<1m';
+            } catch { return ''; }
+        }
+
+        function renderQuotaOverview(accounts) {
+            const container = document.getElementById('quotaOverview');
+            const agg = {
+                geminiPro: { total: 0, count: 0, reset: null },
+                claude: { total: 0, count: 0, reset: null },
+                geminiFlash: { total: 0, count: 0, reset: null },
+                geminiImage: { total: 0, count: 0, reset: null }
+            };
+
+            accounts.forEach(acc => {
+                if (acc.quota) {
+                    Object.keys(agg).forEach(key => {
+                        if (acc.quota[key] && typeof acc.quota[key].remaining === 'number') {
+                            agg[key].total += acc.quota[key].remaining;
+                            agg[key].count++;
+                            if (acc.quota[key].resetTime) agg[key].reset = acc.quota[key].resetTime;
+                        }
+                    });
+                }
+            });
+
+            const quotas = [
+                { key: 'geminiPro', name: 'Gemini Pro', icon: '💎' },
+                { key: 'claude', name: 'Claude', icon: '🤖' },
+                { key: 'geminiFlash', name: 'Gemini Flash', icon: '⚡' },
+                { key: 'geminiImage', name: 'Image Gen', icon: '🎨' }
+            ];
+
+            container.innerHTML = quotas.map(q => {
+                const d = agg[q.key];
+                const avg = d.count > 0 ? d.total / d.count : 0;
+                const pct = isNaN(avg) ? 0 : Math.round(avg * 100);
+                const cls = getQuotaClass(isNaN(avg) ? 0 : avg);
+                const reset = formatResetTime(d.reset);
+
+                return `
+                    <div class="quota-card">
+                        <div class="quota-header">
+                            <div class="quota-name"><span>${q.icon}</span> ${q.name}</div>
+                            <span class="quota-percent ${cls}">${pct}%</span>
+                        </div>
+                        <div class="quota-bar-container">
+                            <div class="quota-bar ${cls}" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="quota-reset">${reset ? `Resets in ${reset}` : `${d.count} accounts`}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAccounts(accounts) {
+            const grid = document.getElementById('accountsGrid');
+
+            if (accounts.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No accounts found</p></div>';
+                return;
+            }
+
+            grid.innerHTML = accounts.map((acc, i) => {
+                const initial = (acc.email || '?').charAt(0).toUpperCase();
+                const email = acc.email || 'unknown';
+                const masked = email.charAt(0) + '***@' + email.split('@')[1];
+                const color = avatarColors[i % avatarColors.length];
+                const active = acc.status === 'active';
+                const q = acc.quota;
+
+                const miniQ = (name, val) => {
+                    const hasValue = typeof val === 'number' && !isNaN(val);
+                    const pct = hasValue ? Math.round(val * 100) : 0;
+                    const cls = getQuotaClass(hasValue ? val : 0);
+                    return `
+                        <div class="mini-quota">
+                            <div class="mini-quota-header">
+                                <span class="mini-quota-name">${name}</span>
+                                <span class="mini-quota-value ${cls}">${hasValue ? pct + '%' : 'N/A'}</span>
+                            </div>
+                            <div class="mini-bar"><div class="mini-bar-fill ${cls}" style="width: ${pct}%"></div></div>
+                        </div>
+                    `;
+                };
+
+                return `
+                    <div class="account-card">
+                        <div class="account-header">
+                            <div class="avatar ${color}">${initial}</div>
+                            <div class="account-info">
+                                <div class="account-name">${masked.split('@')[0]}</div>
+                                <div class="account-email">${masked}</div>
+                            </div>
+                            <span class="account-status ${active ? 'active' : 'error'}">${active ? 'Active' : 'Error'}</span>
+                        </div>
+                        <div class="account-quotas">
+                            ${miniQ('Gemini Pro', q?.geminiPro?.remaining)}
+                            ${miniQ('Claude', q?.claude?.remaining)}
+                            ${miniQ('Flash', q?.geminiFlash?.remaining)}
+                            ${miniQ('Image', q?.geminiImage?.remaining)}
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn primary" onclick="useAccount('${acc.id}')">Use</button>
+                            <button class="action-btn danger" onclick="deleteAccount('${acc.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function useAccount(id) { 
+            showToast(`🔄 Switching to: ${id}`, 'success'); 
+        }
+
+        async function deleteAccount(id) {
+            if (!confirm(`Delete account?\n\n${id}`)) return;
+            try {
+                const r = await fetch(`${API_BASE}/management/auth-files/${id}`, {
+                    method: 'DELETE', headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
+                if (r.ok) { 
+                    showToast('✅ Account deleted', 'success'); 
+                    refreshData(); 
+                } else throw new Error();
+            } catch { 
+                showToast('❌ Failed to delete', 'error'); 
+            }
+        }
+
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `toast ${type} show`;
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

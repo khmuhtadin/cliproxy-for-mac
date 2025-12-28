@@ -612,32 +612,43 @@ EOF
     echo -e "${GREEN}[OK] cp-db installed to $BIN_DIR/cp-db${NC}"
 
 
-    # Clone & Build
-    TEMP_DIR=$(mktemp -d)
-    echo "Cloning repository..."
-    if ! git clone --depth 1 https://github.com/router-for-me/CLIProxyAPIPlus.git "$TEMP_DIR"; then
-        echo -e "${RED}[Error] Failed to clone repository${NC}"
-        rm -rf "$TEMP_DIR"
-        exit 1
+    # Clone & Build (with persistent source for faster updates)
+    SOURCE_DIR="$CONFIG_DIR/temp_source"
+
+    if [ -d "$SOURCE_DIR/.git" ]; then
+        # Source exists - pull latest updates
+        echo "Updating source repository..."
+        cd "$SOURCE_DIR"
+        git fetch origin
+        git reset --hard origin/main
+        cd - > /dev/null
+        echo -e "${GREEN}[OK] Source updated to latest${NC}"
+    else
+        # Fresh clone
+        echo "Cloning repository..."
+        rm -rf "$SOURCE_DIR" 2>/dev/null
+        if ! git clone --depth 1 https://github.com/router-for-me/CLIProxyAPIPlus.git "$SOURCE_DIR"; then
+            echo -e "${RED}[Error] Failed to clone repository${NC}"
+            exit 1
+        fi
+        echo -e "${GREEN}[OK] Repository cloned${NC}"
     fi
 
     echo "Building binary..."
-    cd "$TEMP_DIR"
-    
+    cd "$SOURCE_DIR"
+
     BINARY_NAME="cliproxyapi-plus"
     if [ "$PLATFORM" == "windows" ]; then
         BINARY_NAME="cliproxyapi-plus.exe"
     fi
-    
+
     if ! go build -o "$BINARY_NAME" ./cmd/server; then
         echo -e "${RED}[Error] Failed to build binary${NC}"
-        cd -
-        rm -rf "$TEMP_DIR"
+        cd - > /dev/null
         exit 1
     fi
     mv -f "$BINARY_NAME" "$BIN_DIR/$BINARY_NAME"
-    cd -
-    rm -rf "$TEMP_DIR"
+    cd - > /dev/null
 
     echo -e "${GREEN}[OK] Binary built and installed successfully.${NC}"
 
