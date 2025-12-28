@@ -1514,6 +1514,14 @@ CPDBEOF
         # macOS & Linux - exec replaces current shell with fresh one
         exec "$SHELL"
     fi
+
+    # Exit after update to prevent falling through to menu
+    exit 0
+fi
+
+# Exit if we somehow got here after update (failsafe)
+if [[ "$1" == "-update" ]]; then
+    exit 0
 fi
 
 # --- Main Menu ---
