@@ -538,7 +538,8 @@ install_cliproxy() {
 #!/bin/bash
 
 # CLIProxy Dashboard Launcher
-DASHBOARD_URL="http://localhost:8317/dashboard.html"
+DASHBOARD_FILE="\$HOME/.cli-proxy-api/static/dashboard.html"
+DASHBOARD_URL="file://\$DASHBOARD_FILE"
 PORT=8317
 QUOTA_FETCHER="\$HOME/.cli-proxy-api/scripts/quota-fetcher.py"
 
@@ -1387,7 +1388,8 @@ if [[ "$1" == "-update" ]]; then
 #!/bin/bash
 
 # CLIProxy Dashboard Launcher
-DASHBOARD_URL="http://localhost:8317/dashboard.html"
+DASHBOARD_FILE="\$HOME/.cli-proxy-api/static/dashboard.html"
+DASHBOARD_URL="file://\$DASHBOARD_FILE"
 PORT=8317
 QUOTA_FETCHER="\$HOME/.cli-proxy-api/scripts/quota-fetcher.py"
 
