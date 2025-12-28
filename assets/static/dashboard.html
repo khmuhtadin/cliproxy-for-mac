@@ -7,149 +7,155 @@
     <title>CLIProxy Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        :root {
+            --background: #ffffff;
+            --foreground: #0f172a;
+            --card: #ffffff;
+            --card-foreground: #0f172a;
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --primary-foreground: #ffffff;
+            --secondary: #f0fdf4;
+            --secondary-foreground: #0f172a;
+            --muted: #f1f5f9;
+            --muted-foreground: #64748b;
+            --accent: #ecfdf5;
+            --border: #e2e8f0;
+            --ring: #10b981;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --destructive: #ef4444;
+            --radius: 8px;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f8f9fa;
+            background: var(--secondary);
             min-height: 100vh;
             display: flex;
-            color: #1a1a2e;
+            color: var(--foreground);
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 250px;
-            background: #fff;
-            border-right: 1px solid #e8e8e8;
+            width: 260px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 24px 16px;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 0 12px;
-            margin-bottom: 32px;
+            gap: 12px;
         }
 
         .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #5b5fc7, #7c3aed);
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: var(--radius);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 18px;
         }
 
-        .logo-text {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
+        .logo-text { font-size: 18px; font-weight: 700; }
+        .logo-version { font-size: 11px; color: var(--muted-foreground); font-weight: 500; }
 
-        .logo-version {
+        .sidebar-nav { flex: 1; padding: 12px; }
+        .nav-section { margin-bottom: 8px; }
+        .nav-section-title {
             font-size: 11px;
-            color: #9ca3af;
-            font-weight: 400;
-        }
-
-        .nav-menu {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            font-weight: 600;
+            color: var(--muted-foreground);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 8px 12px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius);
             cursor: pointer;
-            transition: all 0.2s;
-            color: #64748b;
+            transition: all 0.15s ease;
+            color: var(--muted-foreground);
             font-size: 14px;
             font-weight: 500;
             text-decoration: none;
+            margin-bottom: 2px;
         }
 
-        .nav-item:hover {
-            background: #f1f5f9;
-            color: #1a1a2e;
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, #5b5fc7, #7c3aed);
-            color: white;
-            box-shadow: 0 4px 12px rgba(91, 95, 199, 0.3);
-        }
-
-        .nav-item .icon {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
-        }
-
-        .nav-item .arrow {
+        .nav-item:hover { background: var(--accent); color: var(--foreground); }
+        .nav-item.active { background: var(--primary); color: var(--primary-foreground); }
+        .nav-item .icon { width: 20px; height: 20px; flex-shrink: 0; }
+        .nav-item .badge {
             margin-left: auto;
-            font-size: 12px;
-            opacity: 0.5;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid #e8e8e8;
-        }
-
-        .upgrade-card {
-            background: linear-gradient(135deg, #5b5fc7, #7c3aed);
-            border-radius: 16px;
-            padding: 20px;
+            background: var(--primary);
             color: white;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .upgrade-card p {
-            font-size: 13px;
-            margin-bottom: 12px;
-            opacity: 0.9;
-        }
-
-        .upgrade-btn {
-            background: white;
-            color: #5b5fc7;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            font-size: 11px;
             font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 10px;
         }
+        .nav-item.active .badge { background: rgba(255,255,255,0.2); }
 
-        .user-info {
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--accent);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s infinite;
+        }
+        .status-dot.offline { background: var(--destructive); box-shadow: 0 0 8px var(--destructive); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .status-text { font-size: 12px; color: var(--foreground); }
+        .status-label { font-size: 11px; color: var(--muted-foreground); }
+
+        .user-card {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px;
+            background: var(--muted);
+            border-radius: var(--radius);
         }
-
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, #10b981, #059669);
             display: flex;
@@ -157,291 +163,158 @@
             justify-content: center;
             color: white;
             font-weight: 600;
-        }
-
-        .user-details {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 600;
             font-size: 14px;
-            color: #1a1a2e;
         }
-
-        .user-role {
-            font-size: 12px;
-            color: #9ca3af;
-        }
+        .user-info { flex: 1; min-width: 0; }
+        .user-name { font-weight: 600; font-size: 13px; color: var(--foreground); }
+        .user-role { font-size: 12px; color: var(--muted-foreground); }
 
         /* Main Content */
         .main {
             flex: 1;
-            margin-left: 250px;
-            padding: 24px 32px;
+            margin-left: 260px;
+            padding: 24px;
+            min-height: 100vh;
         }
 
-        .header {
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
+        .page-title { font-size: 24px; font-weight: 700; color: var(--foreground); }
+        .page-subtitle { font-size: 14px; color: var(--muted-foreground); margin-top: 4px; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .last-updated { font-size: 12px; color: var(--muted-foreground); }
 
-        .greeting {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .search-box {
-            display: flex;
+        /* Buttons */
+        .btn {
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: #fff;
-            border: 1px solid #e8e8e8;
-            border-radius: 10px;
+            justify-content: center;
+            gap: 8px;
             padding: 10px 16px;
-            width: 240px;
-        }
-
-        .search-box input {
-            border: none;
-            outline: none;
             font-size: 14px;
-            width: 100%;
-            color: #1a1a2e;
+            font-weight: 500;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            text-decoration: none;
         }
-
-        .search-box input::placeholder {
-            color: #9ca3af;
-        }
-
-        .search-icon {
-            color: #9ca3af;
-        }
+        .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--foreground); }
+        .btn-outline:hover { background: var(--accent); }
+        .btn-ghost { background: transparent; color: var(--muted-foreground); padding: 6px; }
+        .btn-ghost:hover { background: var(--accent); color: var(--foreground); }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 28px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
-            align-items: center;
-            gap: 20px;
-            border: 1px solid #e8e8e8;
-        }
-
-        .stat-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .stat-icon.green {
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid #10b981;
-            color: #10b981;
-        }
-
-        .stat-icon.blue {
-            background: rgba(59, 130, 246, 0.1);
-            border: 2px solid #3b82f6;
-            color: #3b82f6;
-        }
-
-        .stat-icon.purple {
-            background: rgba(139, 92, 246, 0.1);
-            border: 2px solid #8b5cf6;
-            color: #8b5cf6;
-        }
-
-        .stat-info h3 {
-            font-size: 12px;
-            color: #9ca3af;
-            font-weight: 500;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .stat-info .value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-
-        .stat-info .trend {
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .stat-info .trend.up {
-            color: #10b981;
-        }
-
-        .stat-info .trend.down {
-            color: #ef4444;
-        }
-
-        .stat-avatars {
-            display: flex;
-            margin-top: 8px;
-        }
-
-        .stat-avatars .mini-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
-            margin-left: -8px;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .stat-avatars .mini-avatar:first-child {
-            margin-left: 0;
-        }
-
-        /* Table Section */
-        .table-section {
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid #e8e8e8;
-            overflow: hidden;
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid #e8e8e8;
-        }
-
-        .table-title h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .table-title .subtitle {
-            font-size: 13px;
-            color: #10b981;
-            font-weight: 500;
-        }
-
-        .table-actions {
-            display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 16px;
         }
 
-        .table-search {
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .stat-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .stat-icon.amber { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+        .stat-content { flex: 1; }
+        .stat-label { font-size: 13px; color: var(--muted-foreground); font-weight: 500; margin-bottom: 4px; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--foreground); line-height: 1.2; }
+        .stat-trend { display: flex; align-items: center; gap: 4px; font-size: 12px; margin-top: 4px; }
+        .stat-trend.up { color: var(--success); }
+        .stat-trend.down { color: var(--destructive); }
+
+        /* Card */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-title { font-size: 16px; font-weight: 600; color: var(--foreground); }
+        .card-description { font-size: 13px; color: var(--muted-foreground); }
+        .card-content { padding: 20px; }
+        .card-actions { display: flex; gap: 8px; }
+
+        /* Search Input */
+        .search-input {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: #f8f9fa;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
+            background: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 8px 12px;
+            width: 200px;
         }
-
-        .table-search input {
+        .search-input input {
             border: none;
             background: transparent;
             outline: none;
             font-size: 13px;
-            width: 120px;
+            width: 100%;
+            color: var(--foreground);
         }
-
-        .sort-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: transparent;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #64748b;
-            cursor: pointer;
-        }
-
-        .refresh-btn {
-            background: linear-gradient(135deg, #5b5fc7, #7c3aed);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .refresh-btn:hover {
-            opacity: 0.9;
-        }
-
-        .refresh-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .search-input input::placeholder { color: var(--muted-foreground); }
+        .search-input .icon { color: var(--muted-foreground); width: 16px; height: 16px; }
 
         /* Table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f8f9fa;
-        }
-
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--muted); }
         th {
             text-align: left;
-            padding: 14px 20px;
+            padding: 12px 20px;
             font-size: 12px;
             font-weight: 600;
-            color: #9ca3af;
+            color: var(--muted-foreground);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
         }
-
         td {
             padding: 16px 20px;
             font-size: 14px;
-            color: #1a1a2e;
-            border-bottom: 1px solid #f1f5f9;
+            color: var(--foreground);
+            border-bottom: 1px solid var(--border);
         }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--accent); }
 
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .account-cell {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .account-cell { display: flex; align-items: center; gap: 12px; }
         .account-avatar {
             width: 36px;
             height: 36px;
@@ -452,136 +325,181 @@
             color: white;
             font-weight: 600;
             font-size: 14px;
+            flex-shrink: 0;
         }
 
-        .avatar-green { background: linear-gradient(135deg, #10b981, #059669); }
-        .avatar-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .avatar-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .avatar-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-        .avatar-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
-        .avatar-cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .avatar-1 { background: linear-gradient(135deg, #10b981, #059669); }
+        .avatar-2 { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+        .avatar-3 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .avatar-4 { background: linear-gradient(135deg, #34d399, #10b981); }
+        .avatar-5 { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .avatar-6 { background: linear-gradient(135deg, #059669, #047857); }
 
-        .quota-bar {
+        .account-name { font-weight: 500; color: var(--foreground); }
+        .account-email { font-size: 13px; color: var(--muted-foreground); }
+
+        /* Progress Bar */
+        .progress-cell { display: flex; align-items: center; gap: 10px; }
+        .progress-bar {
             width: 80px;
-            height: 6px;
-            background: #e8e8e8;
-            border-radius: 3px;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
             overflow: hidden;
-            display: inline-block;
-            margin-right: 8px;
         }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+        .progress-fill.high { background: var(--success); }
+        .progress-fill.medium { background: var(--warning); }
+        .progress-fill.low { background: var(--destructive); }
+        .progress-text { font-size: 13px; font-weight: 500; color: var(--foreground); min-width: 40px; }
 
-        .quota-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-        }
-
-        .quota-bar-fill.high { background: #10b981; }
-        .quota-bar-fill.medium { background: #f59e0b; }
-        .quota-bar-fill.low { background: #ef4444; }
-
-        .status-badge {
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-badge.active {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .status-badge.inactive {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
             font-size: 12px;
             font-weight: 500;
-            cursor: pointer;
-            border: 1px solid #e8e8e8;
-            background: transparent;
-            color: #64748b;
-            margin-right: 6px;
-            transition: all 0.2s;
+            border-radius: 9999px;
         }
-
-        .action-btn:hover {
-            background: #f1f5f9;
-        }
-
-        .action-btn.danger:hover {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.2);
-        }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-destructive { background: rgba(239, 68, 68, 0.1); color: var(--destructive); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-default { background: var(--muted); color: var(--muted-foreground); }
 
         /* Table Footer */
         .table-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 24px;
-            border-top: 1px solid #e8e8e8;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--muted);
         }
-
-        .table-info {
-            font-size: 13px;
-            color: #9ca3af;
-        }
-
-        .pagination {
-            display: flex;
-            gap: 4px;
-        }
-
+        .table-info { font-size: 13px; color: var(--muted-foreground); }
+        .pagination { display: flex; gap: 4px; }
         .page-btn {
             width: 32px;
             height: 32px;
-            border: 1px solid #e8e8e8;
-            background: transparent;
-            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: var(--radius);
             font-size: 13px;
-            color: #64748b;
+            color: var(--muted-foreground);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.15s ease;
         }
+        .page-btn:hover { background: var(--accent); color: var(--foreground); }
+        .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .page-btn:hover {
-            background: #f1f5f9;
+        /* Usage Chart */
+        .usage-list { display: flex; flex-direction: column; gap: 16px; }
+        .usage-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--muted);
+            border-radius: var(--radius);
         }
+        .usage-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .usage-icon.claude { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        .usage-icon.gemini { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .usage-icon.flash { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .usage-icon.image { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+        .usage-icon.default { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
 
-        .page-btn.active {
-            background: #5b5fc7;
-            color: white;
-            border-color: #5b5fc7;
+        .usage-info { flex: 1; min-width: 0; }
+        .usage-name { font-weight: 600; color: var(--foreground); margin-bottom: 4px; }
+        .usage-bar-container {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
         }
+        .usage-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .usage-bar.claude { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .usage-bar.gemini { background: linear-gradient(90deg, #10b981, #34d399); }
+        .usage-bar.flash { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .usage-bar.image { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .usage-bar.default { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+        .usage-stats { text-align: right; min-width: 100px; }
+        .usage-count { font-size: 20px; font-weight: 700; color: var(--foreground); }
+        .usage-label { font-size: 12px; color: var(--muted-foreground); }
+
+        /* Quota Grid */
+        .quota-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .quota-card {
+            padding: 20px;
+            background: var(--muted);
+            border-radius: 12px;
+        }
+        .quota-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .quota-account {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quota-email { font-weight: 600; color: var(--foreground); }
+        .quota-items { display: flex; flex-direction: column; gap: 12px; }
+        .quota-item { display: flex; align-items: center; gap: 12px; }
+        .quota-item-icon { font-size: 16px; width: 24px; }
+        .quota-item-info { flex: 1; }
+        .quota-item-name { font-size: 12px; color: var(--muted-foreground); margin-bottom: 4px; }
+        .quota-item-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .quota-item-fill { height: 100%; border-radius: 3px; }
+        .quota-item-fill.high { background: var(--success); }
+        .quota-item-fill.medium { background: var(--warning); }
+        .quota-item-fill.low { background: var(--destructive); }
+        .quota-item-value { font-size: 13px; font-weight: 600; min-width: 45px; text-align: right; }
+
+        /* Tabs */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* Loading & Empty */
-        .loading, .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #9ca3af;
-        }
-
+        .loading, .empty-state { text-align: center; padding: 60px 20px; color: var(--muted-foreground); }
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid #e8e8e8;
-            border-top-color: #5b5fc7;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 16px;
         }
-
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Toast */
@@ -589,87 +507,99 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            padding: 14px 20px;
-            background: #1a1a2e;
-            color: white;
-            border-radius: 10px;
+            padding: 12px 16px;
+            background: var(--foreground);
+            color: var(--background);
+            border-radius: var(--radius);
             font-size: 14px;
+            font-weight: 500;
             transform: translateY(100px);
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
         .toast.show { transform: translateY(0); opacity: 1; }
-        .toast.success { background: #10b981; }
-        .toast.error { background: #ef4444; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--destructive); }
 
         /* Responsive */
         @media (max-width: 1024px) {
-            .sidebar { display: none; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
             .main { margin-left: 0; }
         }
-
         @media (max-width: 768px) {
             .main { padding: 16px; }
             .stats-grid { grid-template-columns: 1fr; }
-            .table-actions { flex-wrap: wrap; }
-            th, td { padding: 12px 10px; font-size: 12px; }
+            .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            th, td { padding: 12px; font-size: 12px; }
+            .progress-bar { width: 60px; }
         }
     </style>
 </head>
 
 <body>
     <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">⚡</div>
-            <div>
-                <span class="logo-text">Dashboard</span>
-                <span class="logo-version"> v.01</span>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="zap" style="width:20px;height:20px"></i>
+                </div>
+                <div>
+                    <div class="logo-text">CLIProxy</div>
+                    <div class="logo-version">Dashboard v2.0</div>
+                </div>
             </div>
         </div>
 
-        <nav class="nav-menu">
-            <a href="#" class="nav-item" onclick="switchTab('dashboard')">
-                <span class="icon">📊</span>
-                Dashboard
-            </a>
-            <a href="#" class="nav-item" onclick="switchTab('usage')">
-                <span class="icon">📈</span>
-                Usage
-                <span class="arrow">›</span>
-            </a>
-            <a href="#" class="nav-item active" onclick="switchTab('accounts')">
-                <span class="icon">👤</span>
-                Accounts
-                <span class="arrow">›</span>
-            </a>
-            <a href="#" class="nav-item" onclick="switchTab('quota')">
-                <span class="icon">🎯</span>
-                Quota
-                <span class="arrow">›</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="icon">⚙️</span>
-                Settings
-                <span class="arrow">›</span>
-            </a>
-            <a href="#" class="nav-item">
-                <span class="icon">❓</span>
-                Help
-                <span class="arrow">›</span>
-            </a>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard" class="icon"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a href="#" class="nav-item" data-tab="accounts">
+                    <i data-lucide="users" class="icon"></i>
+                    Accounts
+                    <span class="badge" id="accountsBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="quota">
+                    <i data-lucide="gauge" class="icon"></i>
+                    Quota
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <a href="#" class="nav-item" data-tab="settings">
+                    <i data-lucide="settings" class="icon"></i>
+                    Settings
+                </a>
+                <a href="https://github.com/khmuhtadin/cliproxy-installer" target="_blank" class="nav-item">
+                    <i data-lucide="external-link" class="icon"></i>
+                    Documentation
+                </a>
+            </div>
         </nav>
 
         <div class="sidebar-footer">
-            <div class="upgrade-card">
-                <p>Powered by CLIProxyAPI+</p>
-                <button class="upgrade-btn" onclick="window.open('https://github.com/khmuhtadin/cliproxy-installer')">View Docs</button>
+            <div class="server-status">
+                <div class="status-dot" id="serverStatus"></div>
+                <div>
+                    <div class="status-text" id="serverStatusText">Connected</div>
+                    <div class="status-label">Port 8317</div>
+                </div>
             </div>
-            <div class="user-info">
+            <div class="user-card">
                 <div class="user-avatar">A</div>
-                <div class="user-details">
+                <div class="user-info">
                     <div class="user-name">Admin</div>
                     <div class="user-role">Proxy Manager</div>
                 </div>
@@ -679,90 +609,164 @@
 
     <!-- Main Content -->
     <main class="main">
-        <div class="header">
-            <h1 class="greeting">Hello Admin 👋</h1>
-            <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" placeholder="Search" id="globalSearch">
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Overview of your proxy server</p>
+                </div>
+                <div class="header-actions">
+                    <span class="last-updated" id="lastUpdated">Last updated: --</span>
+                    <button class="btn btn-outline btn-sm" onclick="refreshAll()" id="refreshBtn">
+                        <i data-lucide="refresh-cw" style="width:16px;height:16px"></i>
+                        Refresh
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon green">👥</div>
-                <div class="stat-info">
-                    <h3>Total Accounts</h3>
-                    <div class="value" id="totalAccounts">0</div>
-                    <div class="trend up" id="accountsTrend">↑ All synced</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon blue">✅</div>
-                <div class="stat-info">
-                    <h3>Active</h3>
-                    <div class="value" id="activeAccounts">0</div>
-                    <div class="trend up">Ready to use</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple">📊</div>
-                <div class="stat-info">
-                    <h3>Total Requests</h3>
-                    <div class="value" id="totalRequests">0</div>
-                    <div class="stat-avatars" id="modelAvatars"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table Section -->
-        <div class="table-section">
-            <div class="table-header">
-                <div class="table-title">
-                    <h2>All Accounts</h2>
-                    <div class="subtitle" id="activeLabel">Active Members</div>
-                </div>
-                <div class="table-actions">
-                    <div class="table-search">
-                        <span>🔍</span>
-                        <input type="text" placeholder="Search" id="tableSearch" onkeyup="filterTable()">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i data-lucide="users" style="width:24px;height:24px"></i>
                     </div>
-                    <button class="sort-btn">
-                        Sort by: <strong>Newest</strong> ▼
-                    </button>
-                    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
-                        🔄 Refresh
+                    <div class="stat-content">
+                        <div class="stat-label">Total Accounts</div>
+                        <div class="stat-value" id="statAccounts">0</div>
+                        <div class="stat-trend up">
+                            <i data-lucide="check-circle" style="width:14px;height:14px"></i>
+                            All synced
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i data-lucide="shield-check" style="width:24px;height:24px"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Available</div>
+                        <div class="stat-value" id="statAvailable">0</div>
+                        <div class="stat-trend up">
+                            <i data-lucide="zap" style="width:14px;height:14px"></i>
+                            Ready to use
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i data-lucide="battery-charging" style="width:24px;height:24px"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Avg Quota</div>
+                        <div class="stat-value" id="statQuota">--%</div>
+                        <div class="stat-trend up">
+                            <i data-lucide="trending-up" style="width:14px;height:14px"></i>
+                            Remaining
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts Tab -->
+        <div id="tab-accounts" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Accounts</h1>
+                    <p class="page-subtitle">Manage your authenticated proxy accounts</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline btn-sm" onclick="loadAccountsData()">
+                        <i data-lucide="refresh-cw" style="width:16px;height:16px"></i>
+                        Refresh
                     </button>
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Account</th>
-                        <th>Email</th>
-                        <th>Claude</th>
-                        <th>Gemini Pro</th>
-                        <th>Flash</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="accountsTable">
-                    <tr>
-                        <td colspan="7">
-                            <div class="loading">
-                                <div class="loading-spinner"></div>
-                                <span>Loading accounts...</span>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">All Accounts</div>
+                        <div class="card-description" id="accountsSubtitle">0 accounts</div>
+                    </div>
+                    <div class="card-actions">
+                        <div class="search-input">
+                            <i data-lucide="search" class="icon"></i>
+                            <input type="text" placeholder="Search..." id="accountSearch" onkeyup="filterAccounts()">
+                        </div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>Claude</th>
+                            <th>Gemini Pro</th>
+                            <th>Flash</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountsTable">
+                        <tr>
+                            <td colspan="6">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                    <span>Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="table-footer">
+                    <div class="table-info" id="accountsInfo">Showing 0 accounts</div>
+                    <div class="pagination" id="accountsPagination"></div>
+                </div>
+            </div>
+        </div>
 
-            <div class="table-footer">
-                <div class="table-info" id="tableInfo">Showing data 0 to 0 of 0 entries</div>
-                <div class="pagination" id="pagination"></div>
+        <!-- Quota Tab -->
+        <div id="tab-quota" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Quota Overview</h1>
+                    <p class="page-subtitle">Remaining quota for all accounts</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline btn-sm" onclick="loadQuotaData()">
+                        <i data-lucide="refresh-cw" style="width:16px;height:16px"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="quota-grid" id="quotaGrid">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <span>Loading quota data...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="tab-settings" class="tab-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Settings</h1>
+                    <p class="page-subtitle">Server configuration and preferences</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Server Configuration</div>
+                </div>
+                <div class="card-content" id="settingsContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <span>Loading settings...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -777,180 +781,351 @@
         const EMBEDDED_QUOTA_CACHE = null;
         // QUOTA_CACHE_END
 
-        const avatarColors = ['avatar-green', 'avatar-blue', 'avatar-purple', 'avatar-orange', 'avatar-pink', 'avatar-cyan'];
         let accountsData = [];
+        let usageData = {};
         let quotaCache = EMBEDDED_QUOTA_CACHE || { accounts: {} };
         let currentPage = 1;
-        const perPage = 8;
+        const perPage = 6;
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            refreshData();
-            setInterval(refreshData, 30000);
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setupNavigation();
+            refreshAll();
+            setInterval(refreshAll, 60000);
+            checkServerStatus();
+            setInterval(checkServerStatus, 10000);
         });
 
-        async function refreshData() {
-            const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.innerHTML = '⏳ Loading...'; }
+        // Navigation
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tab = item.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+        }
+
+        function switchTab(tabName) {
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`)?.classList.add('active');
+
+            // Load data for tab
+            if (tabName === 'usage') loadUsageData();
+            if (tabName === 'accounts') loadAccountsData();
+            if (tabName === 'quota') loadQuotaData();
+            if (tabName === 'settings') loadSettings();
+        }
+
+        // Server Status
+        async function checkServerStatus() {
+            try {
+                const resp = await fetch('http://localhost:8317/', { method: 'GET' });
+                const dot = document.getElementById('serverStatus');
+                const text = document.getElementById('serverStatusText');
+                if (resp.ok) {
+                    dot.classList.remove('offline');
+                    text.textContent = 'Connected';
+                } else {
+                    dot.classList.add('offline');
+                    text.textContent = 'Error';
+                }
+            } catch {
+                document.getElementById('serverStatus').classList.add('offline');
+                document.getElementById('serverStatusText').textContent = 'Offline';
+            }
+        }
+
+        // Refresh All Data
+        async function refreshAll() {
+            const btn = document.getElementById('refreshBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading-spinner" style="width:16px;height:16px;border-width:2px;margin:0"></span>';
+            }
 
             try {
                 if (EMBEDDED_QUOTA_CACHE) quotaCache = EMBEDDED_QUOTA_CACHE;
 
-                // Fetch usage stats
-                try {
-                    const usageResp = await fetch(`${API_BASE}/management/usage`, {
-                        headers: { 'X-Management-Key': MANAGEMENT_KEY }
-                    });
-                    if (usageResp.ok) {
-                        const usageData = await usageResp.json();
-                        document.getElementById('totalRequests').textContent =
-                            (usageData.usage?.total_requests || 0).toLocaleString();
-                    }
-                } catch (e) { console.log('Usage fetch failed'); }
-
-                // Fetch accounts
-                const response = await fetch(`${API_BASE}/management/auth-files`, {
+                // Load usage
+                const usageResp = await fetch(`${API_BASE}/management/usage`, {
                     headers: { 'X-Management-Key': MANAGEMENT_KEY }
                 });
+                if (usageResp.ok) {
+                    usageData = await usageResp.json();
+                    updateDashboardStats();
+                }
 
-                if (!response.ok) throw new Error('Failed to fetch');
-
-                const data = await response.json();
-                const files = data.files || [];
-                const accounts = files.filter(f => f.type === 'antigravity' && f.email && !f.path.includes('/static/'));
-
-                const accountsWithQuota = accounts.map(account => {
-                    const cachedData = quotaCache.accounts?.[account.id];
-                    return { ...account, quota: cachedData?.quota || null };
+                // Load accounts
+                const accResp = await fetch(`${API_BASE}/management/auth-files`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
                 });
+                if (accResp.ok) {
+                    const data = await accResp.json();
+                    accountsData = (data.files || [])
+                        .filter(f => f.type === 'antigravity' && f.email)
+                        .map(acc => ({
+                            ...acc,
+                            quota: quotaCache.accounts?.[acc.id]?.quota || null
+                        }));
+                    document.getElementById('accountsBadge').textContent = accountsData.length;
+                    document.getElementById('statAccounts').textContent = accountsData.length;
+                }
 
-                accountsData = accountsWithQuota;
-                updateStats(accountsWithQuota);
-                renderAccountsTable(accountsWithQuota);
+                // Update timestamp
+                document.getElementById('lastUpdated').textContent =
+                    'Last updated: ' + new Date().toLocaleTimeString();
 
             } catch (error) {
-                console.error('Error:', error);
-                showToast('Failed to load data', 'error');
+                console.error('Refresh failed:', error);
             } finally {
-                if (refreshBtn) { refreshBtn.disabled = false; refreshBtn.innerHTML = '🔄 Refresh'; }
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="refresh-cw" style="width:16px;height:16px"></i> Refresh';
+                    lucide.createIcons();
+                }
             }
         }
 
-        function updateStats(accounts) {
-            document.getElementById('totalAccounts').textContent = accounts.length;
-            const active = accounts.filter(a => !a.disabled && !a.unavailable).length;
-            document.getElementById('activeAccounts').textContent = active;
-            document.getElementById('activeLabel').textContent = `${active} Available Accounts`;
+        // Dashboard
+        function updateDashboardStats() {
+            // Calculate available accounts
+            const available = accountsData.filter(a => !a.disabled && !a.unavailable).length;
+            document.getElementById('statAvailable').textContent = available;
+
+            // Calculate avg quota
+            let totalQuota = 0, quotaCount = 0;
+            Object.values(quotaCache.accounts || {}).forEach(acc => {
+                if (acc.quota) {
+                    ['claude', 'geminiPro', 'geminiFlash'].forEach(key => {
+                        if (acc.quota[key]?.remaining != null) {
+                            totalQuota += acc.quota[key].remaining;
+                            quotaCount++;
+                        }
+                    });
+                }
+            });
+            const avgQuota = quotaCount > 0 ? Math.round((totalQuota / quotaCount) * 100) : 0;
+            document.getElementById('statQuota').textContent = avgQuota + '%';
         }
 
-        function getQuotaClass(val) {
-            if (val >= 0.5) return 'high';
-            if (val >= 0.2) return 'medium';
-            return 'low';
-        }
+        // Accounts
+        async function loadAccountsData() {
+            const tbody = document.getElementById('accountsTable');
+            tbody.innerHTML = '<tr><td colspan="6"><div class="loading"><div class="loading-spinner"></div><span>Loading...</span></div></td></tr>';
 
-        function renderQuotaBar(val) {
-            if (val === null || val === undefined) return '<span style="color:#9ca3af">N/A</span>';
-            const pct = Math.round(val * 100);
-            const cls = getQuotaClass(val);
-            return `
-                <div class="quota-bar">
-                    <div class="quota-bar-fill ${cls}" style="width: ${pct}%"></div>
-                </div>
-                <span style="font-weight:500">${pct}%</span>
-            `;
+            try {
+                const resp = await fetch(`${API_BASE}/management/auth-files`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
+                if (!resp.ok) throw new Error('Failed');
+
+                const data = await resp.json();
+                accountsData = (data.files || [])
+                    .filter(f => f.type === 'antigravity' && f.email)
+                    .map(acc => ({
+                        ...acc,
+                        quota: quotaCache.accounts?.[acc.id]?.quota || null
+                    }));
+
+                renderAccountsTable(accountsData);
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>Failed to load accounts</p></div></td></tr>';
+            }
         }
 
         function renderAccountsTable(accounts) {
             const tbody = document.getElementById('accountsTable');
+            document.getElementById('accountsSubtitle').textContent = `${accounts.length} accounts`;
 
             if (accounts.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <div style="font-size:48px;margin-bottom:16px">📭</div>
-                                <p>No accounts found</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i data-lucide="inbox" style="width:48px;height:48px;opacity:0.3;margin-bottom:16px"></i><p>No accounts found</p></div></td></tr>';
+                lucide.createIcons();
                 return;
             }
 
-            // Pagination
             const start = (currentPage - 1) * perPage;
-            const end = start + perPage;
-            const paginated = accounts.slice(start, end);
+            const paginated = accounts.slice(start, start + perPage);
 
             tbody.innerHTML = paginated.map((acc, i) => {
-                const initial = (acc.email || '?').charAt(0).toUpperCase();
-                const email = acc.email || 'unknown';
-                const name = email.split('@')[0];
-                const colorClass = avatarColors[(start + i) % avatarColors.length];
+                const initial = (acc.email || '?')[0].toUpperCase();
+                const name = acc.email.split('@')[0];
                 const isAvailable = !acc.disabled && !acc.unavailable;
-                const statusText = acc.status === 'active' ? 'Active' : (acc.status === 'error' ? 'Error' : 'Inactive');
-                const statusClass = acc.status === 'active' ? 'active' : 'inactive';
                 const q = acc.quota;
 
                 return `
                     <tr>
                         <td>
                             <div class="account-cell">
-                                <div class="account-avatar ${colorClass}">${initial}</div>
-                                <span>${name}</span>
+                                <div class="account-avatar avatar-${(i % 6) + 1}">${initial}</div>
+                                <div>
+                                    <div class="account-name">${name}</div>
+                                    <div class="account-email">${acc.email}</div>
+                                </div>
                             </div>
                         </td>
-                        <td>${email}</td>
-                        <td>${renderQuotaBar(q?.claude?.remaining)}</td>
-                        <td>${renderQuotaBar(q?.geminiPro?.remaining)}</td>
-                        <td>${renderQuotaBar(q?.geminiFlash?.remaining)}</td>
+                        <td>${renderProgress(q?.claude?.remaining)}</td>
+                        <td>${renderProgress(q?.geminiPro?.remaining)}</td>
+                        <td>${renderProgress(q?.geminiFlash?.remaining)}</td>
+                        <td>${isAvailable
+                            ? '<span class="badge badge-success"><i data-lucide="check" style="width:12px;height:12px"></i> Active</span>'
+                            : '<span class="badge badge-destructive"><i data-lucide="x" style="width:12px;height:12px"></i> Error</span>'
+                        }</td>
                         <td>
-                            <span class="status-badge ${statusClass}">
-                                ${statusText}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="action-btn" onclick="useAccount('${acc.id}')">Use</button>
-                            <button class="action-btn danger" onclick="deleteAccount('${acc.id}')">Delete</button>
+                            <button class="btn btn-ghost" onclick="deleteAccount('${acc.id}')">
+                                <i data-lucide="trash-2" style="width:16px;height:16px"></i>
+                            </button>
                         </td>
                     </tr>
                 `;
             }).join('');
+            lucide.createIcons();
 
-            // Update table info
-            document.getElementById('tableInfo').textContent =
-                `Showing data ${start + 1} to ${Math.min(end, accounts.length)} of ${accounts.length} entries`;
-
-            // Render pagination
-            renderPagination(accounts.length);
+            document.getElementById('accountsInfo').textContent =
+                `Showing ${start + 1}-${Math.min(start + perPage, accounts.length)} of ${accounts.length}`;
+            renderPagination(accounts.length, 'accountsPagination');
         }
 
-        function renderPagination(total) {
-            const pages = Math.ceil(total / perPage);
-            const container = document.getElementById('pagination');
+        function filterAccounts() {
+            const search = document.getElementById('accountSearch').value.toLowerCase();
+            const filtered = accountsData.filter(a => a.email?.toLowerCase().includes(search));
+            currentPage = 1;
+            renderAccountsTable(filtered);
+        }
 
-            if (pages <= 1) {
-                container.innerHTML = '';
+        // Quota
+        async function loadQuotaData() {
+            const container = document.getElementById('quotaGrid');
+
+            if (Object.keys(quotaCache.accounts || {}).length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1">
+                        <i data-lucide="gauge" style="width:48px;height:48px;opacity:0.3;margin-bottom:16px"></i>
+                        <p>No quota data available</p>
+                        <p style="font-size:12px;color:var(--muted-foreground);margin-top:8px">Run quota-fetcher to load quota data</p>
+                    </div>
+                `;
+                lucide.createIcons();
                 return;
             }
 
-            let html = `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+            container.innerHTML = Object.entries(quotaCache.accounts || {}).map(([id, data]) => {
+                const email = data.email || id.replace('antigravity-', '').replace('.json', '').replace('_', '@');
+                const q = data.quota || {};
+                const initial = email[0].toUpperCase();
 
-            for (let i = 1; i <= pages; i++) {
-                if (i <= 4 || i === pages || Math.abs(i - currentPage) <= 1) {
-                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-                } else if (i === 5 && pages > 5) {
-                    html += `<button class="page-btn" disabled>...</button>`;
-                }
+                const quotaItems = [
+                    { name: 'Claude', icon: 'brain', value: q.claude?.remaining },
+                    { name: 'Gemini Pro', icon: 'sparkles', value: q.geminiPro?.remaining },
+                    { name: 'Flash', icon: 'zap', value: q.geminiFlash?.remaining },
+                    { name: 'Image', icon: 'image', value: q.geminiImage?.remaining }
+                ];
+
+                return `
+                    <div class="quota-card">
+                        <div class="quota-header">
+                            <div class="quota-account">
+                                <div class="account-avatar avatar-1">${initial}</div>
+                                <div class="quota-email">${email.split('@')[0]}</div>
+                            </div>
+                        </div>
+                        <div class="quota-items">
+                            ${quotaItems.map(item => {
+                                const pct = item.value != null ? Math.round(item.value * 100) : null;
+                                const cls = pct !== null ? (pct >= 50 ? 'high' : pct >= 20 ? 'medium' : 'low') : '';
+                                return `
+                                    <div class="quota-item">
+                                        <div class="quota-item-icon">
+                                            <i data-lucide="${item.icon}" style="width:16px;height:16px;color:var(--muted-foreground)"></i>
+                                        </div>
+                                        <div class="quota-item-info">
+                                            <div class="quota-item-name">${item.name}</div>
+                                            <div class="quota-item-bar">
+                                                <div class="quota-item-fill ${cls}" style="width: ${pct || 0}%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="quota-item-value" style="color: var(--${pct >= 50 ? 'success' : pct >= 20 ? 'warning' : 'destructive'})">${pct !== null ? pct + '%' : 'N/A'}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // Settings
+        async function loadSettings() {
+            const container = document.getElementById('settingsContent');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div><span>Loading...</span></div>';
+
+            try {
+                const resp = await fetch(`${API_BASE}/management/config`, {
+                    headers: { 'X-Management-Key': MANAGEMENT_KEY }
+                });
+                if (!resp.ok) throw new Error('Failed');
+
+                const config = await resp.json();
+                container.innerHTML = `
+                    <div style="display:grid;gap:16px;max-width:600px">
+                        <div style="display:flex;justify-content:space-between;padding:12px;background:var(--muted);border-radius:var(--radius)">
+                            <span style="color:var(--muted-foreground)">Debug Mode</span>
+                            <span class="badge ${config.debug ? 'badge-success' : 'badge-default'}">${config.debug ? 'Enabled' : 'Disabled'}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:12px;background:var(--muted);border-radius:var(--radius)">
+                            <span style="color:var(--muted-foreground)">TLS</span>
+                            <span class="badge ${config.tls?.enable ? 'badge-success' : 'badge-default'}">${config.tls?.enable ? 'Enabled' : 'Disabled'}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:12px;background:var(--muted);border-radius:var(--radius)">
+                            <span style="color:var(--muted-foreground)">Switch on Quota Exceeded</span>
+                            <span class="badge ${config['quota-exceeded']?.['switch-project'] ? 'badge-success' : 'badge-default'}">${config['quota-exceeded']?.['switch-project'] ? 'Enabled' : 'Disabled'}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:12px;background:var(--muted);border-radius:var(--radius)">
+                            <span style="color:var(--muted-foreground)">API Keys</span>
+                            <span class="badge badge-default">${(config['api-keys'] || []).length} configured</span>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><p>Failed to load settings</p></div>';
             }
+        }
 
-            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === pages ? 'disabled' : ''}>›</button>`;
+        // Helpers
+        function renderProgress(val) {
+            if (val == null) return '<span style="color:var(--muted-foreground)">N/A</span>';
+            const pct = Math.round(val * 100);
+            const cls = pct >= 50 ? 'high' : pct >= 20 ? 'medium' : 'low';
+            return `
+                <div class="progress-cell">
+                    <div class="progress-bar">
+                        <div class="progress-fill ${cls}" style="width: ${pct}%"></div>
+                    </div>
+                    <span class="progress-text">${pct}%</span>
+                </div>
+            `;
+        }
+
+        function renderPagination(total, containerId) {
+            const pages = Math.ceil(total / perPage);
+            const container = document.getElementById(containerId);
+            if (pages <= 1) { container.innerHTML = ''; return; }
+
+            let html = `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><i data-lucide="chevron-left" style="width:16px;height:16px"></i></button>`;
+            for (let i = 1; i <= Math.min(pages, 5); i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === pages ? 'disabled' : ''}><i data-lucide="chevron-right" style="width:16px;height:16px"></i></button>`;
             container.innerHTML = html;
+            lucide.createIcons();
         }
 
         function goToPage(page) {
@@ -960,20 +1135,8 @@
             renderAccountsTable(accountsData);
         }
 
-        function filterTable() {
-            const search = document.getElementById('tableSearch').value.toLowerCase();
-            const filtered = accountsData.filter(acc =>
-                acc.email?.toLowerCase().includes(search)
-            );
-            renderAccountsTable(filtered);
-        }
-
-        async function useAccount(id) {
-            showToast(`Switching to: ${id}`, 'success');
-        }
-
         async function deleteAccount(id) {
-            if (!confirm(`Delete account?\n\n${id}`)) return;
+            if (!confirm('Delete this account?')) return;
             try {
                 const r = await fetch(`${API_BASE}/management/auth-files/${id}`, {
                     method: 'DELETE',
@@ -981,7 +1144,7 @@
                 });
                 if (r.ok) {
                     showToast('Account deleted', 'success');
-                    refreshData();
+                    loadAccountsData();
                 } else throw new Error();
             } catch {
                 showToast('Failed to delete', 'error');
@@ -990,8 +1153,9 @@
 
         function showToast(msg, type = 'info') {
             const t = document.getElementById('toast');
-            t.textContent = msg;
+            t.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" style="width:16px;height:16px"></i> ${msg}`;
             t.className = `toast ${type} show`;
+            lucide.createIcons();
             setTimeout(() => t.classList.remove('show'), 3000);
         }
     </script>
