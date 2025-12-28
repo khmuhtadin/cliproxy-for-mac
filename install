@@ -1496,26 +1496,8 @@ CPDBEOF
 
     # Auto-restart shell to apply new aliases
     echo -e "${YELLOW}Restarting shell to apply changes...${NC}"
-    sleep 1
-
-    # Determine shell config and restart
-    SHELL_CONFIG="$HOME/.zshrc"
-    if [ "$SHELL" == "/bin/bash" ] || [[ "$SHELL" == *"bash"* ]]; then
-        SHELL_CONFIG="$HOME/.bashrc"
-    fi
-
-    PLATFORM=$(detect_os)
-    if [ "$PLATFORM" == "windows" ]; then
-        # Windows Git Bash - source config and exec new shell
-        echo "Reloading shell configuration..."
-        source "$SHELL_CONFIG" 2>/dev/null
-        exec "$SHELL"
-    else
-        # macOS & Linux - exec replaces current shell with fresh one
-        exec "$SHELL"
-    fi
-
-    # Exit after update to prevent falling through to menu
+    echo ""
+    echo -e "${GREEN}Update complete! Please run 'source ~/.zshrc' or open a new terminal.${NC}"
     exit 0
 fi
 
