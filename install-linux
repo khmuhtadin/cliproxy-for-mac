@@ -217,71 +217,34 @@ EOF
 BINARY="$BIN_DIR/cliproxyapi-plus"
 CONFIG="$CONFIG_DIR/config.yaml"
 
-show_main_menu() {
-    clear
-    echo "========================================="
-    echo "   CLIProxy Login - Select Provider"
-    echo "========================================="
-    echo ""
-    echo "1. Antigravity (Claude/Gemini)"
-    echo "2. GitHub Copilot"
-    echo "3. Gemini CLI"
-    echo "4. Codex"
-    echo "5. Claude"
-    echo "6. Qwen"
-    echo "7. iFlow"
-    echo "8. Kiro (AWS)"
-    echo ""
-    echo "0. Exit"
-    echo ""
-}
+clear
+echo "========================================="
+echo "   CLIProxy Login - Select Provider"
+echo "========================================="
+echo ""
+echo "1. Antigravity (Claude/Gemini)"
+echo "2. GitHub Copilot"
+echo "3. Gemini CLI"
+echo "4. Codex"
+echo "5. Claude"
+echo "6. Qwen"
+echo "7. iFlow"
+echo ""
+echo "0. Exit"
+echo ""
 
-show_kiro_menu() {
-    clear
-    echo "========================================="
-    echo "   Kiro Authentication Methods"
-    echo "========================================="
-    echo ""
-    echo "1. Google OAuth (Default)"
-    echo "2. AWS Builder ID (Device Code)"
-    echo "3. AWS Builder ID (Auth Code - Better UX)"
-    echo "4. Import from Kiro IDE"
-    echo ""
-    echo "0. Back to main menu"
-    echo ""
-}
-
-kiro_login() {
-    while true; do
-        show_kiro_menu
-        read -p "Select Kiro auth method (0-4): " k
-        case \$k in
-            1) "\$BINARY" --config "\$CONFIG" -kiro-login; break ;;
-            2) "\$BINARY" --config "\$CONFIG" -kiro-aws-login; break ;;
-            3) "\$BINARY" --config "\$CONFIG" -kiro-aws-authcode; break ;;
-            4) "\$BINARY" --config "\$CONFIG" -kiro-import; break ;;
-            0) return ;;
-            *) echo "Invalid choice. Press Enter to continue..."; read ;;
-        esac
-    done
-}
-
-while true; do
-    show_main_menu
-    read -p "Select provider (0-8): " c
-    case \$c in
-        1) "\$BINARY" --config "\$CONFIG" -antigravity-login; break ;;
-        2) "\$BINARY" --config "\$CONFIG" -github-copilot-login; break ;;
-        3) "\$BINARY" --config "\$CONFIG" -login; break ;;
-        4) "\$BINARY" --config "\$CONFIG" -codex-login; break ;;
-        5) "\$BINARY" --config "\$CONFIG" -claude-login; break ;;
-        6) "\$BINARY" --config "\$CONFIG" -qwen-login; break ;;
-        7) "\$BINARY" --config "\$CONFIG" -iflow-login; break ;;
-        8) kiro_login ;;
-        0) echo "Exiting..."; exit 0 ;;
-        *) echo "Invalid choice. Press Enter to continue..."; read ;;
-    esac
-done
+read -p "Select provider (0-7): " c
+case \$c in
+    1) "\$BINARY" --config "\$CONFIG" -antigravity-login ;;
+    2) "\$BINARY" --config "\$CONFIG" -github-copilot-login ;;
+    3) "\$BINARY" --config "\$CONFIG" -login ;;
+    4) "\$BINARY" --config "\$CONFIG" -codex-login ;;
+    5) "\$BINARY" --config "\$CONFIG" -claude-login ;;
+    6) "\$BINARY" --config "\$CONFIG" -qwen-login ;;
+    7) "\$BINARY" --config "\$CONFIG" -iflow-login ;;
+    0) echo "Exiting..."; exit 0 ;;
+    *) echo "Invalid choice." ;;
+esac
 EOF
     chmod +x "$SCRIPTS_DIR/login.sh"
 

@@ -203,71 +203,34 @@ Write-Host "Starting CLIProxy on http://localhost:8317"
 `$Binary = "$BinDir\cliproxyapi-plus.exe"
 `$Config = "$ConfigDir\config.yaml"
 
-function Show-MainMenu {
-    Clear-Host
-    Write-Host "========================================="
-    Write-Host "   CLIProxy Login - Select Provider"
-    Write-Host "========================================="
-    Write-Host ""
-    Write-Host "1. Antigravity (Claude/Gemini)"
-    Write-Host "2. GitHub Copilot"
-    Write-Host "3. Gemini CLI"
-    Write-Host "4. Codex"
-    Write-Host "5. Claude"
-    Write-Host "6. Qwen"
-    Write-Host "7. iFlow"
-    Write-Host "8. Kiro (AWS)"
-    Write-Host ""
-    Write-Host "0. Exit"
-    Write-Host ""
-}
+Clear-Host
+Write-Host "========================================="
+Write-Host "   CLIProxy Login - Select Provider"
+Write-Host "========================================="
+Write-Host ""
+Write-Host "1. Antigravity (Claude/Gemini)"
+Write-Host "2. GitHub Copilot"
+Write-Host "3. Gemini CLI"
+Write-Host "4. Codex"
+Write-Host "5. Claude"
+Write-Host "6. Qwen"
+Write-Host "7. iFlow"
+Write-Host ""
+Write-Host "0. Exit"
+Write-Host ""
 
-function Show-KiroMenu {
-    Clear-Host
-    Write-Host "========================================="
-    Write-Host "   Kiro Authentication Methods"
-    Write-Host "========================================="
-    Write-Host ""
-    Write-Host "1. Google OAuth (Default)"
-    Write-Host "2. AWS Builder ID (Device Code)"
-    Write-Host "3. AWS Builder ID (Auth Code - Better UX)"
-    Write-Host "4. Import from Kiro IDE"
-    Write-Host ""
-    Write-Host "0. Back to main menu"
-    Write-Host ""
-}
+`$choice = Read-Host "Select provider (0-7)"
 
-function Invoke-KiroLogin {
-    while (`$true) {
-        Show-KiroMenu
-        `$k = Read-Host "Select Kiro auth method (0-4)"
-        switch (`$k) {
-            '1' { & `$Binary --config `$Config -kiro-login; return }
-            '2' { & `$Binary --config `$Config -kiro-aws-login; return }
-            '3' { & `$Binary --config `$Config -kiro-aws-authcode; return }
-            '4' { & `$Binary --config `$Config -kiro-import; return }
-            '0' { return }
-            Default { Write-Host "Invalid choice. Press Enter to continue..."; Read-Host }
-        }
-    }
-}
-
-while (`$true) {
-    Show-MainMenu
-    `$choice = Read-Host "Select provider (0-8)"
-
-    switch (`$choice) {
-        '1' { & `$Binary --config `$Config -antigravity-login; break }
-        '2' { & `$Binary --config `$Config -github-copilot-login; break }
-        '3' { & `$Binary --config `$Config -login; break }
-        '4' { & `$Binary --config `$Config -codex-login; break }
-        '5' { & `$Binary --config `$Config -claude-login; break }
-        '6' { & `$Binary --config `$Config -qwen-login; break }
-        '7' { & `$Binary --config `$Config -iflow-login; break }
-        '8' { Invoke-KiroLogin }
-        '0' { Write-Host "Exiting..."; exit 0 }
-        Default { Write-Host "Invalid choice. Press Enter to continue..."; Read-Host }
-    }
+switch (`$choice) {
+    '1' { & `$Binary --config `$Config -antigravity-login }
+    '2' { & `$Binary --config `$Config -github-copilot-login }
+    '3' { & `$Binary --config `$Config -login }
+    '4' { & `$Binary --config `$Config -codex-login }
+    '5' { & `$Binary --config `$Config -claude-login }
+    '6' { & `$Binary --config `$Config -qwen-login }
+    '7' { & `$Binary --config `$Config -iflow-login }
+    '0' { Write-Host "Exiting..."; exit 0 }
+    Default { Write-Host "Invalid choice." }
 }
 "@
     Set-Content -Path "$ScriptsDir\login.ps1" -Value $loginScript
