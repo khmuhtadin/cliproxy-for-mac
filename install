@@ -150,6 +150,7 @@ setup_shortcuts() {
         sed -i '' '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-db/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '' '/alias cp-opencode/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '' '/alias cp-login-url/d' "$SHELL_CONFIG" 2>/dev/null || true
     else
         # Linux & Windows (Git Bash has standard sed usually)
         sed -i '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
@@ -159,6 +160,7 @@ setup_shortcuts() {
         sed -i '/alias cp-claude/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-db/d' "$SHELL_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-opencode/d' "$SHELL_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-login-url/d' "$SHELL_CONFIG" 2>/dev/null || true
     fi
 
     # Remove old cp-db from /usr/local/bin if exists (legacy location)
@@ -170,6 +172,7 @@ setup_shortcuts() {
     echo "" >> "$SHELL_CONFIG"
     echo "# CLIProxy Shortcuts" >> "$SHELL_CONFIG"
     echo "alias cp-login=\"$HOME/.cli-proxy-api/scripts/login.sh\"" >> "$SHELL_CONFIG"
+    echo "alias cp-login-url=\"$HOME/.cli-proxy-api/scripts/login-url.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-start=\"$HOME/.cli-proxy-api/scripts/start.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install | bash -s -- -update\"" >> "$SHELL_CONFIG"
     echo "alias cp-stop=\"$HOME/.cli-proxy-api/scripts/stop.sh\"" >> "$SHELL_CONFIG"
@@ -715,7 +718,52 @@ case \$c in
 esac
 EOF
     chmod +x "$SCRIPTS_DIR/login.sh"
-    
+
+    # Login URL Script (for VPS/headless - prints URL only, no browser)
+    cat > "$SCRIPTS_DIR/login-url.sh" <<EOF
+#!/bin/bash
+# Login script for VPS/headless servers - prints URL only, no browser opening
+BINARY="$BIN_DIR/$BINARY_NAME"
+CONFIG="$CONFIG_DIR/config.yaml"
+
+# Set BROWSER to echo to prevent browser opening
+export BROWSER=echo
+
+clear
+echo "========================================="
+echo "   CLIProxy Login (URL Mode)"
+echo "   For VPS/Headless Servers"
+echo "========================================="
+echo ""
+echo "This will print the login URL instead of opening a browser."
+echo "Copy the URL and open it in your local browser."
+echo ""
+echo "1. Antigravity (Claude/Gemini)"
+echo "2. GitHub Copilot"
+echo "3. Gemini CLI"
+echo "4. Codex"
+echo "5. Claude"
+echo "6. Qwen"
+echo "7. iFlow"
+echo ""
+echo "0. Exit"
+echo ""
+
+read -p "Select provider (0-7): " c
+case \\$c in
+    1) "\\$BINARY" --config "\\$CONFIG" -antigravity-login ;;
+    2) "\\$BINARY" --config "\\$CONFIG" -github-copilot-login ;;
+    3) "\\$BINARY" --config "\\$CONFIG" -login ;;
+    4) "\\$BINARY" --config "\\$CONFIG" -codex-login ;;
+    5) "\\$BINARY" --config "\\$CONFIG" -claude-login ;;
+    6) "\\$BINARY" --config "\\$CONFIG" -qwen-login ;;
+    7) "\\$BINARY" --config "\\$CONFIG" -iflow-login ;;
+    0) echo "Exiting..."; exit 0 ;;
+    *) echo "Invalid choice." ;;
+esac
+EOF
+    chmod +x "$SCRIPTS_DIR/login-url.sh"
+
     # Stop Script
     cat > "$SCRIPTS_DIR/stop.sh" <<'EOF'
 #!/bin/bash
@@ -1218,13 +1266,14 @@ PYSCRIPT
     echo -e "${GREEN}  INSTALLATION SUCCESS!${NC}"
     echo -e "${GREEN}========================================${NC}"
     echo "Available shortcuts:"
-    echo -e "  1. Login:    ${CYAN}cp-login${NC}"
-    echo -e "  2. Start:    ${CYAN}cp-start${NC}"
-    echo -e "  3. Stop:     ${CYAN}cp-stop${NC}"
-    echo -e "  4. Update:   ${CYAN}cp-update${NC} (Fetches latest core & installer)"
-    echo -e "  5. Claude:   ${CYAN}cp-claude${NC} (Runs Claude Code with Proxy)"
-    echo -e "  6. OpenCode: ${CYAN}cp-opencode${NC} (Runs OpenCode with Proxy)"
-    echo -e "  7. DB:       ${CYAN}cp-db${NC}     (Open Dashboard)"
+    echo -e "  1. Login:      ${CYAN}cp-login${NC}"
+    echo -e "  2. Login URL:  ${CYAN}cp-login-url${NC} (For VPS/headless - prints URL only)"
+    echo -e "  3. Start:      ${CYAN}cp-start${NC}"
+    echo -e "  4. Stop:       ${CYAN}cp-stop${NC}"
+    echo -e "  5. Update:     ${CYAN}cp-update${NC} (Fetches latest core & installer)"
+    echo -e "  6. Claude:     ${CYAN}cp-claude${NC} (Runs Claude Code with Proxy)"
+    echo -e "  7. OpenCode:   ${CYAN}cp-opencode${NC} (Runs OpenCode with Proxy)"
+    echo -e "  8. Dashboard:  ${CYAN}cp-db${NC}"
     echo ""
 
     # Auto-restart shell to apply new aliases

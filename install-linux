@@ -76,11 +76,13 @@ setup_shortcuts() {
         sed -i '/alias cp-login/d' "$FISH_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-start/d' "$FISH_CONFIG" 2>/dev/null || true
         sed -i '/alias cp-update/d' "$FISH_CONFIG" 2>/dev/null || true
+        sed -i '/alias cp-login-url/d' "$FISH_CONFIG" 2>/dev/null || true
 
         # Add new aliases (Fish syntax)
         echo "" >> "$FISH_CONFIG"
         echo "# CLIProxy Shortcuts" >> "$FISH_CONFIG"
         echo "alias cp-login='$HOME/.cli-proxy-api/scripts/login.sh'" >> "$FISH_CONFIG"
+        echo "alias cp-login-url='$HOME/.cli-proxy-api/scripts/login-url.sh'" >> "$FISH_CONFIG"
         echo "alias cp-start='$HOME/.cli-proxy-api/scripts/start.sh'" >> "$FISH_CONFIG"
         echo "alias cp-update='curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install-linux | bash -s -- -update'" >> "$FISH_CONFIG"
 
@@ -88,17 +90,19 @@ setup_shortcuts() {
         return
     fi
 
-    echo -e "${YELLOW}Adding shortcuts (cp-login, cp-start, cp-update) to $SHELL_CONFIG...${NC}"
+    echo -e "${YELLOW}Adding shortcuts (cp-login, cp-login-url, cp-start, cp-update) to $SHELL_CONFIG...${NC}"
 
     # Remove old aliases if they exist (Linux sed syntax: no empty string after -i)
     sed -i '/alias cp-login/d' "$SHELL_CONFIG" 2>/dev/null || true
     sed -i '/alias cp-start/d' "$SHELL_CONFIG" 2>/dev/null || true
     sed -i '/alias cp-update/d' "$SHELL_CONFIG" 2>/dev/null || true
+    sed -i '/alias cp-login-url/d' "$SHELL_CONFIG" 2>/dev/null || true
 
     # Add new aliases
     echo "" >> "$SHELL_CONFIG"
     echo "# CLIProxy Shortcuts" >> "$SHELL_CONFIG"
     echo "alias cp-login=\"$HOME/.cli-proxy-api/scripts/login.sh\"" >> "$SHELL_CONFIG"
+    echo "alias cp-login-url=\"$HOME/.cli-proxy-api/scripts/login-url.sh\"" >> "$SHELL_CONFIG"
     echo "alias cp-start=\"$HOME/.cli-proxy-api/scripts/start.sh\"" >> "$SHELL_CONFIG"
     # Note: Using install-linux script for updates
     echo "alias cp-update=\"curl -sL https://raw.githubusercontent.com/khmuhtadin/cliproxy-installer/main/install-linux | bash -s -- -update\"" >> "$SHELL_CONFIG"
@@ -247,6 +251,51 @@ case \$c in
 esac
 EOF
     chmod +x "$SCRIPTS_DIR/login.sh"
+
+    # Login URL Script (for VPS/headless - prints URL only, no browser)
+    cat > "$SCRIPTS_DIR/login-url.sh" <<EOF
+#!/bin/bash
+# Login script for VPS/headless servers - prints URL only, no browser opening
+BINARY="$BIN_DIR/cliproxyapi-plus"
+CONFIG="$CONFIG_DIR/config.yaml"
+
+# Set BROWSER to echo to prevent browser opening
+export BROWSER=echo
+
+clear
+echo "========================================="
+echo "   CLIProxy Login (URL Mode)"
+echo "   For VPS/Headless Servers"
+echo "========================================="
+echo ""
+echo "This will print the login URL instead of opening a browser."
+echo "Copy the URL and open it in your local browser."
+echo ""
+echo "1. Antigravity (Claude/Gemini)"
+echo "2. GitHub Copilot"
+echo "3. Gemini CLI"
+echo "4. Codex"
+echo "5. Claude"
+echo "6. Qwen"
+echo "7. iFlow"
+echo ""
+echo "0. Exit"
+echo ""
+
+read -p "Select provider (0-7): " c
+case \$c in
+    1) "\$BINARY" --config "\$CONFIG" -antigravity-login ;;
+    2) "\$BINARY" --config "\$CONFIG" -github-copilot-login ;;
+    3) "\$BINARY" --config "\$CONFIG" -login ;;
+    4) "\$BINARY" --config "\$CONFIG" -codex-login ;;
+    5) "\$BINARY" --config "\$CONFIG" -claude-login ;;
+    6) "\$BINARY" --config "\$CONFIG" -qwen-login ;;
+    7) "\$BINARY" --config "\$CONFIG" -iflow-login ;;
+    0) echo "Exiting..."; exit 0 ;;
+    *) echo "Invalid choice." ;;
+esac
+EOF
+    chmod +x "$SCRIPTS_DIR/login-url.sh"
 
     # Droid Config Injection
     # Linux Droid path might vary, usually ~/.factory or ~/.config/factory ??
