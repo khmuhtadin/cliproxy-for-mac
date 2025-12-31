@@ -177,16 +177,61 @@ function Install-CLIProxy {
 
     # Config.yaml
     if (-not (Test-Path "$ConfigDir\config.yaml")) {
+        # Ask for optional baseURL and apiKey configuration
+        Write-Host ""
+        Write-Yellow "========================================"
+        Write-Yellow "   Optional: Custom Base URL & API Key"
+        Write-Yellow "========================================"
+        Write-Host "You can configure a custom base URL and API key now."
+        Write-Host "This is useful if you want to use a different proxy endpoint."
+        Write-Host ""
+        Write-Host "Press Enter to skip and use defaults (localhost:8317, sk-dummy)"
+        Write-Host ""
+        
+        $configureCustom = Read-Host "Configure custom base URL and API key? (y/n)"
+        
+        $customBaseUrl = ""
+        $customApiKey = ""
+        
+        if ($configureCustom -match "^[Yy]$") {
+            Write-Host ""
+            $customBaseUrl = Read-Host "Enter base URL (e.g., http://localhost:8317)"
+            $customApiKey = Read-Host "Enter API key (e.g., sk-your-key)"
+            
+            # Use defaults if empty
+            if ([string]::IsNullOrWhiteSpace($customBaseUrl)) {
+                $customBaseUrl = "http://localhost:8317"
+            }
+            if ([string]::IsNullOrWhiteSpace($customApiKey)) {
+                $customApiKey = "sk-dummy"
+            }
+            
+            Write-Green "[OK] Using custom configuration"
+            Write-Host "  Base URL: $customBaseUrl"
+            Write-Host "  API Key: $customApiKey"
+        } else {
+            $customBaseUrl = "http://localhost:8317"
+            $customApiKey = "sk-dummy"
+            Write-Cyan "[i] Using default configuration"
+        }
+        
         $configContent = @"
 port: 8317
 auth-dir: "$($ConfigDir -replace '\\', '/')"
 api-keys:
-  - "sk-dummy"
+  - "$customApiKey"
 quota-exceeded:
   switch-project: true
   switch-preview-model: true
 "@
         Set-Content -Path "$ConfigDir\config.yaml" -Value $configContent -Encoding UTF8
+        Write-Green "[OK] Created config.yaml"
+        
+        # Store base URL for later use if custom
+        if ($customBaseUrl -ne "http://localhost:8317") {
+            Set-Content -Path "$ConfigDir\.custom_base_url" -Value $customBaseUrl -Encoding UTF8
+            Set-Content -Path "$ConfigDir\.custom_api_key" -Value $customApiKey -Encoding UTF8
+        }
     }
 
     # Helper Scripts (PowerShell versions)

@@ -197,15 +197,60 @@ install_cliproxy() {
     # Config
     # Only create if it doesn't exist, to preserve user settings on update
     if [ ! -f "$CONFIG_DIR/config.yaml" ]; then
+        # Ask for optional baseURL and apiKey configuration
+        echo ""
+        echo -e "${YELLOW}========================================${NC}"
+        echo -e "${YELLOW}   Optional: Custom Base URL & API Key${NC}"
+        echo -e "${YELLOW}========================================${NC}"
+        echo "You can configure a custom base URL and API key now."
+        echo "This is useful if you want to use a different proxy endpoint."
+        echo ""
+        echo "Press Enter to skip and use defaults (localhost:8317, sk-dummy)"
+        echo ""
+        
+        read -p "Configure custom base URL and API key? (y/n): " configure_custom
+        
+        CUSTOM_BASE_URL=""
+        CUSTOM_API_KEY=""
+        
+        if [[ "$configure_custom" =~ ^[Yy]$ ]]; then
+            echo ""
+            read -p "Enter base URL (e.g., http://localhost:8317): " CUSTOM_BASE_URL
+            read -p "Enter API key (e.g., sk-your-key): " CUSTOM_API_KEY
+            
+            # Use defaults if empty
+            if [ -z "$CUSTOM_BASE_URL" ]; then
+                CUSTOM_BASE_URL="http://localhost:8317"
+            fi
+            if [ -z "$CUSTOM_API_KEY" ]; then
+                CUSTOM_API_KEY="sk-dummy"
+            fi
+            
+            echo -e "${GREEN}[OK] Using custom configuration${NC}"
+            echo "  Base URL: $CUSTOM_BASE_URL"
+            echo "  API Key: $CUSTOM_API_KEY"
+        else
+            CUSTOM_BASE_URL="http://localhost:8317"
+            CUSTOM_API_KEY="sk-dummy"
+            echo -e "${CYAN}[i] Using default configuration${NC}"
+        fi
+        
         cat > "$CONFIG_DIR/config.yaml" <<EOF
 port: 8317
 auth-dir: "$CONFIG_DIR"
 api-keys:
-  - "sk-dummy"
+  - "$CUSTOM_API_KEY"
 quota-exceeded:
   switch-project: true
   switch-preview-model: true
 EOF
+        echo -e "${GREEN}[OK] Created config.yaml${NC}"
+        
+        # Store base URL for later use if custom
+        if [ "$CUSTOM_BASE_URL" != "http://localhost:8317" ]; then
+            echo "$CUSTOM_BASE_URL" > "$CONFIG_DIR/.custom_base_url"
+            echo "$CUSTOM_API_KEY" > "$CONFIG_DIR/.custom_api_key"
+        fi
     fi
 
     # Helper Scripts
